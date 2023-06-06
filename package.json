@@ -1,5 +1,5 @@
 {
-  "name": "robert",
+  "name": "ortomed",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdi/font": "^7.2.96",
     "vue": "^3.2.47",
     "vuetify": "^3.3.2"
   },
