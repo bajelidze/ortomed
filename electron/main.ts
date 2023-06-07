@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
-import db from './modules/db/db';
+import db from './modules/database/sqlite/sqlite';
 
 db();
 
