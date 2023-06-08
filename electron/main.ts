@@ -1,9 +1,24 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
-import db from './modules/database/sqlite/sqlite';
+import { Sqlite, SqliteError } from './modules/database/sqlite/sqlite';
 
-db();
+const sqlite = new Sqlite('test.db');
+
+sqlite.run('CREATE TABLE test (info TEXT)', (err) => {
+  if (err != null) {
+    console.log(err);
+  }
+
+  sqlite.each('SELECT * FROM test', (err, row) => {
+    if (err != null) {
+      console.log(err);
+    } else {
+      console.log(row);
+    }
+  });
+});
+
 
 // The built directory structure
 //

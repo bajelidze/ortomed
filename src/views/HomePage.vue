@@ -40,5 +40,5 @@ const links = [
   'Messages',
   'Profile',
   'Updates',
-]
+];
 </script>

@@ -1,26 +1,47 @@
-// const sqlite3 = require('sqlite3');
+const sqlite3 = require('sqlite3');
 
-import sqlite3 from 'sqlite3';
+import { Database, Param } from '../database';
+import DatabaseBase from '../base/base';
 
-function fn() {
-  const db = new sqlite3.Database(':memory:');
+export class Sqlite extends DatabaseBase implements Database {
+  #client: any;
 
-  db.serialize(() => {
-    db.run('CREATE TABLE lorem (info TEXT)');
+  // constructor constructs `Sqlite`.
+  // The passed `filename` can be set to `":memory:"`
+  // for an in-memory database.
+  constructor(filename: string) {
+    super();
 
+    this.#client = new sqlite3.Database(filename);
+  }
 
-    const stmt = db.prepare('INSERT INTO lorem VALUES (?)');
-    for (let i = 0; i < 10; i++) {
-      stmt.run('Ipsum ' + i);
-    }
-    stmt.finalize();
+  close(): void {
+    this.#client.close();
+  }
 
-    db.each('SELECT rowid AS id, info FROM lorem', (err: Error, row: unknown) => {
-      console.log(row);
-    });
-  });
+  serialize(fn: () => void): void {
+    this.#client.serialize(fn);
+  }
 
-  db.close();
+  eachWithParams(
+    sql: string,
+    params: Param[],
+    fn: (err: Error, row: unknown) => void,
+  ): void {
+    this.#client.run(sql, params, fn);
+  }
+
+  each(sql: string, fn: (err: Error, row: any) => void): void {
+    this.#client.each(sql, fn);
+  }
+
+  run(sql: string, fn: (err: Error) => void): void {
+    this.#client.run(sql, null, fn);
+  }
 }
 
-export default fn;
+// SqliteError is the error type of sqlite lib errors.
+export interface SqliteError {
+  errno: number,
+  code: string,
+}
