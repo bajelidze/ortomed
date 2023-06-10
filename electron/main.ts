@@ -20,7 +20,7 @@ sqlite.run('CREATE TABLE test (info TEXT)', (err) => {
 });
 
 const x = 123;
-
+export
 
 // The built directory structure
 //
