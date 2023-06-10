@@ -1,4 +1,4 @@
-name: Build
+name: Build Windows
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     strategy:
       matrix:
@@ -23,4 +23,4 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run build
-        run: npm run build --if-present
+        run: npm run build
