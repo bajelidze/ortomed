@@ -39,9 +39,3 @@ export class Sqlite extends DatabaseBase implements Database {
     this.#client.run(sql, null, fn);
   }
 }
-
-// SqliteError is the error type of sqlite lib errors.
-export interface SqliteError {
-  errno: number,
-  code: string,
-}

@@ -1,6 +1,19 @@
+import { Sqlite } from './sqlite/sqlite';
+
+// DatabaseType is a type of the `Database`
+// interface implementation.
+export enum DatabaseType {
+  Sqlite,
+}
+
 // Param is the type of the parameter passed to
 // the sql query.
 export type Param = string | number
+
+export interface DatabaseOptions {
+  type?: DatabaseType,
+  filename?: string,
+}
 
 export interface Database {
   // connect connects to the database.
@@ -32,4 +45,22 @@ export interface Database {
 
   // run runs the given `sql` query.
   run(sql: string, fn: (err: Error) => void): void
+}
+
+// newDatabase returns a new database depending on the
+// selected type. If no database type was specified,
+// returns the `sqlite` database by default.
+export function newDatabase(opts: DatabaseOptions): Database {
+  if (opts.type == undefined) {
+    opts.type = DatabaseType.Sqlite;
+  }
+
+  switch(opts.type) {
+  case DatabaseType.Sqlite:
+    if (opts.filename == undefined) {
+      throw Error('filename not specified');
+    }
+
+    return new Sqlite(opts.filename);
+  }
 }

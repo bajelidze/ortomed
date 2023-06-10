@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
-import { Sqlite, SqliteError } from './modules/database/sqlite/sqlite';
+import { Sqlite } from './modules/database/sqlite/sqlite';
 
 const sqlite = new Sqlite('test.db');
 
