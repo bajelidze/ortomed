@@ -1,4 +1,4 @@
-name: Build Windows
+name: Build Ubuntu
 
 on:
   push:
@@ -8,11 +8,17 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    name: "Build ${{ matrix.os }}, Node.js ${{ matrix.node-version }}"
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [20.x]
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v3
