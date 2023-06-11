@@ -9,7 +9,7 @@ export default createLogger({
   format: format.combine(
     format.cli(),
     format.timestamp(),
-    myFormat
+    myFormat,
   ),
   transports: [
     new transports.Console(),

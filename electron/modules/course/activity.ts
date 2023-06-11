@@ -1,6 +1,6 @@
 import { Duration } from 'luxon';
-import { Database } from '../database/database';
-import log from '../../common/logger/logger';
+import { Database } from '@/modules/database/database';
+import log from '@/common/logger';
 
 export interface Activity {
   name: string;
@@ -18,7 +18,7 @@ export class ActivityDao {
     try {
       await this.#db.run('CREATE TABLE activities (name TEXT, duration INTEGER)');
     } catch(err) {
-      log.warn(`Error when creating "activities" table: ${err}`);
+      log.warn(`Couldn't create "activities" table: ${err}`);
     }
   }
 

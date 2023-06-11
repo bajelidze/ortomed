@@ -1,10 +1,9 @@
-const sqlite3 = require('sqlite3');
-
+import { Database as Sqlite3Database } from 'sqlite3';
 import { open, Database as SqliteDatabase } from 'sqlite';
 
-import { Database, Param } from '../database';
-import { ErrUndefinedResult } from '../errors';
-import DatabaseBase from '../base/base';
+import { Database, Param } from '@/modules/database/database';
+import { ErrUndefinedResult } from '@/modules/database/errors';
+import DatabaseBase from '@/modules/database/base/base';
 
 export class Sqlite extends DatabaseBase implements Database {
   #client?: SqliteDatabase;
@@ -25,7 +24,7 @@ export class Sqlite extends DatabaseBase implements Database {
 
     const client = await open({
       filename: this.#filename,
-      driver: sqlite3.Database
+      driver: Sqlite3Database,
     });
 
     this.#client = client;

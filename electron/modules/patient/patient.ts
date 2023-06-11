@@ -13,5 +13,4 @@
 //     this.#database = newDatabase(dbOpts);
 //   }
 
-
 // }

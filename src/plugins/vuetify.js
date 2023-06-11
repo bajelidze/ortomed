@@ -10,7 +10,7 @@ export default createVuetify({
   icons: {
     sets: {
       mdi,
-    }
+    },
   },
   components,
   directives,

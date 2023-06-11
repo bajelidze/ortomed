@@ -9,7 +9,7 @@ const activity: Activity = {
 };
 
 export const API = {
-  activity: activity
+  activity: activity,
 };
 
 declare global {

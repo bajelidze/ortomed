@@ -3,7 +3,6 @@ export enum CourseState {
   Pause,
 }
 
-
 // export class Course {
 //   #name: string;
 //   #schedule: CourseState[];

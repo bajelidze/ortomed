@@ -1,4 +1,4 @@
-import { Sqlite } from './sqlite/sqlite';
+import { Sqlite } from '@/modules/database/sqlite/sqlite';
 
 // DatabaseType is a type of the `Database`
 // interface implementation.
