@@ -14,7 +14,8 @@
     "sqlite": "^4.2.1",
     "sqlite3": "^5.1.6",
     "vue": "^3.2.47",
-    "vuetify": "^3.3.2"
+    "vuetify": "^3.3.2",
+    "winston": "^3.9.0"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.2.13",

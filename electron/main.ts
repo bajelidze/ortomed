@@ -1,6 +1,18 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
+import { ActivityDao } from './modules/course/activity';
+import { newDatabase } from './modules/database/database';
+
+const db = newDatabase({filename:'test.db'});
+
+const activityDao = new ActivityDao(db);
+
+(async () => {
+  const result = await activityDao.list();
+  console.log(result);
+})();
+
 // The built directory structure
 //
 // ├─┬─┬ dist
