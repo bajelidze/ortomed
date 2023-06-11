@@ -1,10 +1,14 @@
-import luxon from 'luxon';
+import { Duration } from 'luxon';
+// import { Database } from '../database/database';
 
 export interface Activity {
   name: string;
-  duration: luxon.Duration;
+  duration: Duration;
 }
 
-// interface ActivityDao {
-//   // listkk
+// class ActivityDao {
+
+//   list(): Activity[] {
+    
+//   }
 // }

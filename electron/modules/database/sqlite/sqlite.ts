@@ -1,41 +1,55 @@
 const sqlite3 = require('sqlite3');
 
+import { open, Database as SqliteDatabase } from 'sqlite';
+
 import { Database, Param } from '../database';
+import { ErrUndefinedResult } from '../errors';
 import DatabaseBase from '../base/base';
 
 export class Sqlite extends DatabaseBase implements Database {
-  #client: any;
+  #client?: SqliteDatabase;
+  #filename: string;
 
   // constructor constructs `Sqlite`.
   // The passed `filename` can be set to `":memory:"`
   // for an in-memory database.
-  constructor(filename: string) {
+  constructor(filename: string | ':memory:') {
     super();
-
-    this.#client = new sqlite3.Database(filename);
+    this.#filename = filename;
   }
 
-  close(): void {
-    this.#client.close();
+  async #init(): Promise<void> {
+    if (this.#client != undefined) {
+      return;
+    }
+
+    const client = await open({
+      filename: this.#filename,
+      driver: sqlite3.Database
+    });
+
+    this.#client = client;
   }
 
-  serialize(fn: () => void): void {
-    this.#client.serialize(fn);
+  async close(): Promise<void> {
+    await this.#init();
+
+    this.#client?.close();
   }
 
-  eachWithParams(
-    sql: string,
-    params: Param[],
-    fn: (err: Error, row: unknown) => void,
-  ): void {
-    this.#client.run(sql, params, fn);
+  async all(sql: string, params?: Param[]): Promise<object[]> {
+    await this.#init();
+    const result = await this.#client?.all(sql, params);
+
+    if (result == undefined) {
+      throw ErrUndefinedResult; 
+    }
+
+    return result;
   }
 
-  each(sql: string, fn: (err: Error, row: any) => void): void {
-    this.#client.each(sql, fn);
-  }
-
-  run(sql: string, fn: (err: Error) => void): void {
-    this.#client.run(sql, null, fn);
+  async run(sql: string, params?: Param[]): Promise<void> {
+    await this.#init();
+    await this.#client?.run(sql, params);
   }
 }

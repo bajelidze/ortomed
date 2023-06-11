@@ -1,13 +1,9 @@
 // Database is a dummy base class providing
 // implementation for the Database interface.
 class Database {
-  connect(): void { return; }
+  async connect(): Promise<void> { return; }
 
-  close(): void { return; }
-
-  serialize(callback: () => void): void {
-    callback();
-  }
+  async close(): Promise<void> { return; }
 }
 
 export default Database;
