@@ -4,11 +4,15 @@ import log from '@/common/logger';
 
 export interface Activity {
   name: string;
+  description?: string;
   duration: Duration;
 }
 
-interface _Activity {
+// ActivityEntity is the type that is actually
+// inserted into the database.
+interface ActivityEntity {
   name: string;
+  description?: string;
   duration: number;
 }
 
@@ -16,7 +20,7 @@ export class ActivityDao {
   #db: Knex;
   #initialized = false;
 
-  readonly #activitiesCol = 'activities';
+  readonly #activitiesTable = 'activities';
 
   constructor(db: Knex) {
     this.#db = db;
@@ -27,17 +31,26 @@ export class ActivityDao {
       return;
     }
 
-    if (!await this.#db.schema.hasTable(this.#activitiesCol)) {
-      await this.#db.schema.createTable(this.#activitiesCol, table => {
+    if (!await this.#db.schema.hasTable(this.#activitiesTable)) {
+      await this.#db.schema.createTable(this.#activitiesTable, table => {
         table.increments();
-        table.string('name');
-        table.integer('duration');
+        table.string('name').notNullable();
+        table.string('description').defaultTo('');
+        table.integer('duration').notNullable();
       });
 
-      log.info(`Created table "${this.#activitiesCol}"`);
+      log.info(`Created table "${this.#activitiesTable}"`);
     }
 
     this.#initialized = true;
+  }
+
+  #toActivityEntities(...activities: Activity[]): ActivityEntity[] {
+    return activities.map(activity => ({
+      name: activity.name,
+      description: activity.description,
+      duration: activity.duration.toMillis(),
+    }));
   }
 
   // list lists all the activities in the store.
@@ -45,7 +58,7 @@ export class ActivityDao {
     await this.#init();
 
     const result = await this.#db.select('*')
-      .from<Activity>(this.#activitiesCol);
+      .from<Activity>(this.#activitiesTable);
 
     log.info(`Listed ${result.length} activities`);
 
@@ -60,15 +73,8 @@ export class ActivityDao {
 
     await this.#init();
 
-    const newActivities: _Activity[] = activities.map(activity => {
-      return {
-        name: activity.name,
-        duration: activity.duration.toMillis(),
-      };
-    });
-
-    await this.#db.insert<_Activity>(newActivities)
-      .into(this.#activitiesCol);
+    await this.#db.insert(this.#toActivityEntities(...activities))
+      .into(this.#activitiesTable);
 
     log.info(`Added ${activities.length} activities`);
   }
