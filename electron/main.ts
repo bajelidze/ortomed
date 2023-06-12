@@ -1,15 +1,42 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
-import { ActivityDao } from './modules/course/activity';
-import { newDatabase } from './modules/database/database';
+// import { ActivityDao } from './modules/course/activity';
+// import { newDatabase } from './modules/database/database';
 
-const db = newDatabase({filename:'test.db'});
+// const db = newDatabase({filename:'test.db'});
 
-const activityDao = new ActivityDao(db);
+// const activityDao = new ActivityDao(db);
+
+// (async () => {
+//   const result = await activityDao.list();
+//   console.log(result);
+// })();
+
+import { knex, Knex } from 'knex';
+import { ActivityDao } from '@/modules/course/activity';
+import { Duration } from 'luxon';
+
+const knexCfg: Knex.Config = {
+  client: 'sqlite3',
+  connection: {
+    filename: 'test.db',
+  },
+  useNullAsDefault: true,
+};
+
+const db = knex(knexCfg);
 
 (async () => {
+  const activityDao = new ActivityDao(db);
+
+  await activityDao.add({
+    name: 'LFK',
+    duration: Duration.fromObject({hours: 1}),
+  });
+
   const result = await activityDao.list();
+
   console.log(result);
 })();
 

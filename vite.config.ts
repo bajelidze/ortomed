@@ -26,6 +26,7 @@ export default defineConfig({
             rollupOptions: {
               external: [ // C/C++ modules that can't be built properly.
                 'sqlite3',
+                'knex',
               ],
             },
           },
