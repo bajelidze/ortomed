@@ -2,67 +2,105 @@ import { Duration } from 'luxon';
 import { Knex } from 'knex';
 import log from '@/common/logger';
 
-export interface Activity {
-  name: string;
-  description?: string;
-  duration: Duration;
+export const _activitiesTable = 'activities';
+
+export class Activity {
+  id: number = 0;
+  name: string = '';
+  description: string = '';
+  duration: Duration = Duration.fromMillis(0);
+
+  // flexible is true when the `Activity`
+  // can be scheduled with other flexible
+  // activities on the same calender date.
+  flexible: boolean = false;
+
+  constructor(init?: Partial<Activity>) {
+    Object.assign(this, init);
+  }
 }
 
-// ActivityEntity is the type that is actually
-// inserted into the database.
-interface ActivityEntity {
+export interface ActivityEntity {
+  id: number;
   name: string;
   description?: string;
   duration: number;
+  flexible: number;
 }
 
 export class ActivityDao {
-  #db: Knex;
-  #initialized = false;
+  private db: Knex;
+  private initialized = false;
 
-  readonly #activitiesTable = 'activities';
+  readonly table = _activitiesTable;
 
   constructor(db: Knex) {
-    this.#db = db;
+    this.db = db;
   }
 
   async #init(): Promise<void> {
-    if (this.#initialized) {
+    if (this.initialized) {
       return;
     }
 
-    if (!await this.#db.schema.hasTable(this.#activitiesTable)) {
-      await this.#db.schema.createTable(this.#activitiesTable, table => {
-        table.increments();
+    if (!await this.db.schema.hasTable(this.table)) {
+      await this.db.schema.createTable(this.table, table => {
+        table.increments('id');
         table.string('name').notNullable();
         table.string('description').defaultTo('');
-        table.integer('duration').notNullable();
+        table.integer('duration').unsigned().notNullable();
       });
 
-      log.info(`Created table "${this.#activitiesTable}"`);
+      log.info(`Created table "${this.table}"`);
     }
 
-    this.#initialized = true;
+    this.initialized = true;
   }
 
-  #toActivityEntities(...activities: Activity[]): ActivityEntity[] {
+  private toActivityEntities(...activities: Activity[]): ActivityEntity[] {
     return activities.map(activity => ({
+      id: activity.id,
       name: activity.name,
       description: activity.description,
       duration: activity.duration.toMillis(),
+      flexible: activity.flexible ? 1 : 0,
     }));
   }
 
-  // list lists all the activities in the store.
-  async list(): Promise<Activity[]> {
+  private toActivities(...activities: ActivityEntity[]): Activity[] {
+    return activities.map(activity => (new Activity({
+      id: activity.id,
+      name: activity.name,
+      description: activity.description,
+      duration: Duration.fromMillis(activity.duration),
+      flexible: activity.flexible ? true : false,
+    })));
+  }
+
+  private async list(builder?: (query: Knex.QueryBuilder) => Knex.QueryBuilder): Promise<Activity[]> {
     await this.#init();
 
-    const result = await this.#db.select('*')
-      .from<Activity>(this.#activitiesTable);
+    let query = this.db
+      .select('*')
+      .from(this.table);
 
-    log.info(`Listed ${result.length} activities`);
+    if (builder) {
+      query = builder(query);
+    }
 
-    return result;
+    const activities: ActivityEntity[] = await query;
+
+    log.info(`Listed ${activities.length} activities`);
+
+    return this.toActivities(...activities);
+  }
+
+  async listAll(): Promise<Activity[]> {
+    return this.list();
+  }
+
+  async listPages(limit: number,  offset: number): Promise<Activity[]> {
+    return this.list(query => query.limit(limit).offset(offset))
   }
 
   // add adds new activities to the store.
@@ -73,8 +111,9 @@ export class ActivityDao {
 
     await this.#init();
 
-    await this.#db.insert(this.#toActivityEntities(...activities))
-      .into(this.#activitiesTable);
+    await this.db
+      .insert(this.toActivityEntities(...activities))
+      .into(this.table);
 
     log.info(`Added ${activities.length} activities`);
   }
