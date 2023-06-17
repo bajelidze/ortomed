@@ -1,21 +1,10 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
-// import { ActivityDao } from './modules/course/activity';
-// import { newDatabase } from './modules/database/database';
-
-// const db = newDatabase({filename:'test.db'});
-
-// const activityDao = new ActivityDao(db);
-
-// (async () => {
-//   const result = await activityDao.list();
-//   console.log(result);
-// })();
-
 import { knex, Knex } from 'knex';
-import { ActivityDao } from '@/modules/course/activity';
-import { Duration } from 'luxon';
+import { Course, CourseDao } from '@/modules/course/course';
+// import { Activity, ActivityDao } from '@/modules/course/activity';
+import { CourseActivity } from '@/modules/course/courseActivity';
 
 const knexCfg: Knex.Config = {
   client: 'sqlite3',
@@ -27,17 +16,38 @@ const knexCfg: Knex.Config = {
 
 const db = knex(knexCfg);
 
+import fs from 'fs';
+import { Activity } from './modules/course/activity';
+// import { Duration } from 'luxon';
+
 (async () => {
-  const activityDao = new ActivityDao(db);
+  const dao = new CourseDao(db);
 
-  await activityDao.add({
+  const course = new Course({
     name: 'LFK',
-    duration: Duration.fromObject({hours: 1}),
-  });
+    description: 'massage...',
+    repetitions: 2,
+  })
 
-  const result = await activityDao.list();
+  await course.setDb(db).commit();
+
+  const act = new Activity({
+    name: "LFK",
+    description: 'massage',
+  })
+
+  
+
+  await course.addActivities(new CourseActivity({
+    activity: act,
+    index: 1,
+  }))
+
+  const result = await dao.listAll();
 
   console.log(result);
+
+  fs.unlinkSync('test.db');
 })();
 
 // The built directory structure
@@ -54,6 +64,8 @@ process.env.PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.D
 
 let win: BrowserWindow | null;
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL'];
+
+process.traceProcessWarnings = true;
 
 function createWindow() {
   win = new BrowserWindow({

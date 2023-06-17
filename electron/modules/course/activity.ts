@@ -1,6 +1,7 @@
 import { Duration } from 'luxon';
 import { Knex } from 'knex';
 import log from '@/common/logger';
+import errs from '@/common/errors';
 
 export const _activitiesTable = 'activities';
 
@@ -8,7 +9,7 @@ export class Activity {
   id: number = 0;
   name: string = '';
   description: string = '';
-  duration: Duration = Duration.fromMillis(0);
+  duration: Duration = Duration.fromObject({hour: 1});
 
   // flexible is true when the `Activity`
   // can be scheduled with other flexible
@@ -38,7 +39,7 @@ export class ActivityDao {
     this.db = db;
   }
 
-  async #init(): Promise<void> {
+  private async init(): Promise<void> {
     if (this.initialized) {
       return;
     }
@@ -49,6 +50,7 @@ export class ActivityDao {
         table.string('name').notNullable();
         table.string('description').defaultTo('');
         table.integer('duration').unsigned().notNullable();
+        table.boolean('flexible').notNullable();
       });
 
       log.info(`Created table "${this.table}"`);
@@ -78,7 +80,7 @@ export class ActivityDao {
   }
 
   private async list(builder?: (query: Knex.QueryBuilder) => Knex.QueryBuilder): Promise<Activity[]> {
-    await this.#init();
+    await this.init();
 
     let query = this.db
       .select('*')
@@ -103,13 +105,25 @@ export class ActivityDao {
     return this.list(query => query.limit(limit).offset(offset))
   }
 
+  async getById(activityId: number): Promise<Activity> {
+    const activities = await this.list(query => query.where('id', activityId));
+
+    if (activities.length > 1) {
+      throw new Error('got multiple activities instead of one');
+    } else if (activities.length != 1) {
+      throw new errs.ErrNotFound(`activity with id ${activityId} was not found`);
+    }
+
+    return activities[0];
+  }
+
   // add adds new activities to the store.
   async add(...activities: Activity[]): Promise<void> {
     if (activities.length == 0) {
       throw Error('no activities specified');
     }
 
-    await this.#init();
+    await this.init();
 
     await this.db
       .insert(this.toActivityEntities(...activities))
