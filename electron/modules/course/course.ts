@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 import log from '@/common/logger';
 import errs from '@/common/errors';
+import { CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
 
 const _coursesTable = 'courses';
 
