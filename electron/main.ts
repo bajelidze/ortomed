@@ -2,7 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
 import { knex, Knex } from 'knex';
-import { Course, CourseDao } from '@/modules/course/course';
+import { Course } from '@/modules/course/course';
 // import { Activity, ActivityDao } from '@/modules/course/activity';
 import { CourseActivity } from '@/modules/course/courseActivity';
 
@@ -16,14 +16,10 @@ const knexCfg: Knex.Config = {
 
 const db = knex(knexCfg);
 
-import fs from 'fs';
 import { Activity } from './modules/course/activity';
 import { Duration } from 'luxon';
-// import { Duration } from 'luxon';
 
 (async () => {
-  const dao = new CourseDao(db);
-
   const course = new Course({
     name: 'LFK',
     description: 'massage...',

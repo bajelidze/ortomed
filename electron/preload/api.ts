@@ -1,16 +1,6 @@
 import { contextBridge } from 'electron';
 
-import { Activity } from '../modules/course/activity';
-import { Duration } from 'luxon';
-
-const activity: Activity = {
-  name: 'Massage',
-  duration: Duration.fromMillis(100),
-};
-
-export const API = {
-  activity: activity,
-};
+export const API = {};
 
 declare global {
   interface Window {api: typeof API}
