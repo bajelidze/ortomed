@@ -24,16 +24,16 @@ import { Duration } from 'luxon';
     name: 'LFK',
     description: 'massage...',
     repetitions: 2,
-  })
+  });
 
   await course.setDb(db).commit();
 
   const act = new Activity({
-    name: "LFK",
+    name: 'LFK',
     description: 'massage',
-  })
+  });
 
-  await act.setDb(db).commit()
+  await act.setDb(db).commit();
 
   const ca1 = new CourseActivity({
     activity: act,
@@ -48,7 +48,6 @@ import { Duration } from 'luxon';
   await course.addActivities(ca1, ca2);
 
   // const result = await dao.listAll();
-
 
   const result = await course.listActivities();
 

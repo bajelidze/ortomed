@@ -16,7 +16,7 @@ export class CourseActivity {
   pause: Duration = defaultPause;
 
   // index is the order in the set of activities.
-  index: number = 0;
+  index = 0;
 
   constructor(init?: Partial<CourseActivity>) {
     Object.assign(this, init);
@@ -69,7 +69,7 @@ export class CourseActivityDao {
           .references('id')
           .inTable(this.table);
 
-        table.integer('pause').unsigned()
+        table.integer('pause').unsigned();
         table.integer('index').unsigned();
       });
 
@@ -102,13 +102,13 @@ export class CourseActivityDao {
   private async toCourseActivities(
     ...courseActivityEntities: CourseActivityEntity[]
   ): Promise<CourseActivity[]> {
-    let courseActivities: CourseActivity[] = [];
+    const courseActivities: CourseActivity[] = [];
 
     for (const ca of courseActivityEntities) {
       if (ca.pause == undefined) {
-        throw new Error('pause is undefined')
+        throw new Error('pause is undefined');
       } else if (ca.activityId == undefined) {
-        throw new Error('activityId is undefined')
+        throw new Error('activityId is undefined');
       }
 
       const activity = await this.activityDao.getById(ca.activityId);
@@ -119,7 +119,7 @@ export class CourseActivityDao {
         activity: activity,
         pause: Duration.fromMillis(ca.pause),
         index: ca.index,
-      }))
+      }));
     }
 
     return courseActivities;
@@ -141,8 +141,8 @@ export class CourseActivityDao {
     return this.list();
   }
 
-  async listPages(limit: number,  offset: number): Promise<CourseActivityEntity[]> {
-    return this.list(query => query.limit(limit).offset(offset))
+  async listPages(limit: number, offset: number): Promise<CourseActivityEntity[]> {
+    return this.list(query => query.limit(limit).offset(offset));
   }
 
   // add adds new course activities to the store.
@@ -175,7 +175,7 @@ export class CourseActivityDao {
         _activitiesTable,
         `${_courseActivitiesTable}.courseId`,
         `${_activitiesTable}.id`,
-      )
+      );
 
     log.info(`Listed ${courseActivityEntities.length} course activities for course ${courseId}`);
 

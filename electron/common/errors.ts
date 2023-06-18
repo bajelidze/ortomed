@@ -7,4 +7,4 @@ class ErrNotFound extends Error {
 
 export default {
   ErrNotFound: ErrNotFound,
-}
+};

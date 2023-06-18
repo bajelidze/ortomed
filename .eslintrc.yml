@@ -21,8 +21,8 @@ rules:
   semi: [error, always]
   comma-dangle: [error, always-multiline]
   no-multiple-empty-lines: [error, {max: 1}]
-  no-multi-spaces: [error, always]
-  space-after-keywords: [error, always]
+  no-multi-spaces: error
+  keyword-spacing: error
 
   '@typescript-eslint/no-var-requires': 0
   '@typescript-eslint/no-explicit-any': [off]

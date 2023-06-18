@@ -1,18 +1,16 @@
 import { Knex } from 'knex';
 import log from '@/common/logger';
 import errs from '@/common/errors';
-import { _activitiesTable } from '@/modules/course/activity';
-import { _courseActivitiesTable, CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
 
 const _coursesTable = 'courses';
 
 export class Course {
   id?: number;
-  name: string = '';
+  name = '';
   description?: string = '';
   repetitions?: number = 1;
 
-  private initialized: boolean = false;
+  private initialized = false;
   private db?: Knex;
   private dao?: CourseDao;
   private courseActivityDao?: CourseActivityDao;
@@ -23,8 +21,8 @@ export class Course {
 
   private init() {
     if (this.initialized) {
-      return
-    } else if(!this.db) {
+      return;
+    } else if (!this.db) {
       throw new Error('database was not set');
     }
 
@@ -75,7 +73,7 @@ export class Course {
     }
 
     // Set ids of the course activities to the current course.
-    for (let ca of courseActivities) {
+    for (const ca of courseActivities) {
       ca.courseId = this.id;
     }
 
@@ -89,7 +87,7 @@ export class Course {
 
     courseActivities.forEach((ca, idx) => {
       ca.index = highest + idx + 1;
-    })
+    });
 
     await this.courseActivityDao.add(...courseActivities);
   }
@@ -171,8 +169,8 @@ export class CourseDao {
     return this.list();
   }
 
-  async listPages(limit: number,  offset: number): Promise<Course[]> {
-    return this.list(query => query.limit(limit).offset(offset))
+  async listPages(limit: number, offset: number): Promise<Course[]> {
+    return this.list(query => query.limit(limit).offset(offset));
   }
 
   async getById(id: number): Promise<Course> {

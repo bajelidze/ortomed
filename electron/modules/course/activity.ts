@@ -7,16 +7,16 @@ export const _activitiesTable = 'activities';
 
 export class Activity {
   id?: number;
-  name: string = '';
-  description: string = '';
+  name = '';
+  description = '';
   duration: Duration = Duration.fromObject({hour: 1});
 
   // flexible is true when the `Activity`
   // can be scheduled with other flexible
   // activities on the same calender date.
-  flexible: boolean = false;
+  flexible = false;
 
-  private initialized: boolean = false;
+  private initialized = false;
   private db?: Knex;
   private dao?: ActivityDao;
 
@@ -26,8 +26,8 @@ export class Activity {
 
   private init() {
     if (this.initialized) {
-      return
-    } else if(!this.db) {
+      return;
+    } else if (!this.db) {
       throw new Error('database was not set');
     }
 
@@ -136,8 +136,8 @@ export class ActivityDao {
     return this.list();
   }
 
-  async listPages(limit: number,  offset: number): Promise<Activity[]> {
-    return this.list(query => query.limit(limit).offset(offset))
+  async listPages(limit: number, offset: number): Promise<Activity[]> {
+    return this.list(query => query.limit(limit).offset(offset));
   }
 
   async getById(activityId: number): Promise<Activity> {
