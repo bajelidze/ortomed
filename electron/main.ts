@@ -18,6 +18,7 @@ const db = knex(knexCfg);
 
 import fs from 'fs';
 import { Activity } from './modules/course/activity';
+import { Duration } from 'luxon';
 // import { Duration } from 'luxon';
 
 (async () => {
@@ -36,18 +37,28 @@ import { Activity } from './modules/course/activity';
     description: 'massage',
   })
 
-  
+  await act.setDb(db).commit()
 
-  await course.addActivities(new CourseActivity({
+  const ca1 = new CourseActivity({
     activity: act,
-    index: 1,
-  }))
+    pause: Duration.fromObject({hour: 2}),
+  });
 
-  const result = await dao.listAll();
+  const ca2 = new CourseActivity({
+    activity: act,
+    pause: Duration.fromObject({hour: 1, minute: 30}),
+  });
+
+  await course.addActivities(ca1, ca2);
+
+  // const result = await dao.listAll();
+
+
+  const result = await course.listActivities();
 
   console.log(result);
 
-  fs.unlinkSync('test.db');
+  // fs.unlinkSync('test.db');
 })();
 
 // The built directory structure

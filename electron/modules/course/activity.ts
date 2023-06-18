@@ -6,7 +6,7 @@ import errs from '@/common/errors';
 export const _activitiesTable = 'activities';
 
 export class Activity {
-  id: number = 0;
+  id?: number;
   name: string = '';
   description: string = '';
   duration: Duration = Duration.fromObject({hour: 1});
@@ -16,13 +16,48 @@ export class Activity {
   // activities on the same calender date.
   flexible: boolean = false;
 
+  private initialized: boolean = false;
+  private db?: Knex;
+  private dao?: ActivityDao;
+
   constructor(init?: Partial<Activity>) {
     Object.assign(this, init);
+  }
+
+  private init() {
+    if (this.initialized) {
+      return
+    } else if(!this.db) {
+      throw new Error('database was not set');
+    }
+
+    this.dao = new ActivityDao(this.db);
+    this.initialized = true;
+  }
+
+  // setDb sets the database backend.
+  setDb(db: Knex) {
+    this.db = db;
+    return this;
+  }
+
+  // commit adds the Course to the store.
+  async commit() {
+    this.init();
+
+    const ids = await this.dao?.add(this);
+
+    if (ids == undefined) {
+      throw Error('ids is undefined');
+    }
+
+    this.id = ids[0];
+    return this;
   }
 }
 
 export interface ActivityEntity {
-  id: number;
+  id?: number;
   name: string;
   description?: string;
   duration: number;
@@ -118,17 +153,18 @@ export class ActivityDao {
   }
 
   // add adds new activities to the store.
-  async add(...activities: Activity[]): Promise<void> {
+  async add(...activities: Activity[]): Promise<number[]> {
     if (activities.length == 0) {
       throw Error('no activities specified');
     }
 
     await this.init();
 
-    await this.db
+    const result: number[] = await this.db
       .insert(this.toActivityEntities(...activities))
       .into(this.table);
 
     log.info(`Added ${activities.length} activities`);
+    return result;
   }
 }

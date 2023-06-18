@@ -59,14 +59,12 @@ export class CourseActivityDao {
 
         table.integer('courseId')
           .unsigned()
-          .unique()
           .index()
           .references('id')
           .inTable(this.table);
 
         table.integer('activityId')
           .unsigned()
-          .unique()
           .index()
           .references('id')
           .inTable(this.table);
@@ -127,9 +125,9 @@ export class CourseActivityDao {
     return courseActivities;
   }
 
-  private async toCourseActivityEntities(
+  private toCourseActivityEntities(
     ...courseActivityEntities: CourseActivity[]
-  ): Promise<CourseActivityEntity[]> {
+  ): CourseActivityEntity[] {
     return courseActivityEntities.map(ca => ({
       id: ca.id,
       courseId: ca.courseId,
@@ -148,18 +146,20 @@ export class CourseActivityDao {
   }
 
   // add adds new course activities to the store.
-  async add(...courseActivities: CourseActivity[]): Promise<void> {
+  async add(...courseActivities: CourseActivity[]): Promise<number[]> {
     if (courseActivities.length == 0) {
       throw Error('no course activities specified');
     }
 
     await this.init();
 
-    await this.db
+    const result: number[] = await this.db
       .insert(this.toCourseActivityEntities(...courseActivities))
       .into(this.table);
 
     log.info(`Added ${courseActivities.length} course activities`);
+
+    return result;
   }
 
   // listCourseActivitiesForCourse returns all the
@@ -176,6 +176,8 @@ export class CourseActivityDao {
         `${_courseActivitiesTable}.courseId`,
         `${_activitiesTable}.id`,
       )
+
+    log.info(`Listed ${courseActivityEntities.length} course activities for course ${courseId}`);
 
     return this.toCourseActivities(...courseActivityEntities);
   }

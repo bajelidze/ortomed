@@ -1,5 +1,6 @@
 import { Knex } from 'knex';
 import log from '@/common/logger';
+import errs from '@/common/errors';
 import { _activitiesTable } from '@/modules/course/activity';
 import { _courseActivitiesTable, CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
 
@@ -28,11 +29,12 @@ export class Course {
     }
 
     this.dao = new CourseDao(this.db);
+    this.courseActivityDao = new CourseActivityDao(this.db);
     this.initialized = true;
   }
 
   // setDb sets the database backend.
-  setDb(db: Knex): this {
+  setDb(db: Knex) {
     this.db = db;
     return this;
   }
@@ -41,7 +43,13 @@ export class Course {
   async commit() {
     this.init();
 
-    await this.dao?.add(this);
+    const ids = await this.dao?.add(this);
+
+    if (ids == undefined) {
+      throw Error('ids is undefined');
+    }
+
+    this.id = ids[0];
     return this;
   }
 
@@ -66,11 +74,24 @@ export class Course {
       throw new Error('courseActivityDao is undefined');
     }
 
+    // Set ids of the course activities to the current course.
     for (let ca of courseActivities) {
       ca.courseId = this.id;
     }
 
-    return await this.courseActivityDao.add(...courseActivities);
+    // Find the index for the new activities.
+    const activities = await this.listActivities();
+    let highest = 0;
+
+    if (activities.length > 0) {
+      highest = Math.max(...activities.map(act => act.index));
+    }
+
+    courseActivities.forEach((ca, idx) => {
+      ca.index = highest + idx + 1;
+    })
+
+    await this.courseActivityDao.add(...courseActivities);
   }
 }
 
@@ -154,19 +175,32 @@ export class CourseDao {
     return this.list(query => query.limit(limit).offset(offset))
   }
 
+  async getById(id: number): Promise<Course> {
+    const result = await this.list(query => query.where('id', id));
+
+    if (result.length == 0) {
+      throw new errs.ErrNotFound(`course with id ${id} not found`);
+    }
+
+    return result[0];
+  }
+
   // add adds new activities to the store.
-  async add(...courses: Course[]): Promise<void> {
+  // Returns the ids of the added courses.
+  async add(...courses: Course[]): Promise<number[]> {
     if (courses.length == 0) {
       throw Error('no courses specified');
     }
 
     await this.init();
 
-    await this.db
+    const ids = await this.db
       .insert(this.toCoursesEntities(...courses))
       .into(this.table);
 
     log.info(`Added ${courses.length} courses`);
+
+    return ids;
   }
 
 }
