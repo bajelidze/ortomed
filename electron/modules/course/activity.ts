@@ -11,9 +11,13 @@ export class Activity {
   description = '';
   duration: Duration = Duration.fromObject({hour: 1});
 
+  // capacity is the maximum number of patients that
+  // can participate in the activity at the same time.
+  capacity = 1;
+
   // flexible is true when the `Activity`
   // can be scheduled with other flexible
-  // activities on the same calender date.
+  // activities on the same calendar date.
   flexible = false;
 
   private initialized = false;
@@ -62,6 +66,7 @@ export interface ActivityEntity {
   description?: string;
   duration: number;
   flexible: number;
+  capacity: number;
 }
 
 export class ActivityDao {
@@ -85,6 +90,7 @@ export class ActivityDao {
         table.string('name').notNullable();
         table.string('description').defaultTo('');
         table.integer('duration').unsigned().notNullable();
+        table.integer('capacity').unsigned().notNullable();
         table.boolean('flexible').notNullable();
       });
 
@@ -101,6 +107,7 @@ export class ActivityDao {
       description: activity.description,
       duration: activity.duration.toMillis(),
       flexible: activity.flexible ? 1 : 0,
+      capacity: activity.capacity,
     }));
   }
 
@@ -111,6 +118,7 @@ export class ActivityDao {
       description: activity.description,
       duration: Duration.fromMillis(activity.duration),
       flexible: activity.flexible ? true : false,
+      capacity: activity.capacity,
     })));
   }
 
