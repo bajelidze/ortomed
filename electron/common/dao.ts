@@ -17,7 +17,7 @@ export abstract class BasicDao<Class, Entity> {
 
   protected abstract toEntities(...classes: Class[]): Entity[]
 
-  protected abstract toClasses(...activities: Entity[]): Class[]
+  protected abstract toClasses(...entities: Entity[]): Class[]
 
   protected async init(): Promise<void> {
     if (this.initialized) {

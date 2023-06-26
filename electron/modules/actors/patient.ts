@@ -71,10 +71,10 @@ export class PatientDao extends BasicDao<Patient, PatientEntity> {
     }));
   }
 
-  protected toClasses(...activities: PatientEntity[]): Patient[] {
-    return activities.map(activity => (new Patient({
-      id: activity.id,
-      name: activity.name,
+  protected toClasses(...patientEntities: PatientEntity[]): Patient[] {
+    return patientEntities.map(ent => (new Patient({
+      id: ent.id,
+      name: ent.name,
     })));
   }
 }

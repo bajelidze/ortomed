@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 import log from '@/common/logger';
 import errs from '@/common/errors';
+import { BasicDao } from '@/common/dao';
 import { CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
 
 const _coursesTable = 'courses';
@@ -101,45 +102,21 @@ interface CourseEntity {
   repetitions?: number;
 }
 
-export class CourseDao {
-  private db: Knex;
-  private initialized = false;
-
-  readonly table = _coursesTable;
-
+export class CourseDao extends BasicDao<Course, CourseEntity> {
   constructor(db: Knex) {
-    this.db = db;
+    super(db, _coursesTable);
   }
 
-  private async init(): Promise<void> {
-    if (this.initialized) {
-      return;
-    }
-
-    if (!await this.db.schema.hasTable(this.table)) {
-      await this.db.schema.createTable(this.table, table => {
-        table.increments('id');
-        table.string('name').notNullable();
-        table.string('description').defaultTo('');
-        table.integer('repetitions').unsigned().defaultTo(1);
-      });
-
-      log.info(`Created table "${this.table}"`);
-    }
-
-    this.initialized = true;
+  protected async createTable(): Promise<void> {
+    await this.db.schema.createTable(this.table, table => {
+      table.increments('id');
+      table.string('name').notNullable();
+      table.string('description').defaultTo('');
+      table.integer('repetitions').unsigned().defaultTo(1);
+    });
   }
 
-  private toCourses(...courses: CourseEntity[]): Course[] {
-    return courses.map(course => (new Course({
-      id: course.id,
-      name: course.name,
-      description: course.description,
-      repetitions: course.repetitions,
-    })));
-  }
-
-  private toCoursesEntities(...courses: Course[]): CourseEntity[] {
+  protected toEntitites(...courses: Course[]): CourseEntity[] {
     return courses.map(course => ({
       id: course.id,
       name: course.name,
@@ -148,58 +125,12 @@ export class CourseDao {
     }));
   }
 
-  private async list(builder?: (query: Knex.QueryBuilder) => Knex.QueryBuilder): Promise<Course[]> {
-    await this.init();
-
-    let query = this.db
-      .select('*')
-      .from(this.table);
-
-    if (builder) {
-      query = builder(query);
-    }
-
-    const courses: CourseEntity[] = await query;
-
-    log.info(`Listed ${courses.length} courses`);
-
-    return this.toCourses(...courses);
+  protected toClasses(...courses: CourseEntity[]): Course[] {
+    return courses.map(course => (new Course({
+      id: course.id,
+      name: course.name,
+      description: course.description,
+      repetitions: course.repetitions,
+    })));
   }
-
-  async listAll(): Promise<Course[]> {
-    return this.list();
-  }
-
-  async listPages(limit: number, offset: number): Promise<Course[]> {
-    return this.list(query => query.limit(limit).offset(offset));
-  }
-
-  async getById(id: number): Promise<Course> {
-    const result = await this.list(query => query.where('id', id));
-
-    if (result.length == 0) {
-      throw new errs.ErrNotFound(`course with id ${id} not found`);
-    }
-
-    return result[0];
-  }
-
-  // add adds new activities to the store.
-  // Returns the ids of the added courses.
-  async add(...courses: Course[]): Promise<number[]> {
-    if (courses.length == 0) {
-      throw Error('no courses specified');
-    }
-
-    await this.init();
-
-    const ids = await this.db
-      .insert(this.toCoursesEntities(...courses))
-      .into(this.table);
-
-    log.info(`Added ${courses.length} courses`);
-
-    return ids;
-  }
-
 }
