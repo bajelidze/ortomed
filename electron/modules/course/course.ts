@@ -1,6 +1,4 @@
 import { Knex } from 'knex';
-import log from '@/common/logger';
-import errs from '@/common/errors';
 import { BasicDao } from '@/common/dao';
 import { CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
 
@@ -116,7 +114,7 @@ export class CourseDao extends BasicDao<Course, CourseEntity> {
     });
   }
 
-  protected toEntitites(...courses: Course[]): CourseEntity[] {
+  protected toEntities(...courses: Course[]): CourseEntity[] {
     return courses.map(course => ({
       id: course.id,
       name: course.name,
