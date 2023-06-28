@@ -1,7 +1,6 @@
 import { Duration } from 'luxon';
 import { Knex } from 'knex';
-import log from '@/common/logger';
-import errs from '@/common/errors';
+import { BasicDao } from '@/common/dao';
 
 export const _activitiesTable = 'activities';
 
@@ -69,38 +68,23 @@ export interface ActivityEntity {
   capacity: number;
 }
 
-export class ActivityDao {
-  private db: Knex;
-  private initialized = false;
-
-  readonly table = _activitiesTable;
-
+export class ActivityDao extends BasicDao<Activity, ActivityEntity> {
   constructor(db: Knex) {
-    this.db = db;
+    super(db, _activitiesTable);
   }
 
-  private async init(): Promise<void> {
-    if (this.initialized) {
-      return;
-    }
-
-    if (!await this.db.schema.hasTable(this.table)) {
-      await this.db.schema.createTable(this.table, table => {
-        table.increments('id');
-        table.string('name').notNullable();
-        table.string('description').defaultTo('');
-        table.integer('duration').unsigned().notNullable();
-        table.integer('capacity').unsigned().notNullable();
-        table.boolean('flexible').notNullable();
-      });
-
-      log.info(`Created table "${this.table}"`);
-    }
-
-    this.initialized = true;
+  protected async createTable(): Promise<void> {
+    return this.db.schema.createTable(this.table, table => {
+      table.increments('id');
+      table.string('name').notNullable();
+      table.string('description').defaultTo('');
+      table.integer('duration').unsigned().notNullable();
+      table.integer('capacity').unsigned().notNullable();
+      table.boolean('flexible').notNullable();
+    });
   }
 
-  private toActivityEntities(...activities: Activity[]): ActivityEntity[] {
+  protected toEntities(...activities: Activity[]): ActivityEntity[] {
     return activities.map(activity => ({
       id: activity.id,
       name: activity.name,
@@ -111,7 +95,7 @@ export class ActivityDao {
     }));
   }
 
-  private toActivities(...activities: ActivityEntity[]): Activity[] {
+  protected toClasses(...activities: ActivityEntity[]): Activity[] {
     return activities.map(activity => (new Activity({
       id: activity.id,
       name: activity.name,
@@ -120,59 +104,5 @@ export class ActivityDao {
       flexible: activity.flexible ? true : false,
       capacity: activity.capacity,
     })));
-  }
-
-  private async list(builder?: (query: Knex.QueryBuilder) => Knex.QueryBuilder): Promise<Activity[]> {
-    await this.init();
-
-    let query = this.db
-      .select('*')
-      .from(this.table);
-
-    if (builder) {
-      query = builder(query);
-    }
-
-    const activities: ActivityEntity[] = await query;
-
-    log.info(`Listed ${activities.length} activities`);
-
-    return this.toActivities(...activities);
-  }
-
-  async listAll(): Promise<Activity[]> {
-    return this.list();
-  }
-
-  async listPages(limit: number, offset: number): Promise<Activity[]> {
-    return this.list(query => query.limit(limit).offset(offset));
-  }
-
-  async getById(activityId: number): Promise<Activity> {
-    const activities = await this.list(query => query.where('id', activityId));
-
-    if (activities.length > 1) {
-      throw new Error('got multiple activities instead of one');
-    } else if (activities.length != 1) {
-      throw new errs.ErrNotFound(`activity with id ${activityId} was not found`);
-    }
-
-    return activities[0];
-  }
-
-  // add adds new activities to the store.
-  async add(...activities: Activity[]): Promise<number[]> {
-    if (activities.length == 0) {
-      throw Error('no activities specified');
-    }
-
-    await this.init();
-
-    const result: number[] = await this.db
-      .insert(this.toActivityEntities(...activities))
-      .into(this.table);
-
-    log.info(`Added ${activities.length} activities`);
-    return result;
   }
 }

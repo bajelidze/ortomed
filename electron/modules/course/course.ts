@@ -106,7 +106,7 @@ export class CourseDao extends BasicDao<Course, CourseEntity> {
   }
 
   protected async createTable(): Promise<void> {
-    await this.db.schema.createTable(this.table, table => {
+    return this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.string('name').notNullable();
       table.string('description').defaultTo('');
