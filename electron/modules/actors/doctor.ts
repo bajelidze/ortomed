@@ -1,11 +1,16 @@
 import { Knex } from 'knex';
 import { BasicDao } from '@/common/dao';
+import { RRule, datetime } from 'rrule';
+import { DateTime } from 'luxon';
 
 export const _doctorsTable = 'doctor';
 
 export class Doctor {
   id?: number;
   name = '';
+
+  holidays?: string[];
+  recurringsolidays?: RRule;
 
   private initialized = false;
   private db?: Knex;
