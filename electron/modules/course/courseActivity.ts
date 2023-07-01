@@ -2,6 +2,7 @@ import { Duration } from 'luxon';
 import { Knex } from 'knex';
 import log from '@/common/logger';
 import { _activitiesTable, Activity, ActivityDao } from '@/modules/course/activity';
+import { _coursesTable } from '@/modules/course/course';
 
 export const _courseActivitiesTable = 'courseActivities';
 
@@ -61,13 +62,13 @@ export class CourseActivityDao {
           .unsigned()
           .index()
           .references('id')
-          .inTable(this.table);
+          .inTable(_coursesTable);
 
         table.integer('activityId')
           .unsigned()
           .index()
           .references('id')
-          .inTable(this.table);
+          .inTable(_activitiesTable);
 
         table.integer('pause').unsigned();
         table.integer('index').unsigned();

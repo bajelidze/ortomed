@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
+import { RRule, rrulestr } from 'rrule';
 import { BasicDao } from '@/common/dao';
-import { RRule, datetime } from 'rrule';
-import { DateTime } from 'luxon';
+import { Holiday, HolidayDao } from '@/modules/actors/holiday';
 
 export const _doctorsTable = 'doctor';
 
@@ -9,12 +9,13 @@ export class Doctor {
   id?: number;
   name = '';
 
-  holidays?: string[];
-  recurringsolidays?: RRule;
+  holidays?: Holiday[];
+  recurringHolidays?: RRule;
 
   private initialized = false;
   private db?: Knex;
   private dao?: DoctorDao;
+  private holidayDao?: HolidayDao;
 
   constructor(init?: Partial<Doctor>) {
     Object.assign(this, init);
@@ -28,6 +29,7 @@ export class Doctor {
     }
 
     this.dao = new DoctorDao(this.db);
+    this.holidayDao = new HolidayDao(this.db);
     this.initialized = true;
   }
 
@@ -37,7 +39,7 @@ export class Doctor {
     return this;
   }
 
-  // commit adds the Course to the store.
+  // commit adds the Doctor to the store.
   async commit() {
     this.init();
 
@@ -50,11 +52,26 @@ export class Doctor {
     this.id = ids[0];
     return this;
   }
+
+  async setRecurringHolidays(recurringHolidays: RRule) {
+    this.recurringHolidays = recurringHolidays;
+  }
+
+  async addHolidays(holidays: Holiday[]): Promise<void> {
+    this.init();
+
+    if (this.holidayDao == undefined) {
+      throw new Error('holidayDao is undefined');
+    }
+
+    await this.holidayDao.add(...holidays);
+  }
 }
 
 export interface DoctorEntity {
   id?: number;
-  name: string;
+  name?: string;
+  recurringHolidays?: string
 }
 
 export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
@@ -66,20 +83,23 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.string('name').notNullable();
+      table.string('recurringHolidays');
     });
   }
 
-  protected toEntities(...patients: Doctor[]): DoctorEntity[] {
-    return patients.map(patient => ({
-      id: patient.id,
-      name: patient.name,
+  protected toEntities(...doctors: Doctor[]): DoctorEntity[] {
+    return doctors.map(doctor => ({
+      id: doctor.id,
+      name: doctor.name,
+      recurringHolidays: doctor.recurringHolidays?.toString(),
     }));
   }
 
-  protected toClasses(...patientEntities: DoctorEntity[]): Doctor[] {
-    return patientEntities.map(ent => (new Doctor({
-      id: ent.id,
-      name: ent.name,
+  protected toClasses(...doctors: DoctorEntity[]): Doctor[] {
+    return doctors.map(doctor => (new Doctor({
+      id: doctor.id,
+      name: doctor.name,
+      recurringHolidays: rrulestr(doctor.recurringHolidays ? doctor.recurringHolidays : ''),
     })));
   }
 }

@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { BasicDao } from '@/common/dao';
 import { CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
 
-const _coursesTable = 'courses';
+export const _coursesTable = 'courses';
 
 export class Course {
   id?: number;
