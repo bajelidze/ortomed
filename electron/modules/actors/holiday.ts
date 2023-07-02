@@ -1,7 +1,8 @@
 import { Knex } from 'knex';
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { _doctorsTable } from '@/modules/actors/doctor';
+import { Interval } from '@/common/structs';
 
 export const _holidaysTable = 'holidays';
 
@@ -47,6 +48,13 @@ export class Holiday {
 
     this.id = ids[0];
     return this;
+  }
+
+  static holidaysToIntervals(...holidays: Holiday[]): Interval[] {
+    return holidays.map(holiday => ({
+      st: holiday.date?.toUnixInteger(),
+      et: holiday.date?.plus(Duration.fromObject({day: 1})).toUnixInteger(),
+    }) as Interval);
   }
 }
 

@@ -1,7 +1,10 @@
 import { Knex } from 'knex';
-import { RRule, rrulestr } from 'rrule';
+import { RRule } from 'rrule';
+import { DateTime, Duration } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { Holiday, HolidayDao } from '@/modules/actors/holiday';
+import { Availability, AvailabilityDao } from '@/modules/actors/weekly';
+import { Interval } from '@/common/structs';
 
 export const _doctorsTable = 'doctor';
 
@@ -9,12 +12,11 @@ export class Doctor {
   id?: number;
   name = '';
 
-  recurringHolidays?: RRule;
-
   private initialized = false;
   private db?: Knex;
   private dao?: DoctorDao;
   private holidayDao?: HolidayDao;
+  private availabilityDao?: AvailabilityDao;
 
   constructor(init?: Partial<Doctor>) {
     Object.assign(this, init);
@@ -29,6 +31,7 @@ export class Doctor {
 
     this.dao = new DoctorDao(this.db);
     this.holidayDao = new HolidayDao(this.db);
+    this.availabilityDao = new AvailabilityDao(this.db);
     this.initialized = true;
   }
 
@@ -52,9 +55,9 @@ export class Doctor {
     return this;
   }
 
-  async setRecurringHolidays(recurringHolidays: RRule) {
-    this.recurringHolidays = recurringHolidays;
-  }
+  // async setRecurringHolidays(recurringHolidays: RRule) {
+  //   this.recurringHolidays = recurringHolidays;
+  // }
 
   async addHolidays(...holidays: Holiday[]): Promise<void> {
     this.init();
@@ -81,6 +84,59 @@ export class Doctor {
 
     return this.holidayDao.listHolidaysForDoctor(this.id);
   }
+
+  async listAvailabilities(): Promise<Availability[]> {
+    this.init();
+
+    if (this.availabilityDao == undefined) {
+      throw new Error('availabilityDao is undefined');
+    } else if (this.id == undefined) {
+      throw new Error('id is undefined');
+    }
+
+    return this.availabilityDao?.listAvailabilitysForDoctor(this.id);
+  }
+
+  async addAvailability(...availabilities: Availability[]): Promise<void> {
+    this.init();
+
+    if (this.availabilityDao == undefined) {
+      throw new Error('availabilityDao is undefined');
+    }
+
+    for (const availability of availabilities) {
+      availability.doctorId = this.id;
+    }
+
+    await this.availabilityDao.add(...availabilities);
+  }
+
+  static recurringHolidaysToIntervals(
+    recurringHolidays: RRule,
+    startTime: DateTime,
+    lookAhead?: Duration,
+  ) {
+    if (lookAhead == undefined) {
+      lookAhead = Duration.fromObject({year: 1});
+    }
+
+    startTime = startTime.startOf('day');
+
+    console.log(startTime);
+
+    const recurringHolidaysDates = recurringHolidays.between(
+      startTime.toJSDate(),
+      startTime.plus(lookAhead).toJSDate(),
+    );
+
+    return recurringHolidaysDates.map(rh => ({
+      st: DateTime.fromJSDate(rh).startOf('day').toUnixInteger(),
+      et: DateTime.fromJSDate(rh).
+        startOf('day')
+        .plus(Duration.fromObject({day: 1}))
+        .toUnixInteger(),
+    }) as Interval);
+  }
 }
 
 export interface DoctorEntity {
@@ -98,7 +154,6 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.string('name').notNullable();
-      table.string('recurringHolidays');
     });
   }
 
@@ -106,7 +161,6 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return doctors.map(doctor => ({
       id: doctor.id,
       name: doctor.name,
-      recurringHolidays: doctor.recurringHolidays?.toString(),
     }));
   }
 
@@ -114,7 +168,6 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return doctors.map(doctor => (new Doctor({
       id: doctor.id,
       name: doctor.name,
-      recurringHolidays: rrulestr(doctor.recurringHolidays ? doctor.recurringHolidays : ''),
     })));
   }
 }
