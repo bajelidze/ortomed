@@ -1,9 +1,14 @@
+import sourceMapSupport from 'source-map-support';
+sourceMapSupport.install();
+
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
 import { knex, Knex } from 'knex';
+import { RRule } from 'rrule';
 import { Course } from '@/modules/course/course';
-// import { Activity, ActivityDao } from '@/modules/course/activity';
+import { Doctor } from '@/modules/actors/doctor';
+import { Holiday } from '@/modules/actors/holiday';
 import { CourseActivity } from '@/modules/course/courseActivity';
 
 const knexCfg: Knex.Config = {
@@ -17,7 +22,7 @@ const knexCfg: Knex.Config = {
 const db = knex(knexCfg);
 
 import { Activity } from './modules/course/activity';
-import { Duration } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 
 (async () => {
   const course = new Course({
@@ -49,9 +54,29 @@ import { Duration } from 'luxon';
 
   // const result = await dao.listAll();
 
-  const result = await course.listActivities();
+  const doctor = await new Doctor({
+    name: 'Strong',
+    recurringHolidays: new RRule({
+      freq: RRule.WEEKLY,
+      dtstart: DateTime.now().toJSDate(),
+    }),
+  }).setDb(db).commit();
 
-  console.log(result);
+  await doctor.addHolidays(new Holiday({
+    date: DateTime.fromObject({
+      day: 30,
+      month: 11,
+      year: 2023,
+    }),
+  }));
+
+  const holidays = await doctor.listHolidays();
+
+  console.log(holidays[0].date?.toString());
+
+  // const result = await course.listActivities();
+
+  // console.log(result);
 
   // fs.unlinkSync('test.db');
 })();

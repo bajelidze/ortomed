@@ -29,6 +29,7 @@ export default defineConfig({
                 'knex',
               ],
             },
+            sourcemap: true,
           },
         },
       },

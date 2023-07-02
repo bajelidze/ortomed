@@ -64,12 +64,12 @@ export class HolidayDao extends BasicDao<Holiday, HolidayEntity> {
   protected async createTable(): Promise<void> {
     return this.db.schema.createTable(this.table, table => {
       table.increments('id');
-      table.string('name').notNullable();
       table.integer('doctorId')
         .unsigned()
         .index()
         .references('id')
         .inTable(_doctorsTable);
+      table.integer('date').unsigned().notNullable();
     });
   }
 
@@ -87,5 +87,9 @@ export class HolidayDao extends BasicDao<Holiday, HolidayEntity> {
       doctorId: holiday.doctorId,
       date: DateTime.fromSeconds(holiday.date == undefined ? 0 : holiday.date),
     })));
+  }
+
+  async listHolidaysForDoctor(doctorId: number): Promise<Holiday[]> {
+    return this.list(query => query.where('doctorId', doctorId));
   }
 }

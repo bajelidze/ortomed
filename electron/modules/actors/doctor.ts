@@ -9,7 +9,6 @@ export class Doctor {
   id?: number;
   name = '';
 
-  holidays?: Holiday[];
   recurringHolidays?: RRule;
 
   private initialized = false;
@@ -57,14 +56,30 @@ export class Doctor {
     this.recurringHolidays = recurringHolidays;
   }
 
-  async addHolidays(holidays: Holiday[]): Promise<void> {
+  async addHolidays(...holidays: Holiday[]): Promise<void> {
     this.init();
 
     if (this.holidayDao == undefined) {
       throw new Error('holidayDao is undefined');
     }
 
+    for (const holiday of holidays) {
+      holiday.doctorId = this.id;
+    }
+
     await this.holidayDao.add(...holidays);
+  }
+
+  async listHolidays(): Promise<Holiday[]> {
+    this.init();
+
+    if (this.holidayDao == undefined) {
+      throw new Error('holidayDao is undefined');
+    } else if (this.id == undefined) {
+      throw new Error('id is undefined');
+    }
+
+    return this.holidayDao.listHolidaysForDoctor(this.id);
   }
 }
 
