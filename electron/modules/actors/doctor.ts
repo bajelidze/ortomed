@@ -3,14 +3,15 @@ import { RRule } from 'rrule';
 import { DateTime, Duration } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { Holiday, HolidayDao } from '@/modules/actors/holiday';
-import { Availability, AvailabilityDao } from '@/modules/actors/weekly';
+import { Availability, AvailabilityDao } from '@/modules/actors/availability';
 import { Interval } from '@/common/structs';
 
-export const _doctorsTable = 'doctor';
+export const _doctorsTable = 'doctors';
 
 export class Doctor {
   id?: number;
   name = '';
+  schedule?: RRule;
 
   private initialized = false;
   private db?: Knex;
@@ -54,10 +55,6 @@ export class Doctor {
     this.id = ids[0];
     return this;
   }
-
-  // async setRecurringHolidays(recurringHolidays: RRule) {
-  //   this.recurringHolidays = recurringHolidays;
-  // }
 
   async addHolidays(...holidays: Holiday[]): Promise<void> {
     this.init();
@@ -111,8 +108,10 @@ export class Doctor {
     await this.availabilityDao.add(...availabilities);
   }
 
-  static recurringHolidaysToIntervals(
-    recurringHolidays: RRule,
+  // scheduleToIntervals converts the given schedule to the set
+  // of intervals.
+  static scheduleToIntervals(
+    schedule: RRule,
     startTime: DateTime,
     lookAhead?: Duration,
   ) {
@@ -124,14 +123,14 @@ export class Doctor {
 
     console.log(startTime);
 
-    const recurringHolidaysDates = recurringHolidays.between(
+    const scheduleDates = schedule.between(
       startTime.toJSDate(),
       startTime.plus(lookAhead).toJSDate(),
     );
 
-    return recurringHolidaysDates.map(rh => ({
-      st: DateTime.fromJSDate(rh).startOf('day').toUnixInteger(),
-      et: DateTime.fromJSDate(rh).
+    return scheduleDates.map(sc => ({
+      st: DateTime.fromJSDate(sc).startOf('day').toUnixInteger(),
+      et: DateTime.fromJSDate(sc).
         startOf('day')
         .plus(Duration.fromObject({day: 1}))
         .toUnixInteger(),
@@ -142,7 +141,7 @@ export class Doctor {
 export interface DoctorEntity {
   id?: number;
   name?: string;
-  recurringHolidays?: string
+  schedule?: string
 }
 
 export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
@@ -154,6 +153,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.string('name').notNullable();
+      table.string('schedule').notNullable();
     });
   }
 
@@ -161,6 +161,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return doctors.map(doctor => ({
       id: doctor.id,
       name: doctor.name,
+      schedule: doctor.schedule?.toString(),
     }));
   }
 
@@ -168,6 +169,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return doctors.map(doctor => (new Doctor({
       id: doctor.id,
       name: doctor.name,
+      schedule: RRule.fromString(doctor.schedule == undefined ? '' : doctor.schedule),
     })));
   }
 }

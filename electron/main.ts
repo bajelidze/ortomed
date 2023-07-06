@@ -5,13 +5,13 @@ import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
 import { knex, Knex } from 'knex';
-import { RRule, Weekday } from 'rrule';
+import { RRule } from 'rrule';
 import { Course } from '@/modules/course/course';
 import { Doctor } from '@/modules/actors/doctor';
 import { Holiday } from '@/modules/actors/holiday';
 import { Availability } from '@/modules/actors/availability';
 import { CourseActivity } from '@/modules/course/courseActivity';
-import { IntervalDT } from '@/common/structs';
+import { Scheduler } from '@/modules/scheduler/scheduler';
 
 const knexCfg: Knex.Config = {
   client: 'sqlite3',
@@ -58,6 +58,11 @@ import { DateTime, Duration } from 'luxon';
 
   const doctor = await new Doctor({
     name: 'Strong',
+    schedule: new RRule({
+      freq: RRule.WEEKLY,
+      dtstart: DateTime.now().toJSDate(),
+      byweekday: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR],
+    }),
   }).setDb(db).commit();
 
   await doctor.addHolidays(new Holiday({
@@ -76,17 +81,15 @@ import { DateTime, Duration } from 'luxon';
     }));
   }
 
-  const holidays = await doctor.listHolidays();
+  // console.log(intervals);
 
-  const intervals = Holiday.holidaysToIntervals(...holidays);
-
-  console.log(intervals);
-
-  const av = await doctor.listAvailabilities();
+  // const av = await doctor.listAvailabilities();
 
   // const result = await course.listActivities();
 
-  console.log(av);
+  const scheduler = new Scheduler(db);
+
+  await scheduler.getDoctorBlockset(doctor, DateTime.now());
 })();
 
 // The built directory structure
