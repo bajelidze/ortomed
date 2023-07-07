@@ -45,9 +45,9 @@ export class Scheduler {
     for (const av of avails) {
       if (av.weekday == undefined) {
         throw Error(`weekday is undefined for availability with id ${av.id}`);
-      } else if (av.startTime == undefined) {
+      } else if (av.interval?.st == undefined) {
         throw Error(`startTime is undefined for availability with id ${av.id}`);
-      } else if (av.endTime == undefined) {
+      } else if (av.interval?.et == undefined) {
         throw Error(`startTime is undefined for availability with id ${av.id}`);
       }
 
@@ -56,11 +56,11 @@ export class Scheduler {
       if (weekdayMap[weekday] == undefined) {
         weekdayMap[weekday] = [];
       }
-      console.log({st: av.startTime, et: av.endTime});
+      console.log({st: av.interval?.st, et: av.interval?.et});
 
       weekdayMap[weekday].push({
-        st: av.startTime.toUnixInteger(),
-        et: av.endTime.toUnixInteger(),
+        st: av.interval?.st,
+        et: av.interval?.et,
       });
     }
 
@@ -73,10 +73,10 @@ export class Scheduler {
       throw Error(`doctor with id ${doctor.id} is missing schedule`);
     }
 
-    const scheduleIntervals = Doctor.scheduleToIntervals(doctor.schedule, startTime, lookAhead);
+    // const scheduleIntervals = Doctor.scheduleToIntervals(doctor.schedule, startTime, lookAhead);
 
     console.log(weekdayMap);
-    console.log(scheduleIntervals);
+    // console.log(scheduleIntervals);
     // Compute recurring schedule intervals.
     // const blockset: Interval[] = [];
 

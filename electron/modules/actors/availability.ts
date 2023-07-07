@@ -1,17 +1,18 @@
 import { Knex } from 'knex';
 import { Weekday, WeekdayStr } from 'rrule';
-import { DateTime, Duration } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { _doctorsTable } from '@/modules/actors/doctor';
+import { Interval } from '@/common/structs';
 
 export const _availabilitiesTable = 'availabilities';
+
+const secondsInDay = 86400;
 
 export class Availability {
   id?: number;
   doctorId?: number;
   weekday?: Weekday;
-  startTime?: DateTime;
-  endTime?: DateTime;
+  interval?: Interval;
 
   private initialized = false;
   private db?: Knex;
@@ -42,13 +43,13 @@ export class Availability {
   async commit() {
     this.init();
 
-    for (const time of [this.startTime, this.endTime]) {
+    for (const time of [this.interval?.st, this.interval?.et]) {
       if (time == undefined) {
         throw Error('time is undefined');
       }
 
-      if (time.minus(Duration.fromObject({day: 1})).toUnixInteger() > 0) {
-        throw Error('startTime/endTime cannot be longer than 1 day');
+      if (time - secondsInDay > 0) {
+        throw Error('st/et cannot be longer than 1 day');
       }
     }
 
@@ -95,8 +96,8 @@ export class AvailabilityDao extends BasicDao<Availability, AvailabilityEntity> 
       id: availability.id,
       doctorId: availability.doctorId,
       weekday: availability.weekday?.toString(),
-      startTime: availability.startTime?.toUnixInteger(),
-      endTime: availability.endTime?.toUnixInteger(),
+      startTime: availability.interval?.st,
+      endTime: availability.interval?.et,
     }));
   }
 
@@ -105,8 +106,10 @@ export class AvailabilityDao extends BasicDao<Availability, AvailabilityEntity> 
       id: availability.id,
       doctorId: availability.doctorId,
       weekday: Weekday.fromStr(availability.weekday as WeekdayStr),
-      startTime: DateTime.fromSeconds(availability.startTime ? availability.startTime : 0),
-      endTime: DateTime.fromSeconds(availability.endTime ? availability.endTime : 0),
+      interval: {
+        st: availability.startTime == undefined ? 0 : availability.startTime,
+        et: availability.endTime == undefined ? 0 : availability.endTime,
+      },
     })));
   }
 
