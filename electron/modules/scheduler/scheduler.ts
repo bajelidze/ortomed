@@ -1,16 +1,12 @@
 import { Knex } from 'knex';
-import { DateTime, Duration } from 'luxon';
-import { RRule } from 'rrule';
+import { DateTime, Duration, Interval } from 'luxon';
 import log from '@/common/logger';
-import { Session } from '@/modules/scheduler/session';
-import { Patient } from '@/modules/actors/patient';
 import { Doctor, DoctorDao } from '@/modules/actors/doctor';
-import { Holiday } from '@/modules/actors/holiday';
-import { Course, CourseDao } from '@/modules/course/course';
-import { Interval, IntervalDT, isIntersect } from '@/common/structs';
+import { CourseDao } from '@/modules/course/course';
+import time from '@/common/time';
 
 type WeekdayMap = {
-  [key: string]: Interval[]
+  [key: number]: time.IntervalD[]
 }
 
 export class Scheduler {
@@ -27,15 +23,6 @@ export class Scheduler {
     log.info('Constructed new Scheduler');
   }
 
-  // async new(patient: Patient, doctor: Doctor, course: Course) {
-
-  // }
-
-  // async newBlockset(patient: Patient, doctor: Doctor, course: Course) {
-  //   const blockset: Interval[] = [];
-
-  // }
-
   async getDoctorBlockset(doctor: Doctor, startTime: DateTime, lookAhead?: Duration) {
     // Prepare weekday map.
     const avails = await doctor.listAvailabilities();
@@ -51,17 +38,18 @@ export class Scheduler {
         throw Error(`startTime is undefined for availability with id ${av.id}`);
       }
 
-      const weekday = av.weekday.toString();
+      const weekdayStr = av.weekday.toString();
+      const weekday = time.weekdayMap.get(weekdayStr);
+
+      if (weekday == undefined) {
+        throw Error(`weekday ${weekdayStr} doesn't have a num mapping`);
+      }
 
       if (weekdayMap[weekday] == undefined) {
         weekdayMap[weekday] = [];
       }
-      console.log({st: av.interval?.st, et: av.interval?.et});
 
-      weekdayMap[weekday].push({
-        st: av.interval?.st,
-        et: av.interval?.et,
-      });
+      weekdayMap[weekday].push(av.interval);
     }
 
     if (weekdayMapIntersectExists(weekdayMap)) {
@@ -73,21 +61,65 @@ export class Scheduler {
       throw Error(`doctor with id ${doctor.id} is missing schedule`);
     }
 
-    // const scheduleIntervals = Doctor.scheduleToIntervals(doctor.schedule, startTime, lookAhead);
+    const scheduleIntervals = Doctor.scheduleToIntervals(doctor.schedule, startTime, lookAhead);
 
-    console.log(weekdayMap);
-    // console.log(scheduleIntervals);
+    const sblockset = Scheduler.getAvailabilityBlockset(scheduleIntervals, weekdayMap);
+
+    // console.log(weekdayMap);
+    for (const si of sblockset) {
+      console.log(si.toString());
+    }
     // Compute recurring schedule intervals.
     // const blockset: Interval[] = [];
 
     // Get holidays.
     // const holidays = Holiday.holidaysToIntervals(...await doctor.listHolidays());
   }
+
+  static getAvailabilityBlockset(scheduleIntervals: Interval[], weekdayMap: WeekdayMap): Interval[] {
+    const newIntervals: Interval[] = [];
+
+    for (const sInterval of scheduleIntervals) {
+      if (sInterval.start == undefined) {
+        throw Error('start undefined');
+      } else if (sInterval.start.weekdayShort == undefined) {
+        throw Error('weekdayShort undefined');
+      } else if (sInterval.end == null) {
+        throw Error('sInterval.end null');
+      }
+
+      const wdIntervals = weekdayMap[sInterval.start.weekday];
+
+      if (wdIntervals.length == 0) {
+        newIntervals.push(sInterval);
+        continue;
+      }
+
+      let currTime = sInterval.start;
+
+      for (const wdInterval of wdIntervals) {
+
+        newIntervals.push(Interval.fromDateTimes(
+          currTime,
+          currTime.plus(wdInterval.st),
+        ));
+
+        currTime = currTime.plus(wdInterval.et);
+      }
+
+      newIntervals.push(Interval.fromDateTimes(
+        currTime,
+        sInterval.end,
+      ));
+    }
+
+    return newIntervals;
+  }
 }
 
 function weekdayMapIntersectExists(weekdayMap: WeekdayMap): boolean {
   for (const key in weekdayMap) {
-    if (isIntersect(weekdayMap[key])) {
+    if (time.isIntersect(weekdayMap[key])) {
       return true;
     }
   }

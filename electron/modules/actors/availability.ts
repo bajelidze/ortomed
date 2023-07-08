@@ -1,8 +1,9 @@
 import { Knex } from 'knex';
 import { Weekday, WeekdayStr } from 'rrule';
+import { Duration } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { _doctorsTable } from '@/modules/actors/doctor';
-import { Interval } from '@/common/structs';
+import time from '@/common/time';
 
 export const _availabilitiesTable = 'availabilities';
 
@@ -12,7 +13,7 @@ export class Availability {
   id?: number;
   doctorId?: number;
   weekday?: Weekday;
-  interval?: Interval;
+  interval?: time.IntervalD;
 
   private initialized = false;
   private db?: Knex;
@@ -43,12 +44,12 @@ export class Availability {
   async commit() {
     this.init();
 
-    for (const time of [this.interval?.st, this.interval?.et]) {
-      if (time == undefined) {
+    for (const t of [this.interval?.st, this.interval?.et]) {
+      if (t == undefined) {
         throw Error('time is undefined');
       }
 
-      if (time - secondsInDay > 0) {
+      if (time.durationToSeconds(t) - secondsInDay > 0) {
         throw Error('st/et cannot be longer than 1 day');
       }
     }
@@ -96,8 +97,8 @@ export class AvailabilityDao extends BasicDao<Availability, AvailabilityEntity> 
       id: availability.id,
       doctorId: availability.doctorId,
       weekday: availability.weekday?.toString(),
-      startTime: availability.interval?.st,
-      endTime: availability.interval?.et,
+      startTime: time.durationToSeconds(availability.interval?.st),
+      endTime: time.durationToSeconds(availability.interval?.et),
     }));
   }
 
@@ -107,8 +108,8 @@ export class AvailabilityDao extends BasicDao<Availability, AvailabilityEntity> 
       doctorId: availability.doctorId,
       weekday: Weekday.fromStr(availability.weekday as WeekdayStr),
       interval: {
-        st: availability.startTime == undefined ? 0 : availability.startTime,
-        et: availability.endTime == undefined ? 0 : availability.endTime,
+        st: Duration.fromObject({second: availability.startTime}),
+        et: Duration.fromObject({second: availability.endTime}),
       },
     })));
   }

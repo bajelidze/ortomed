@@ -1,10 +1,9 @@
 import { Knex } from 'knex';
 import { RRule } from 'rrule';
-import { DateTime, Duration } from 'luxon';
+import { DateTime, Duration, Interval } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { Holiday, HolidayDao } from '@/modules/actors/holiday';
 import { Availability, AvailabilityDao } from '@/modules/actors/availability';
-import { Interval } from '@/common/structs';
 
 export const _doctorsTable = 'doctors';
 
@@ -121,20 +120,17 @@ export class Doctor {
 
     startTime = startTime.startOf('day');
 
-    console.log(startTime);
-
     const scheduleDates = schedule.between(
       startTime.toJSDate(),
       startTime.plus(lookAhead).toJSDate(),
     );
 
-    return scheduleDates.map(sc => ({
-      st: DateTime.fromJSDate(sc).startOf('day').toUnixInteger(),
-      et: DateTime.fromJSDate(sc).
-        startOf('day')
-        .plus(Duration.fromObject({day: 1}))
-        .toUnixInteger(),
-    }) as Interval);
+    return scheduleDates.map(sc => {
+      const st = DateTime.fromJSDate(sc).startOf('day');
+      return Interval.fromDateTimes(
+        st, st.plus(Duration.fromObject({day: 1})),
+      );
+    });
   }
 }
 

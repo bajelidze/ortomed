@@ -12,7 +12,6 @@ import { Holiday } from '@/modules/actors/holiday';
 import { Availability } from '@/modules/actors/availability';
 import { CourseActivity } from '@/modules/course/courseActivity';
 import { Scheduler } from '@/modules/scheduler/scheduler';
-import { durationToSeconds } from '@/common/time';
 
 const knexCfg: Knex.Config = {
   client: 'sqlite3',
@@ -25,7 +24,7 @@ const knexCfg: Knex.Config = {
 const db = knex(knexCfg);
 
 import { Activity } from './modules/course/activity';
-import { DateTime, Duration, Interval } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 
 (async () => {
   const course = new Course({
@@ -78,8 +77,8 @@ import { DateTime, Duration, Interval } from 'luxon';
     const av = await new Availability({
       weekday: weekday,
       interval: {
-        st: durationToSeconds(Duration.fromObject({hour: 9})),
-        et: durationToSeconds(Duration.fromObject({hour: 18})),
+        st: Duration.fromObject({hour: 9}),
+        et: Duration.fromObject({hour: 18}),
       },
     }).setDb(db).commit();
 
