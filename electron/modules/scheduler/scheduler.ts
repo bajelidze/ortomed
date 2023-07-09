@@ -6,11 +6,28 @@ import { Doctor, DoctorDao } from '@/modules/actors/doctor';
 import { Availability } from '@/modules/actors/availability';
 import { Holiday } from '@/modules/actors/holiday';
 import { CourseDao } from '@/modules/course/course';
+import { CourseActivity, CourseActivityDao } from '@/modules/course/courseActivity';
 import { Session, SessionDao } from '@/modules/scheduler/session';
+import { Activity, ActivityDao } from '../course/activity';
+import { Intersect } from 'vuetify/directives';
 
 type WeekdayMap = {
   [key: number]: time.IntervalD[]
 }
+
+type CourseActivityMap = {
+  [sessionId: number]: CourseActivity
+}
+
+type ActivityCache = {
+  [activityId: number]: Activity
+}
+
+type CapacityMap = {
+  [capacity: number]: Interval[]
+}
+
+const oneDay = Duration.fromObject({day: 1});
 
 export class Scheduler {
   db?: Knex;
@@ -18,23 +35,77 @@ export class Scheduler {
   doctorDao: DoctorDao;
   courseDao: CourseDao;
   sessionDao: SessionDao;
+  courseActivityDao: CourseActivityDao;
+  activityDao: ActivityDao;
 
   constructor(db: Knex) {
     this.db = db;
     this.doctorDao = new DoctorDao(db);
     this.courseDao = new CourseDao(db);
     this.sessionDao = new SessionDao(db);
+    this.courseActivityDao = new CourseActivityDao(db);
+    this.activityDao = new ActivityDao(db);
 
     log.info('Constructed new Scheduler');
   }
 
-  // async getSessionBlockset(startTime: DateTime) {
-  //   const sessions = await this.sessionDao.listFrom(startTime);
+  async getSessionBlockset(doctor: Doctor, activity: Activity, startTime: DateTime) {
+    if (doctor.id == undefined) {
+      throw Error('doctor.id undefined');
+    }
 
-  //   // for (const sess of sessions) {
-  //   //   // sess.
-  //   // }
-  // }
+    const sessions: Session[] = await this.sessionDao.listByDoctorId(doctor.id, startTime);
+
+    // Get all the course activities for the corresponding sessions.
+    const courseActivityMap: CourseActivityMap = {};
+    const activityCache: ActivityCache = {};
+    const capMap: CapacityMap = {};
+
+    const blockset: Interval[] = [];
+
+    for (const sess of sessions) {
+      if (sess.id == undefined) {
+        throw Error('session.id undefined');
+      } else if (sess.interval == undefined) {
+        throw Error('session.interval undefined');
+      } else if (sess.interval.start == null) {
+        throw Error('session.interval.start null');
+      }
+
+      if (sess.courseActivityId == undefined) {
+        throw Error(`courseActivityId undefined in session ${sess.id}`);
+      }
+
+      const ca = await this.courseActivityDao.getById(sess.courseActivityId);
+
+      if (ca.activityId == undefined) {
+        throw Error(`courseActivity with id ${ca.id} has activityId undefined`);
+      }
+
+      courseActivityMap[sess.id] = ca;
+
+      // Get corresponding activity.
+      if (activityCache[ca.activityId] == undefined) {
+        activityCache[ca.activityId] = await this.activityDao.getById(ca.activityId);
+      }
+
+      const cactivity = activityCache[ca.activityId];
+
+      // If one of the activities is not flexible, then they must be the same.
+      // Otherwise, the entire day is getting blocked.
+      if ((!cactivity.flexible || !activity.flexible) && activity.name != activity.name) {
+        const day = sess.interval.start.startOf('day');
+
+        blockset.push(Interval.fromDateTimes(
+          day, day.plus(oneDay),
+        ));
+
+        continue;
+      }
+
+      // Join every session into a map according to activity capacity.
+    }
+  }
 
   async getDoctorBlockset(doctor: Doctor, startTime: DateTime, lookAhead?: Duration): Promise<Interval[]> {
     // Prepare weekday map.

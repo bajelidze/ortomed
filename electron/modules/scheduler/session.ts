@@ -158,19 +158,10 @@ export class SessionDao extends BasicDao<Session, SessionEntity> {
     });
   }
 
-  async listFrom(from: DateTime, withCourseActivities?: boolean): Promise<Session[]> {
-    return this.list(query => {
-      query = query.where('endTime', '>', from.toUnixInteger());
-
-      if (withCourseActivities) {
-        query = query.join(
-          _courseActivitiesTable,
-          `${_sessionsTable}.courseActivityId`,
-          `${_courseActivitiesTable}.id`,
-        );
-      }
-
-      return query;
-    });
+  async listByDoctorId(doctorId: number, from: DateTime): Promise<Session[]> {
+    return this.list(query => query
+      .where('endTime', '>', from.toUnixInteger())
+      .where('doctorId', doctorId),
+    );
   }
 }

@@ -78,7 +78,7 @@ export class ActivityDao extends BasicDao<Activity, ActivityEntity> {
   protected async createTable(): Promise<void> {
     return this.db.schema.createTable(this.table, table => {
       table.increments('id');
-      table.string('name').notNullable();
+      table.string('name').notNullable().unique();
       table.string('description').defaultTo('');
       table.integer('duration').unsigned().notNullable();
       table.integer('capacity').unsigned().notNullable();

@@ -1,7 +1,17 @@
-import { Duration } from 'luxon';
+import { Duration, Interval } from 'luxon';
 import { RRule } from 'rrule';
 
 export namespace time {
+  export const weekdayMap = new Map<string, number>([
+    [RRule.MO.toString(), 1],
+    [RRule.TU.toString(), 2],
+    [RRule.WE.toString(), 3],
+    [RRule.TH.toString(), 4],
+    [RRule.FR.toString(), 5],
+    [RRule.SA.toString(), 6],
+    [RRule.SU.toString(), 7],
+  ]);
+
   export interface IntervalD {
     st: Duration;
     et: Duration;
@@ -28,15 +38,26 @@ export namespace time {
     return false;
   }
 
-  export const weekdayMap = new Map<string, number>([
-    [RRule.MO.toString(), 1],
-    [RRule.TU.toString(), 2],
-    [RRule.WE.toString(), 3],
-    [RRule.TH.toString(), 4],
-    [RRule.FR.toString(), 5],
-    [RRule.SA.toString(), 6],
-    [RRule.SU.toString(), 7],
-  ]);
+  // reduceIntervals returns the intersections between intervals that 
+  // intersect at least `overlaps` times. Mutates the input array.
+  export function reduceIntervals(intervals: Interval[], overlaps: number): Interval[] {
+    for (let i = 0; i < overlaps; i++) {
+      const newIntervals: Interval[] = [];
+
+      for (let j = 1; j < intervals.length; j++) {
+        const intersect = intervals[j-1].intersection(intervals[j]);
+        if (intersect == null) {
+          continue;
+        }
+
+        newIntervals.push(intersect);
+      }
+
+      intervals = newIntervals;
+    }
+
+    return Interval.merge(intervals);
+  }
 }
 
 export default time;

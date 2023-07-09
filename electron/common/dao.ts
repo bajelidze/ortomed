@@ -76,6 +76,17 @@ export abstract class BasicDao<Cls extends Class, Entity> {
     return classes[0];
   }
 
+  async listByIds(...ids: number[]): Promise<Cls[]> {
+    const classes = await this.list(query => query.whereIn('id', ids));
+
+    if (classes.length == 0) {
+      throw new errs.ErrNotFound(`no items with id in ${ids} found in ${this.table}`);
+    }
+
+    log.info(`Got ${classes.length} item${classes.length > 1 ? 's' : ''} with id in ${ids} from "${this.table}"`);
+    return classes;
+  }
+
   async add(...classes: Cls[]): Promise<number[]> {
     if (classes.length == 0) {
       throw Error('no items specified');
