@@ -1,6 +1,7 @@
 import { Duration } from 'luxon';
 import { Knex } from 'knex';
 import { BasicDao } from '@/common/dao';
+import db from '@/common/db';
 
 export const _activitiesTable = 'activities';
 
@@ -25,6 +26,7 @@ export class Activity {
 
   constructor(init?: Partial<Activity>) {
     Object.assign(this, init);
+    this.db = db;
   }
 
   private init() {

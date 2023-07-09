@@ -4,7 +4,6 @@ sourceMapSupport.install();
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
-import { knex, Knex } from 'knex';
 import { RRule } from 'rrule';
 import { Course } from '@/modules/course/course';
 import { Doctor } from '@/modules/actors/doctor';
@@ -12,19 +11,11 @@ import { Holiday } from '@/modules/actors/holiday';
 import { Availability } from '@/modules/actors/availability';
 import { CourseActivity } from '@/modules/course/courseActivity';
 import { Scheduler } from '@/modules/scheduler/scheduler';
-
-const knexCfg: Knex.Config = {
-  client: 'sqlite3',
-  connection: {
-    filename: 'test.db',
-  },
-  useNullAsDefault: true,
-};
-
-const db = knex(knexCfg);
+import { Session, SessionDao } from '@/modules/scheduler/session';
 
 import { Activity } from './modules/course/activity';
-import { DateTime, Duration } from 'luxon';
+import { DateTime, Duration, Interval } from 'luxon';
+import { Patient } from './modules/actors/patient';
 
 (async () => {
   const course = new Course({
@@ -33,24 +24,22 @@ import { DateTime, Duration } from 'luxon';
     repetitions: 2,
   });
 
-  await course.setDb(db).commit();
+  await course.commit();
 
   const act = new Activity({
     name: 'LFK',
     description: 'massage',
   });
 
-  await act.setDb(db).commit();
+  await act.commit();
 
   const ca1 = new CourseActivity({
-    activity: act,
     pause: Duration.fromObject({hour: 2}),
-  });
+  }).setActivity(act);
 
   const ca2 = new CourseActivity({
-    activity: act,
     pause: Duration.fromObject({hour: 1, minute: 30}),
-  });
+  }).setActivity(act);
 
   await course.addActivities(ca1, ca2);
 
@@ -63,7 +52,7 @@ import { DateTime, Duration } from 'luxon';
       dtstart: DateTime.now().toJSDate(),
       byweekday: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR],
     }),
-  }).setDb(db).commit();
+  }).commit();
 
   await doctor.addHolidays(new Holiday({
     date: DateTime.fromObject({
@@ -73,6 +62,8 @@ import { DateTime, Duration } from 'luxon';
     }),
   }));
 
+  const patient = await new Patient({name: 'John'}).commit();
+
   for (const weekday of [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR]) {
     const av = await new Availability({
       weekday: weekday,
@@ -80,20 +71,31 @@ import { DateTime, Duration } from 'luxon';
         st: Duration.fromObject({hour: 9}),
         et: Duration.fromObject({hour: 18}),
       },
-    }).setDb(db).commit();
+    }).commit();
 
     await doctor.addAvailability(av);
   }
 
-  // console.log(intervals);
+  const now = DateTime.now();
 
-  // const av = await doctor.listAvailabilities();
+  await Session.new(
+    doctor,
+    patient,
+    ca1,
+    Interval.fromDateTimes(
+      now.plus(Duration.fromObject({hour: 2})),
+      now.plus(Duration.fromObject({hour: 3})),
+    ),
+  ).commit();
 
-  // const result = await course.listActivities();
+  // const sessDao = new SessionDao(db);
 
-  const scheduler = new Scheduler(db);
+  // const result = await sessDao.listFrom(DateTime.fromObject({year: 2020, month: 1, day: 1}), true);
 
-  await scheduler.getDoctorBlockset(doctor, DateTime.now());
+  // console.log(result);
+
+  // const scheduler = new Scheduler(db);
+
 })();
 
 // The built directory structure

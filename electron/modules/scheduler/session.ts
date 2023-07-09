@@ -1,9 +1,10 @@
-import { DateTime } from 'luxon';
+import { DateTime, Interval } from 'luxon';
 import { Knex } from 'knex';
 import { BasicDao } from '@/common/dao';
 import { _doctorsTable, Doctor } from '@/modules/actors/doctor';
 import { _patientsTable, Patient } from '@/modules/actors/patient';
 import { _courseActivitiesTable, CourseActivity } from '@/modules/course/courseActivity';
+import db from '@/common/db';
 
 const _sessionsTable = 'sessions';
 
@@ -11,11 +12,9 @@ export class Session {
   id?: number;
   doctorId?: number;
   patientId?: number;
-  actionId?: number;
   courseActivityId?: number;
 
-  startTime?: DateTime;
-  endTime?: DateTime;
+  interval?: Interval;
 
   private initialized = false;
   private db?: Knex;
@@ -23,6 +22,7 @@ export class Session {
 
   constructor(init?: Partial<Session>) {
     Object.assign(this, init);
+    this.db = db;
   }
 
   private init() {
@@ -73,13 +73,26 @@ export class Session {
   setCourseActivity(courseActivity: CourseActivity) {
     this.courseActivityId = courseActivity.id;
   }
+
+  static new(
+    doctor: Doctor,
+    patient: Patient,
+    courseActivity: CourseActivity,
+    interval: Interval,
+  ): Session {
+    return new Session({
+      doctorId: doctor.id,
+      patientId: patient.id,
+      courseActivityId: courseActivity.id,
+      interval: interval,
+    });
+  }
 }
 
 interface SessionEntity {
   id?: number;
   doctorId?: number;
   patientId?: number;
-  actionId?: number;
   courseActivityId?: number;
   startTime?: number;
   endTime?: number;
@@ -93,7 +106,6 @@ export class SessionDao extends BasicDao<Session, SessionEntity> {
   protected async createTable(): Promise<void> {
     return this.db.schema.createTable(this.table, table => {
       table.increments('id');
-      table.string('name').notNullable();
       table.integer('doctorId')
         .unsigned()
         .index()
@@ -114,17 +126,51 @@ export class SessionDao extends BasicDao<Session, SessionEntity> {
     });
   }
 
-  protected toEntities(...holidays: Session[]): SessionEntity[] {
-    return holidays.map(holiday => ({
-      id: holiday.id,
-      doctorId: holiday.doctorId,
+  protected toEntities(...sessions: Session[]): SessionEntity[] {
+    return sessions.map(session => ({
+      id: session.id,
+      doctorId: session.doctorId,
+      patientId: session.patientId,
+      courseActivityId: session.courseActivityId,
+      startTime: session.interval?.start?.toUnixInteger(),
+      endTime: session.interval?.end?.toUnixInteger(),
     }));
   }
 
-  protected toClasses(...holidays: SessionEntity[]): Session[] {
-    return holidays.map(holiday => (new Session({
-      id: holiday.id,
-      doctorId: holiday.doctorId,
-    })));
+  protected toClasses(...sessions: SessionEntity[]): Session[] {
+    return sessions.map(session => {
+      if (session.startTime == undefined) {
+        throw Error('startTime undefined');
+      } else if (session.endTime == undefined) {
+        throw Error('endTime undefined');
+      }
+
+      return new Session({
+        id: session.id,
+        doctorId: session.doctorId,
+        patientId: session.patientId,
+        courseActivityId: session.courseActivityId,
+        interval: Interval.fromDateTimes(
+          DateTime.fromSeconds(session.startTime),
+          DateTime.fromSeconds(session.endTime),
+        ),
+      });
+    });
+  }
+
+  async listFrom(from: DateTime, withCourseActivities?: boolean): Promise<Session[]> {
+    return this.list(query => {
+      query = query.where('endTime', '>', from.toUnixInteger());
+
+      if (withCourseActivities) {
+        query = query.join(
+          _courseActivitiesTable,
+          `${_sessionsTable}.courseActivityId`,
+          `${_courseActivitiesTable}.id`,
+        );
+      }
+
+      return query;
+    });
   }
 }

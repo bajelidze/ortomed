@@ -1,9 +1,12 @@
 import { Knex } from 'knex';
 import { DateTime, Duration, Interval } from 'luxon';
 import log from '@/common/logger';
-import { Doctor, DoctorDao } from '@/modules/actors/doctor';
-import { CourseDao } from '@/modules/course/course';
 import time from '@/common/time';
+import { Doctor, DoctorDao } from '@/modules/actors/doctor';
+import { Availability } from '@/modules/actors/availability';
+import { Holiday } from '@/modules/actors/holiday';
+import { CourseDao } from '@/modules/course/course';
+import { Session, SessionDao } from '@/modules/scheduler/session';
 
 type WeekdayMap = {
   [key: number]: time.IntervalD[]
@@ -14,22 +17,46 @@ export class Scheduler {
 
   doctorDao: DoctorDao;
   courseDao: CourseDao;
+  sessionDao: SessionDao;
 
   constructor(db: Knex) {
     this.db = db;
     this.doctorDao = new DoctorDao(db);
     this.courseDao = new CourseDao(db);
+    this.sessionDao = new SessionDao(db);
 
     log.info('Constructed new Scheduler');
   }
 
-  async getDoctorBlockset(doctor: Doctor, startTime: DateTime, lookAhead?: Duration) {
+  // async getSessionBlockset(startTime: DateTime) {
+  //   const sessions = await this.sessionDao.listFrom(startTime);
+
+  //   // for (const sess of sessions) {
+  //   //   // sess.
+  //   // }
+  // }
+
+  async getDoctorBlockset(doctor: Doctor, startTime: DateTime, lookAhead?: Duration): Promise<Interval[]> {
     // Prepare weekday map.
     const avails = await doctor.listAvailabilities();
+    const weekdayMap = Scheduler.getWeekdayMap(...avails);
 
+    const scheduleIntervals = Doctor.scheduleToIntervals(doctor.schedule, startTime, lookAhead);
+
+    // Schedule blockset.
+    const blockset = Scheduler.getAvailabilityBlockset(scheduleIntervals, weekdayMap);
+
+    // Holiday blockset.
+    const holidays = Holiday.holidaysToIntervals(...await doctor.listHolidays());
+    blockset.push(...holidays);
+
+    return blockset;
+  }
+
+  static getWeekdayMap(...availabilities: Availability[]): WeekdayMap {
     const weekdayMap: WeekdayMap = {};
 
-    for (const av of avails) {
+    for (const av of availabilities) {
       if (av.weekday == undefined) {
         throw Error(`weekday is undefined for availability with id ${av.id}`);
       } else if (av.interval?.st == undefined) {
@@ -56,24 +83,7 @@ export class Scheduler {
       throw Error('weekday map has an intersecting interval');
     }
 
-    // Find recurring schedule.
-    if (doctor.schedule == undefined) {
-      throw Error(`doctor with id ${doctor.id} is missing schedule`);
-    }
-
-    const scheduleIntervals = Doctor.scheduleToIntervals(doctor.schedule, startTime, lookAhead);
-
-    const sblockset = Scheduler.getAvailabilityBlockset(scheduleIntervals, weekdayMap);
-
-    // console.log(weekdayMap);
-    for (const si of sblockset) {
-      console.log(si.toString());
-    }
-    // Compute recurring schedule intervals.
-    // const blockset: Interval[] = [];
-
-    // Get holidays.
-    // const holidays = Holiday.holidaysToIntervals(...await doctor.listHolidays());
+    return weekdayMap;
   }
 
   static getAvailabilityBlockset(scheduleIntervals: Interval[], weekdayMap: WeekdayMap): Interval[] {
@@ -98,7 +108,6 @@ export class Scheduler {
       let currTime = sInterval.start;
 
       for (const wdInterval of wdIntervals) {
-
         newIntervals.push(Interval.fromDateTimes(
           currTime,
           currTime.plus(wdInterval.st),

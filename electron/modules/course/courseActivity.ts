@@ -1,8 +1,9 @@
 import { Duration } from 'luxon';
 import { Knex } from 'knex';
-import log from '@/common/logger';
-import { _activitiesTable, Activity, ActivityDao } from '@/modules/course/activity';
+import { _activitiesTable, Activity } from '@/modules/course/activity';
 import { _coursesTable } from '@/modules/course/course';
+import { BasicDao } from '@/common/dao';
+import db from '@/common/db';
 
 export const _courseActivitiesTable = 'courseActivities';
 
@@ -11,7 +12,7 @@ const defaultPause = Duration.fromObject({hours: 12});
 export class CourseActivity {
   id?: number;
   courseId?: number;
-  activity?: Activity;
+  activityId?: number;
 
   // pause is the minimal pause before next activity.
   pause: Duration = defaultPause;
@@ -19,8 +20,49 @@ export class CourseActivity {
   // index is the order in the set of activities.
   index = 0;
 
+  private initialized = false;
+  private db?: Knex;
+  private dao?: CourseActivityDao;
+
   constructor(init?: Partial<CourseActivity>) {
     Object.assign(this, init);
+    this.db = db;
+  }
+
+  private init() {
+    if (this.initialized) {
+      return;
+    } else if (!this.db) {
+      throw new Error('database was not set');
+    }
+
+    this.dao = new CourseActivityDao(this.db);
+    this.initialized = true;
+  }
+
+  // setDb sets the database backend.
+  setDb(db: Knex) {
+    this.db = db;
+    return this;
+  }
+
+  // commit adds the Course to the store.
+  async commit(): Promise<this> {
+    this.init();
+
+    const ids = await this.dao?.add(this);
+
+    if (ids == undefined) {
+      throw Error('ids is undefined');
+    }
+
+    this.id = ids[0];
+    return this;
+  }
+
+  setActivity(activity: Activity): this {
+    this.activityId = activity.id;
+    return this;
   }
 }
 
@@ -32,154 +74,50 @@ export interface CourseActivityEntity {
   index?: number; // The order the set of activities.
 }
 
-export class CourseActivityDao {
-  private db: Knex;
-  private activityDao: ActivityDao;
-  private initialized = false;
-
-  readonly table = _courseActivitiesTable;
-
-  constructor(db: Knex, activityDao?: ActivityDao) {
-    this.db = db;
-
-    if (activityDao == undefined) {
-      this.activityDao = new ActivityDao(db);
-    } else {
-      this.activityDao = activityDao;
-    }
+export class CourseActivityDao extends BasicDao<CourseActivity, CourseActivityEntity> {
+  constructor(db: Knex) {
+    super(db, _courseActivitiesTable);
   }
 
-  private async init(): Promise<void> {
-    if (this.initialized) {
-      return;
-    }
-
-    if (!await this.db.schema.hasTable(this.table)) {
-      await this.db.schema.createTable(this.table, table => {
-        table.increments();
-
-        table.integer('courseId')
-          .unsigned()
-          .index()
-          .references('id')
-          .inTable(_coursesTable);
-
-        table.integer('activityId')
-          .unsigned()
-          .index()
-          .references('id')
-          .inTable(_activitiesTable);
-
-        table.integer('pause').unsigned();
-        table.integer('index').unsigned();
-      });
-
-      log.info(`Created table "${this.table}"`);
-    }
-
-    this.initialized = true;
+  protected async createTable(): Promise<void> {
+    return this.db.schema.createTable(this.table, table => {
+      table.increments();
+      table.integer('courseId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable(_coursesTable);
+      table.integer('activityId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable(_activitiesTable);
+      table.integer('pause').unsigned();
+      table.integer('index').unsigned();
+    });
   }
 
-  private async list(
-    builder?: (query: Knex.QueryBuilder) => Knex.QueryBuilder,
-  ): Promise<CourseActivityEntity[]> {
-    await this.init();
-
-    let query = this.db
-      .select('*')
-      .from(this.table);
-
-    if (builder) {
-      query = builder(query);
-    }
-
-    const courseActivities: CourseActivityEntity[] = await query;
-
-    log.info(`Listed ${courseActivities.length} course activities`);
-
-    return courseActivities;
-  }
-
-  private async toCourseActivities(
-    ...courseActivityEntities: CourseActivityEntity[]
-  ): Promise<CourseActivity[]> {
-    const courseActivities: CourseActivity[] = [];
-
-    for (const ca of courseActivityEntities) {
-      if (ca.pause == undefined) {
-        throw new Error('pause is undefined');
-      } else if (ca.activityId == undefined) {
-        throw new Error('activityId is undefined');
-      }
-
-      const activity = await this.activityDao.getById(ca.activityId);
-
-      courseActivities.push(new CourseActivity({
-        id: ca.id,
-        courseId: ca.courseId,
-        activity: activity,
-        pause: Duration.fromMillis(ca.pause),
-        index: ca.index,
-      }));
-    }
-
-    return courseActivities;
-  }
-
-  private toCourseActivityEntities(
-    ...courseActivityEntities: CourseActivity[]
-  ): CourseActivityEntity[] {
-    return courseActivityEntities.map(ca => ({
+  protected toEntities(...courseActivities: CourseActivity[]): CourseActivityEntity[] {
+    return courseActivities.map(ca => ({
       id: ca.id,
       courseId: ca.courseId,
-      activityId: ca.activity?.id,
-      pause: ca.pause.toMillis(),
+      activityId: ca.activityId,
+      pause: ca.pause?.seconds,
       index: ca.index,
     }));
   }
 
-  async listAll(): Promise<CourseActivityEntity[]> {
-    return this.list();
+  protected toClasses(...courseActivities: CourseActivityEntity[]): CourseActivity[] {
+    return courseActivities.map(ca => (new CourseActivity({
+      id: ca.id,
+      courseId: ca.courseId,
+      activityId: ca.activityId,
+      pause: Duration.fromObject({seconds: ca.pause}),
+      index: ca.index,
+    })));
   }
 
-  async listPages(limit: number, offset: number): Promise<CourseActivityEntity[]> {
-    return this.list(query => query.limit(limit).offset(offset));
-  }
-
-  // add adds new course activities to the store.
-  async add(...courseActivities: CourseActivity[]): Promise<number[]> {
-    if (courseActivities.length == 0) {
-      throw Error('no course activities specified');
-    }
-
-    await this.init();
-
-    const result: number[] = await this.db
-      .insert(this.toCourseActivityEntities(...courseActivities))
-      .into(this.table);
-
-    log.info(`Added ${courseActivities.length} course activities`);
-
-    return result;
-  }
-
-  // listCourseActivitiesForCourse returns all the
-  // course activities for the selected course.
-  async listCourseActivitiesForCourse(courseId: number): Promise<CourseActivity[]> {
-    await this.init();
-
-    const courseActivityEntities: CourseActivityEntity[] = await this.db
-      .select('*')
-      .from(_courseActivitiesTable)
-      .where('courseId', courseId)
-      .join(
-        _activitiesTable,
-        `${_courseActivitiesTable}.courseId`,
-        `${_activitiesTable}.id`,
-      );
-
-    log.info(`Listed ${courseActivityEntities.length} course activities for course ${courseId}`);
-
-    return this.toCourseActivities(...courseActivityEntities);
+  async listByCourse(courseId: number): Promise<CourseActivity[]> {
+    return this.list(query => query.where('courseId', courseId));
   }
 }

@@ -93,6 +93,8 @@ export abstract class BasicDao<Cls extends Class, Entity> {
         .insert(this.toEntities(...classes));
 
       ids.push(...result);
+
+      log.info(`Inserted ${toInsert.length} item${toInsert.length > 1 ? 's' : ''} into "${this.table}"`);
     }
 
     if (toUpdate.length > 0) {
@@ -106,9 +108,10 @@ export abstract class BasicDao<Cls extends Class, Entity> {
           .update(this.toEntities(upd)[0], ['id']);
         ids.push(result[0].id);
       }
+
+      log.info(`Updated ${toUpdate.length} item${toUpdate.length > 1 ? 's' : ''} in "${this.table}"`);
     }
 
-    log.info(`Added ${classes.length} items into "${this.table}"`);
     return ids;
   }
 }

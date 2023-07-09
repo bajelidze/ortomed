@@ -4,6 +4,7 @@ import { DateTime, Duration, Interval } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { Holiday, HolidayDao } from '@/modules/actors/holiday';
 import { Availability, AvailabilityDao } from '@/modules/actors/availability';
+import db from '@/common/db';
 
 export const _doctorsTable = 'doctors';
 
@@ -20,6 +21,7 @@ export class Doctor {
 
   constructor(init?: Partial<Doctor>) {
     Object.assign(this, init);
+    this.db = db;
   }
 
   private init() {
@@ -64,9 +66,8 @@ export class Doctor {
 
     for (const holiday of holidays) {
       holiday.doctorId = this.id;
+      await holiday.commit();
     }
-
-    await this.holidayDao.add(...holidays);
   }
 
   async listHolidays(): Promise<Holiday[]> {
@@ -110,10 +111,18 @@ export class Doctor {
   // scheduleToIntervals converts the given schedule to the set
   // of intervals.
   static scheduleToIntervals(
-    schedule: RRule,
-    startTime: DateTime,
+    schedule?: RRule,
+    startTime?: DateTime,
     lookAhead?: Duration,
   ) {
+    if (schedule == undefined) {
+      throw Error('schedule undefined');
+    }
+
+    if (startTime == undefined) {
+      startTime = DateTime.now();
+    }
+
     if (lookAhead == undefined) {
       lookAhead = Duration.fromObject({year: 1});
     }

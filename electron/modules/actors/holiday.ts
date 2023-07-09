@@ -1,10 +1,12 @@
 import { Knex } from 'knex';
-import { DateTime, Duration } from 'luxon';
+import { DateTime, Duration, Interval } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { _doctorsTable } from '@/modules/actors/doctor';
-import { Interval } from '@/common/structs';
+import db from '@/common/db';
 
 export const _holidaysTable = 'holidays';
+
+const oneDay = Duration.fromObject({day: 1});
 
 export class Holiday {
   id?: number;
@@ -17,6 +19,7 @@ export class Holiday {
 
   constructor(init?: Partial<Holiday>) {
     Object.assign(this, init);
+    this.db = db;
   }
 
   private init() {
@@ -51,10 +54,15 @@ export class Holiday {
   }
 
   static holidaysToIntervals(...holidays: Holiday[]): Interval[] {
-    return holidays.map(holiday => ({
-      st: holiday.date?.toUnixInteger(),
-      et: holiday.date?.plus(Duration.fromObject({day: 1})).toUnixInteger(),
-    }) as Interval);
+    return holidays.map(holiday => {
+      if (holiday.date == undefined) {
+        throw Error(`holiday date undfined for id ${holiday.id}`);
+      }
+
+      const date = holiday.date?.startOf('day');
+
+      return Interval.fromDateTimes(date, date.plus(oneDay));
+    });
   }
 }
 

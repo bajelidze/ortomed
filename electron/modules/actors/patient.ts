@@ -1,5 +1,6 @@
 import { Knex } from 'knex';
 import { BasicDao } from '@/common/dao';
+import db from '@/common/db';
 
 export const _patientsTable = 'patients';
 
@@ -13,6 +14,7 @@ export class Patient {
 
   constructor(init?: Partial<Patient>) {
     Object.assign(this, init);
+    this.db = db;
   }
 
   private init() {

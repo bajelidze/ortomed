@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 import { BasicDao } from '@/common/dao';
 import { CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
+import db from '@/common/db';
 
 export const _coursesTable = 'courses';
 
@@ -17,6 +18,7 @@ export class Course {
 
   constructor(init?: Partial<Course>) {
     Object.assign(this, init);
+    this.db = db;
   }
 
   private init() {
@@ -61,7 +63,7 @@ export class Course {
       throw new Error('courseActivityDao is undefined');
     }
 
-    return await this.courseActivityDao.listCourseActivitiesForCourse(this.id);
+    return await this.courseActivityDao.listByCourse(this.id);
   }
 
   // addActivities adds the activities to the course.
@@ -89,7 +91,9 @@ export class Course {
       ca.index = highest + idx + 1;
     });
 
-    await this.courseActivityDao.add(...courseActivities);
+    for (const ca of courseActivities) {
+      await ca.commit();
+    }
   }
 }
 

@@ -4,6 +4,7 @@ import { Duration } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { _doctorsTable } from '@/modules/actors/doctor';
 import time from '@/common/time';
+import db from '@/common/db';
 
 export const _availabilitiesTable = 'availabilities';
 
@@ -21,6 +22,7 @@ export class Availability {
 
   constructor(init?: Partial<Availability>) {
     Object.assign(this, init);
+    this.db = db;
   }
 
   private init() {
