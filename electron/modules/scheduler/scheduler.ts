@@ -18,8 +18,8 @@ type CourseActivityMap = {
   [sessionId: number]: CourseActivity
 }
 
-type ActivityCache = {
-  [activityId: number]: Activity
+type Cache<T> = {
+  [id: number]: T
 }
 
 type CapacityMap = {
@@ -37,6 +37,14 @@ export class Scheduler {
   courseActivityDao: CourseActivityDao;
   activityDao: ActivityDao;
 
+  // Caches to optimize DB access.
+  // This assumes that no concurrent
+  // schedulings are possible.
+  activityCache: Cache<Activity>;
+  courseActivityCache: Cache<CourseActivity>;
+  sessionCache: Cache<Session>;
+  availabilityCache: Cache<Availability[]>;
+
   constructor(db: Knex) {
     this.db = db;
     this.doctorDao = new DoctorDao(db);
@@ -44,6 +52,10 @@ export class Scheduler {
     this.sessionDao = new SessionDao(db);
     this.courseActivityDao = new CourseActivityDao(db);
     this.activityDao = new ActivityDao(db);
+    this.activityCache = {};
+    this.courseActivityCache = {};
+    this.sessionCache = {};
+    this.availabilityCache = {};
 
     log.info('Constructed new Scheduler');
   }
@@ -57,7 +69,6 @@ export class Scheduler {
 
     // Get all the course activities for the corresponding sessions.
     const courseActivityMap: CourseActivityMap = {};
-    const activityCache: ActivityCache = {};
     const capMap: CapacityMap = {};
 
     const blockset: Interval[] = [];
@@ -73,7 +84,15 @@ export class Scheduler {
         throw Error(`courseActivityId undefined in session ${sess.id}`);
       }
 
-      const courseActivity = await this.courseActivityDao.getById(sess.courseActivityId);
+      if (this.sessionCache[sess.id] == undefined) {
+        this.sessionCache[sess.id] = sess;
+      }
+
+      if (this.courseActivityCache[sess.courseActivityId] == undefined) {
+        this.courseActivityCache[sess.courseActivityId] = await this.courseActivityDao.getById(sess.courseActivityId);
+      }
+
+      const courseActivity = this.courseActivityCache[sess.courseActivityId];
 
       if (courseActivity.activityId == undefined) {
         throw Error(`courseActivity with id ${courseActivity.id} has activityId undefined`);
@@ -82,11 +101,11 @@ export class Scheduler {
       courseActivityMap[sess.id] = courseActivity;
 
       // Get corresponding activity.
-      if (activityCache[courseActivity.activityId] == undefined) {
-        activityCache[courseActivity.activityId] = await this.activityDao.getById(courseActivity.activityId);
+      if (this.activityCache[courseActivity.activityId] == undefined) {
+        this.activityCache[courseActivity.activityId] = await this.activityDao.getById(courseActivity.activityId);
       }
 
-      const activity = activityCache[courseActivity.activityId];
+      const activity = this.activityCache[courseActivity.activityId];
 
       // If one of the activities is not flexible, then they must be the same.
       // Otherwise, the entire day is getting blocked.
@@ -144,8 +163,15 @@ export class Scheduler {
   }
 
   async getDoctorBlockset(doctor: Doctor, startTime: DateTime, lookAhead?: Duration): Promise<Interval[]> {
-    // Prepare weekday map.
-    const avails = await doctor.listAvailabilities();
+    if (doctor.id == undefined) {
+      throw Error('doctor.id undefined');
+    }
+
+    if (this.availabilityCache[doctor.id] == undefined) {
+      this.availabilityCache[doctor.id] = await doctor.listAvailabilities();
+    }
+
+    const avails = this.availabilityCache[doctor.id];
     const weekdayMap = Scheduler.getWeekdayMap(...avails);
 
     const scheduleIntervals = Doctor.scheduleToIntervals(doctor.schedule, startTime, lookAhead);
@@ -186,7 +212,7 @@ export class Scheduler {
       weekdayMap[weekday].push(av.interval);
     }
 
-    if (weekdayMapIntersectExists(weekdayMap)) {
+    if (Scheduler.weekdayMapIntersectExists(weekdayMap)) {
       throw Error('weekday map has an intersecting interval');
     }
 
@@ -231,14 +257,15 @@ export class Scheduler {
 
     return newIntervals;
   }
-}
 
-function weekdayMapIntersectExists(weekdayMap: WeekdayMap): boolean {
-  for (const key in weekdayMap) {
-    if (time.isIntersect(weekdayMap[key])) {
-      return true;
+  static weekdayMapIntersectExists(weekdayMap: WeekdayMap): boolean {
+    for (const key in weekdayMap) {
+      if (time.isIntersect(weekdayMap[key])) {
+        return true;
+      }
     }
-  }
 
-  return false;
+    return false;
+  }
 }
+
