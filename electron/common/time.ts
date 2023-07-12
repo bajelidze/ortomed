@@ -58,6 +58,27 @@ export namespace time {
 
     return Interval.merge(intervals);
   }
+
+  // getOverlaps returns a set of intervals that are overlaps between the passed intervals.
+  export function getOverlaps(...intervals: Interval[]): Interval[] {
+    const result: Interval[] = [];
+
+    if (intervals.length < 1) {
+      return result;
+    }
+
+    for (let i = 1; i < intervals.length; i++) {
+      const intersection = intervals[i-1].intersection(intervals[i]);
+      if (intersection == null) {
+        console.log(null);
+        continue;
+      }
+
+      result.push(intersection);
+    }
+
+    return result;
+  }
 }
 
 export default time;

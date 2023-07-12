@@ -11,11 +11,12 @@ import { Holiday } from '@/modules/actors/holiday';
 import { Availability } from '@/modules/actors/availability';
 import { CourseActivity } from '@/modules/course/courseActivity';
 import { Scheduler } from '@/modules/scheduler/scheduler';
-import { Session, SessionDao } from '@/modules/scheduler/session';
+import { Session } from '@/modules/scheduler/session';
 
 import { Activity } from './modules/course/activity';
 import { DateTime, Duration, Interval } from 'luxon';
 import { Patient } from './modules/actors/patient';
+import db from '@/common/db';
 
 (async () => {
   const course = new Course({
@@ -29,6 +30,7 @@ import { Patient } from './modules/actors/patient';
   const act = new Activity({
     name: 'LFK',
     description: 'massage',
+    capacity: 1,
   });
 
   await act.commit();
@@ -38,7 +40,7 @@ import { Patient } from './modules/actors/patient';
   }).setActivity(act);
 
   const ca2 = new CourseActivity({
-    pause: Duration.fromObject({hour: 1, minute: 30}),
+    pause: Duration.fromObject({hour: 2}),
   }).setActivity(act);
 
   await course.addActivities(ca1, ca2);
@@ -78,15 +80,15 @@ import { Patient } from './modules/actors/patient';
 
   const now = DateTime.now();
 
-  await Session.new(
-    doctor,
-    patient,
-    ca1,
-    Interval.fromDateTimes(
-      now.plus(Duration.fromObject({hour: 2})),
-      now.plus(Duration.fromObject({hour: 3})),
-    ),
-  ).commit();
+  for (const ca of [ca1, ca2]) {
+    await Session.new(
+      doctor, patient, ca,
+      Interval.fromDateTimes(
+        now.plus(Duration.fromObject({hour: 2})),
+        now.plus(Duration.fromObject({hour: 3})),
+      ),
+    ).commit();
+  }
 
   // const sessDao = new SessionDao(db);
 
@@ -94,8 +96,19 @@ import { Patient } from './modules/actors/patient';
 
   // console.log(result);
 
-  // const scheduler = new Scheduler(db);
+  const scheduler = new Scheduler(db);
 
+  const blockset = await scheduler.getSessionBlockset(
+    doctor,
+    act,
+    DateTime.now().minus(
+      Duration.fromObject({hour: 1}),
+    ),
+  );
+
+  for (const interval of blockset) {
+    console.log(interval.toString());
+  }
 })();
 
 // The built directory structure

@@ -9,7 +9,6 @@ import { CourseDao } from '@/modules/course/course';
 import { CourseActivity, CourseActivityDao } from '@/modules/course/courseActivity';
 import { Session, SessionDao } from '@/modules/scheduler/session';
 import { Activity, ActivityDao } from '../course/activity';
-import { Intersect } from 'vuetify/directives';
 
 type WeekdayMap = {
   [key: number]: time.IntervalD[]
@@ -49,7 +48,7 @@ export class Scheduler {
     log.info('Constructed new Scheduler');
   }
 
-  async getSessionBlockset(doctor: Doctor, activity: Activity, startTime: DateTime) {
+  async getSessionBlockset(doctor: Doctor, inputActivity: Activity, startTime: DateTime): Promise<Interval[]> {
     if (doctor.id == undefined) {
       throw Error('doctor.id undefined');
     }
@@ -70,30 +69,28 @@ export class Scheduler {
         throw Error('session.interval undefined');
       } else if (sess.interval.start == null) {
         throw Error('session.interval.start null');
-      }
-
-      if (sess.courseActivityId == undefined) {
+      } else if (sess.courseActivityId == undefined) {
         throw Error(`courseActivityId undefined in session ${sess.id}`);
       }
 
-      const ca = await this.courseActivityDao.getById(sess.courseActivityId);
+      const courseActivity = await this.courseActivityDao.getById(sess.courseActivityId);
 
-      if (ca.activityId == undefined) {
-        throw Error(`courseActivity with id ${ca.id} has activityId undefined`);
+      if (courseActivity.activityId == undefined) {
+        throw Error(`courseActivity with id ${courseActivity.id} has activityId undefined`);
       }
 
-      courseActivityMap[sess.id] = ca;
+      courseActivityMap[sess.id] = courseActivity;
 
       // Get corresponding activity.
-      if (activityCache[ca.activityId] == undefined) {
-        activityCache[ca.activityId] = await this.activityDao.getById(ca.activityId);
+      if (activityCache[courseActivity.activityId] == undefined) {
+        activityCache[courseActivity.activityId] = await this.activityDao.getById(courseActivity.activityId);
       }
 
-      const cactivity = activityCache[ca.activityId];
+      const activity = activityCache[courseActivity.activityId];
 
       // If one of the activities is not flexible, then they must be the same.
       // Otherwise, the entire day is getting blocked.
-      if ((!cactivity.flexible || !activity.flexible) && activity.name != activity.name) {
+      if ((!activity.flexible || !inputActivity.flexible) && activity.name != inputActivity.name) {
         const day = sess.interval.start.startOf('day');
 
         blockset.push(Interval.fromDateTimes(
@@ -104,7 +101,46 @@ export class Scheduler {
       }
 
       // Join every session into a map according to activity capacity.
+      if (capMap[activity.capacity] == undefined) {
+        capMap[activity.capacity] = [];
+      }
+
+      capMap[activity.capacity].push(sess.interval);
     }
+
+    const reduced = Scheduler.reduceCapMap(capMap);
+
+    blockset.push(...reduced);
+
+    return Interval.merge(blockset);
+  }
+
+  // reduceCapMap reduces the CapacityMap returning a set of intervals
+  // depending on the allowed overlap count (capacity).
+  static reduceCapMap(capMap: CapacityMap): Interval[] {
+    const result: Interval[] = [];
+
+    for (const capacityStr in capMap) {
+      const capacity = Number(capacityStr);
+
+      let intervals = capMap[capacity];
+
+      intervals.sort((a, b) => {
+        if (a.start == null || b.start == null) {
+          throw Error('interval start null');
+        }
+
+        return a.start.toUnixInteger() - b.start.toUnixInteger();
+      });
+
+      for (let i = 1; i < capacity; i++) {
+        intervals = time.getOverlaps(...intervals);
+      }
+
+      result.push(...intervals);
+    }
+
+    return Interval.merge(result);
   }
 
   async getDoctorBlockset(doctor: Doctor, startTime: DateTime, lookAhead?: Duration): Promise<Interval[]> {
