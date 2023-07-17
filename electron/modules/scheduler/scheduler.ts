@@ -3,19 +3,17 @@ import { DateTime, Duration, Interval } from 'luxon';
 import log from '@/common/logger';
 import time from '@/common/time';
 import { Doctor, DoctorDao } from '@/modules/actors/doctor';
+import { Patient } from '@/modules/actors/patient';
 import { Availability } from '@/modules/actors/availability';
 import { Holiday } from '@/modules/actors/holiday';
-import { CourseDao } from '@/modules/course/course';
+import { Course, CourseDao } from '@/modules/course/course';
 import { CourseActivity, CourseActivityDao } from '@/modules/course/courseActivity';
 import { Session, SessionDao } from '@/modules/scheduler/session';
 import { Activity, ActivityDao } from '../course/activity';
+import { sort } from 'rrule/dist/esm/dateutil';
 
 type WeekdayMap = {
   [key: number]: time.IntervalD[]
-}
-
-type CourseActivityMap = {
-  [sessionId: number]: CourseActivity
 }
 
 type Cache<T> = {
@@ -42,7 +40,7 @@ export class Scheduler {
   // schedulings are possible.
   activityCache: Cache<Activity>;
   courseActivityCache: Cache<CourseActivity>;
-  sessionCache: Cache<Session>;
+  sessionCache: Cache<Session[]>;
   availabilityCache: Cache<Availability[]>;
 
   constructor(db: Knex) {
@@ -60,15 +58,74 @@ export class Scheduler {
     log.info('Constructed new Scheduler');
   }
 
-  async getSessionBlockset(doctor: Doctor, inputActivity: Activity, startTime: DateTime): Promise<Interval[]> {
+  async scheduleCourse(
+    doctor: Doctor,
+    patient: Patient,
+    course: Course,
+    startTime: DateTime,
+  ) {
+    const courseActivities = await course.listActivities();
+
+    for (const courseActivity of courseActivities) {
+      const session = await this.scheduleCourseActivity(
+        doctor, patient, courseActivity, startTime,
+      );
+
+      if (session.interval?.end == null) {
+        throw Error('the scheduled session interval end is null');
+      }
+
+      // The next course activity needs to be after the previous one plus
+      // the pause defined by the course activity itself.
+      startTime = session.interval?.end.plus(courseActivity.pause);
+    }
+  }
+
+  private async scheduleCourseActivity(
+    doctor: Doctor,
+    patient: Patient,
+    courseActivities: CourseActivity,
+    startTime: DateTime,
+  ): Promise<Session> {
+    
+  }
+
+  private async getBlockset(
+    doctor: Doctor,
+    patient: Patient,
+    activity: Activity,
+    startTime: DateTime,
+    lookAhead?: Duration,
+  ): Promise<Interval[]> {
+    let blockset = await this.getDoctorBlockset(doctor, startTime, lookAhead);
+    const sessionBlockset = await this.getSessionBlockset(doctor, activity, startTime);
+
+    blockset.push(...sessionBlockset);
+
+    blockset = Interval.merge(blockset).sort((a, b) => {
+      if (a.start == undefined || b.start == undefined) {
+        throw Error('start is undefined');
+      }
+
+      return a.start?.toUnixInteger() - b.start?.toUnixInteger();
+    });
+
+    return blockset;
+  }
+
+  private async getSessionBlockset(doctor: Doctor, inputActivity: Activity, startTime: DateTime): Promise<Interval[]> {
     if (doctor.id == undefined) {
       throw Error('doctor.id undefined');
     }
 
-    const sessions: Session[] = await this.sessionDao.listByDoctorId(doctor.id, startTime);
+    if (this.sessionCache[doctor.id] == undefined) {
+      this.sessionCache[doctor.id] = await this.sessionDao.listByDoctorId(doctor.id, startTime);
+    }
+
+    const sessions = this.sessionCache[doctor.id];
 
     // Get all the course activities for the corresponding sessions.
-    const courseActivityMap: CourseActivityMap = {};
+    const courseActivityMap: Cache<CourseActivity> = {};
     const capMap: CapacityMap = {};
 
     const blockset: Interval[] = [];
@@ -82,10 +139,6 @@ export class Scheduler {
         throw Error('session.interval.start null');
       } else if (sess.courseActivityId == undefined) {
         throw Error(`courseActivityId undefined in session ${sess.id}`);
-      }
-
-      if (this.sessionCache[sess.id] == undefined) {
-        this.sessionCache[sess.id] = sess;
       }
 
       if (this.courseActivityCache[sess.courseActivityId] == undefined) {
@@ -136,7 +189,7 @@ export class Scheduler {
 
   // reduceCapMap reduces the CapacityMap returning a set of intervals
   // depending on the allowed overlap count (capacity).
-  static reduceCapMap(capMap: CapacityMap): Interval[] {
+  private static reduceCapMap(capMap: CapacityMap): Interval[] {
     const result: Interval[] = [];
 
     for (const capacityStr in capMap) {
@@ -162,7 +215,7 @@ export class Scheduler {
     return Interval.merge(result);
   }
 
-  async getDoctorBlockset(doctor: Doctor, startTime: DateTime, lookAhead?: Duration): Promise<Interval[]> {
+  private async getDoctorBlockset(doctor: Doctor, startTime: DateTime, lookAhead?: Duration): Promise<Interval[]> {
     if (doctor.id == undefined) {
       throw Error('doctor.id undefined');
     }
@@ -219,7 +272,7 @@ export class Scheduler {
     return weekdayMap;
   }
 
-  static getAvailabilityBlockset(scheduleIntervals: Interval[], weekdayMap: WeekdayMap): Interval[] {
+  private static getAvailabilityBlockset(scheduleIntervals: Interval[], weekdayMap: WeekdayMap): Interval[] {
     const newIntervals: Interval[] = [];
 
     for (const sInterval of scheduleIntervals) {
@@ -258,7 +311,7 @@ export class Scheduler {
     return newIntervals;
   }
 
-  static weekdayMapIntersectExists(weekdayMap: WeekdayMap): boolean {
+  private static weekdayMapIntersectExists(weekdayMap: WeekdayMap): boolean {
     for (const key in weekdayMap) {
       if (time.isIntersect(weekdayMap[key])) {
         return true;
