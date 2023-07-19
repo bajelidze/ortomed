@@ -98,17 +98,13 @@ import db from '@/common/db';
 
   const scheduler = new Scheduler(db);
 
-  const blockset = await scheduler.getSessionBlockset(
-    doctor,
-    act,
-    DateTime.now().minus(
-      Duration.fromObject({hour: 1}),
-    ),
-  );
+  const sessions = await scheduler.scheduleCourse(doctor, patient, course, now);
 
-  for (const interval of blockset) {
-    console.log(interval.toString());
+  for (const session of sessions) {
+    console.log(session.interval?.toString());
   }
+
+  scheduler.commitSessions(...sessions);
 })();
 
 // The built directory structure

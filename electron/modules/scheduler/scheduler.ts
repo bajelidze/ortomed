@@ -10,7 +10,7 @@ import { Course, CourseDao } from '@/modules/course/course';
 import { CourseActivity, CourseActivityDao } from '@/modules/course/courseActivity';
 import { Session, SessionDao } from '@/modules/scheduler/session';
 import { Activity, ActivityDao } from '../course/activity';
-import { sort } from 'rrule/dist/esm/dateutil';
+import errs from '@/common/errors';
 
 type WeekdayMap = {
   [key: number]: time.IntervalD[]
@@ -38,10 +38,9 @@ export class Scheduler {
   // Caches to optimize DB access.
   // This assumes that no concurrent
   // schedulings are possible.
-  activityCache: Cache<Activity>;
-  courseActivityCache: Cache<CourseActivity>;
-  sessionCache: Cache<Session[]>;
-  availabilityCache: Cache<Availability[]>;
+  activityCache: Cache<Activity> = {};
+  courseActivityCache: Cache<CourseActivity> = {};
+  availabilityCache: Cache<Availability[]> = {};
 
   constructor(db: Knex) {
     this.db = db;
@@ -50,10 +49,6 @@ export class Scheduler {
     this.sessionDao = new SessionDao(db);
     this.courseActivityDao = new CourseActivityDao(db);
     this.activityDao = new ActivityDao(db);
-    this.activityCache = {};
-    this.courseActivityCache = {};
-    this.sessionCache = {};
-    this.availabilityCache = {};
 
     log.info('Constructed new Scheduler');
   }
@@ -63,7 +58,11 @@ export class Scheduler {
     patient: Patient,
     course: Course,
     startTime: DateTime,
-  ) {
+  ): Promise<Session[]> {
+    this.resetCache();
+
+    const newSessions: Session[] = [];
+
     const courseActivities = await course.listActivities();
 
     for (const courseActivity of courseActivities) {
@@ -78,21 +77,83 @@ export class Scheduler {
       // The next course activity needs to be after the previous one plus
       // the pause defined by the course activity itself.
       startTime = session.interval?.end.plus(courseActivity.pause);
+
+      newSessions.push(session);
     }
+
+    return newSessions;
+  }
+
+  async commitSessions(...sessions: Session[]): Promise<void> {
+    for (const session of sessions) {
+      await session.commit();
+    }
+  }
+
+  private resetCache() {
+    this.activityCache = {};
+    this.courseActivityCache = {};
+    this.availabilityCache = {};
   }
 
   private async scheduleCourseActivity(
     doctor: Doctor,
     patient: Patient,
-    courseActivities: CourseActivity,
+    courseActivity: CourseActivity,
     startTime: DateTime,
+    lookAhead?: Duration,
   ): Promise<Session> {
-    
+    if (courseActivity.activityId == undefined) {
+      throw Error(`activityId in courseActivity ${courseActivity.id} is undefined`);
+    }
+
+    const activity = await this.activityDao.getById(courseActivity.activityId);
+
+    const blockset = await this.getBlockset(doctor, activity, startTime, lookAhead);
+
+    if (blockset.length < 2) {
+      let start = startTime;
+
+      if (blockset.length == 1) {
+        if (blockset[0].end == null) {
+          throw Error('blockset interval is null');
+        }
+
+        start = blockset[0].end;
+      }
+
+      const interval = Interval.fromDateTimes(
+        start,
+        start.plus(activity.duration),
+      );
+      return Session.new(doctor, patient, courseActivity, interval);
+    }
+
+    for (let i = 1; i < blockset.length; i++) {
+      const curr = blockset[i];
+      const next = blockset[i + 1];
+
+      if (next.start == null) {
+        throw Error(`blockset start is null, at idx: ${i}`);
+      } else if (curr.end == null) {
+        throw Error(`blockset end is null, at idx: ${i}`);
+      }
+
+      if (curr.end?.diff(next.start).toMillis() > activity.duration.toMillis()) {
+        const interval = Interval.fromDateTimes(
+          curr.end,
+          curr.end.plus(activity.duration),
+        );
+
+        return Session.new(doctor, patient, courseActivity, interval);
+      }
+    }
+
+    throw new errs.ErrNotFound('could not find a free interval for the new session in the given blockset');
   }
 
   private async getBlockset(
     doctor: Doctor,
-    patient: Patient,
     activity: Activity,
     startTime: DateTime,
     lookAhead?: Duration,
@@ -118,11 +179,7 @@ export class Scheduler {
       throw Error('doctor.id undefined');
     }
 
-    if (this.sessionCache[doctor.id] == undefined) {
-      this.sessionCache[doctor.id] = await this.sessionDao.listByDoctorId(doctor.id, startTime);
-    }
-
-    const sessions = this.sessionCache[doctor.id];
+    const sessions = await this.sessionDao.listByDoctorId(doctor.id, startTime);
 
     // Get all the course activities for the corresponding sessions.
     const courseActivityMap: Cache<CourseActivity> = {};
