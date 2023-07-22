@@ -129,7 +129,7 @@ export class Scheduler {
       return Session.new(doctor, patient, courseActivity, interval);
     }
 
-    for (let i = 1; i < blockset.length; i++) {
+    for (let i = 1; i < blockset.length - 1; i++) {
       const curr = blockset[i];
       const next = blockset[i + 1];
 
@@ -139,7 +139,7 @@ export class Scheduler {
         throw Error(`blockset end is null, at idx: ${i}`);
       }
 
-      if (curr.end?.diff(next.start).toMillis() > activity.duration.toMillis()) {
+      if (Math.abs(curr.end?.diff(next.start).toMillis()) > activity.duration.toMillis()) {
         const interval = Interval.fromDateTimes(
           curr.end,
           curr.end.plus(activity.duration),
