@@ -41,4 +41,6 @@ const links = [
   'Profile',
   'Updates',
 ];
+
+console.log('heereee');
 </script>

@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "NODE_OPTIONS='--unhandled-rejections=strict' vite",
+    "dev": "ELECTRON_ENABLE_LOGGING=1 NODE_OPTIONS='--unhandled-rejections=strict' vite",
+    "debug": "ORTOMED_DEBUG=1 ELECTRON_ENABLE_LOGGING=1 NODE_OPTIONS='--unhandled-rejections=strict' vite",
     "build": "vue-tsc && vite build && electron-builder --publish=never",
     "preview": "vite preview"
   },

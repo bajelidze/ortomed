@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { defineConfig } from 'vite';
+import { defineConfig, InlineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
 import vue from '@vitejs/plugin-vue';
@@ -8,32 +8,35 @@ import alias from '@rollup/plugin-alias';
 const electronDir = 'electron';
 const electronDirFull = resolve(__dirname, electronDir);
 
+const vite: InlineConfig = {
+  plugins: [
+    alias({
+      entries: [
+        { find: '@', replacement: electronDirFull },
+      ],
+    }),
+  ],
+  build: {
+    rollupOptions: {
+      external: [ // C/C++ modules that can't be built properly.
+        'sqlite3',
+        'knex',
+      ],
+    },
+    sourcemap: true,
+  },
+};
+
 export default defineConfig({
   plugins: [
     vue(),
     electron([
       {
+        vite,
         entry: `${electronDir}/main.ts`,
-        vite: {
-          plugins: [
-            alias({
-              entries: [
-                { find: '@', replacement: electronDirFull },
-              ],
-            }),
-          ],
-          build: {
-            rollupOptions: {
-              external: [ // C/C++ modules that can't be built properly.
-                'sqlite3',
-                'knex',
-              ],
-            },
-            sourcemap: true,
-          },
-        },
       },
       {
+        vite,
         entry: `${electronDir}/preload/preload.ts`,
         onstart(options) {
           // Notify the Renderer-Process to reload the page

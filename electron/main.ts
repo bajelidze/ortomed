@@ -1,7 +1,7 @@
 import sourceMapSupport from 'source-map-support';
 sourceMapSupport.install();
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 
 // (async () => {
@@ -122,6 +122,7 @@ function createWindow() {
     icon: path.join(process.env.PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
     },
   });
 
@@ -136,6 +137,10 @@ function createWindow() {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
     win.loadFile(path.join(process.env.DIST, 'index.html'));
+  }
+
+  if (process.env.ORTOMED_DEBUG == '1') {
+    win.webContents.openDevTools();
   }
 }
 
