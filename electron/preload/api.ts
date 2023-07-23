@@ -1,10 +1,9 @@
-import { contextBridge } from 'electron';
-// import { Patient } from '@/modules/actors/patient';
-import log from '../common/logger';
+import { contextBridge, ipcRenderer } from 'electron';
+import { Patient } from '@/modules/actors/patient';
+import { NFP } from '@/common/typing';
 
 export const API = {
-  hello: 'world',
-  log,
+  listPatients: (): Promise<NFP<Patient>[]> => ipcRenderer.invoke('listPatients'),
 };
 
 declare global {
@@ -12,6 +11,5 @@ declare global {
 }
 
 export function exposeAPI() {
-  console.log('exposeAPI~~~~');
   contextBridge.exposeInMainWorld('api', API);
 }

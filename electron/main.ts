@@ -1,8 +1,9 @@
 import sourceMapSupport from 'source-map-support';
 sourceMapSupport.install();
 
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
+import { setHandlers } from '@/api/api';
 
 // (async () => {
 // const course = new Course({
@@ -147,5 +148,7 @@ function createWindow() {
 app.on('window-all-closed', () => {
   win = null;
 });
+
+setHandlers();
 
 app.whenReady().then(createWindow);

@@ -1,22 +1,17 @@
-import { createApp } from 'vue';
-import './style.css';
-
 // @ts-ignore
 import App from './App.vue';
 // @ts-ignore
 import vuetify from './plugins/vuetify';
+import { createApp } from 'vue';
+import './style.css';
 
-// const patient = new window.api.Patient({name: 'Irakli'});
+// await window.api.patient.commit();
 
-// window.api.log.info('Patient:', patient.name);
-console.log(window.api.hello);
+const patients = await window.api.listPatients();
 
-// const information = document.getElementById('info');
-// if (information == null) {
-//   throw Error('information is null');
-// }
-// information.innerText = `Activity name: ${patient.name}`;
-// throw new Error('xddd');
+for (const patient of patients) {
+  console.log(patient.name);
+}
 
 createApp(App).use(vuetify).mount('#app').$nextTick(() => postMessage({ payload: 'removeLoading' }, '*'));
 

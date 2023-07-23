@@ -4,7 +4,7 @@ const myFormat = format.printf(({ level, message, timestamp }) => {
   return `${timestamp} ${level}: ${message.trim()}`;
 });
 
-export default createLogger({
+const logger = createLogger({
   level: 'info',
   format: format.combine(
     format.cli(),
@@ -15,3 +15,5 @@ export default createLogger({
     new transports.Console(),
   ],
 });
+
+export default logger;
