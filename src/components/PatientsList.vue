@@ -1,7 +1,5 @@
 <template>
-  <v-card
-    class="ma-6"
-  >
+  <v-card>
     <v-table>
       <thead>
         <tr>

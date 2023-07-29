@@ -7,6 +7,7 @@ import { mdi } from 'vuetify/iconsets/mdi';
 import '@mdi/font/css/materialdesignicons.css';
 
 export default createVuetify({
+  //@ts-ignore
   icons: {
     sets: {
       mdi,
