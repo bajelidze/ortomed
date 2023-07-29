@@ -1,5 +1,4 @@
 <template>
-  <v-card>
       <v-navigation-drawer
         expand-on-hover
         rail
@@ -7,7 +6,14 @@
       >
         <v-list density="compact" nav>
           <router-link to="/patients">
-            <v-list-item prepend-icon="mdi-account" title="Patients" value="patients"></v-list-item>
+          <Suspense>
+            <template #default>
+              <v-list-item prepend-icon="mdi-account" title="Patients" value="patients"></v-list-item>
+            </template>
+            <template #fallback>
+              Loading...
+            </template>
+          </Suspense>
           </router-link>
           <router-link to="/doctors">
             <v-list-item prepend-icon="mdi-medical-bag" title="Doctors" value="doctors"></v-list-item>
@@ -19,7 +25,6 @@
       <v-main>
         <router-view />
       </v-main>
-  </v-card>
 </template>
 
 <script setup lang="ts">

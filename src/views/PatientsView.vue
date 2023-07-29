@@ -1,9 +1,14 @@
 <template>
-  <button @click="count++">You clicked me {{ count }} times.</button>
+  <Suspense>
+    <template #default>
+      <PatientsList />
+    </template>
+    <template #fallback>
+      Loading...
+    </template>
+  </Suspense>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
-const count = ref(0);
+import PatientsList from '../components/PatientsList.vue';
 </script>

@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { DateTime } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import db from '@/common/db';
 
@@ -7,6 +8,7 @@ export const _patientsTable = 'patients';
 export class Patient {
   id?: number;
   name = '';
+  dateAdded = DateTime.now();
 
   private initialized = false;
   private db?: Knex;
@@ -52,6 +54,7 @@ export class Patient {
 export interface PatientEntity {
   id?: number;
   name: string;
+  dateAdded: number;
 }
 
 export class PatientDao extends BasicDao<Patient, PatientEntity> {
@@ -63,6 +66,7 @@ export class PatientDao extends BasicDao<Patient, PatientEntity> {
     return this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.string('name').notNullable();
+      table.integer('dateAdded').unsigned();
     });
   }
 
@@ -70,6 +74,7 @@ export class PatientDao extends BasicDao<Patient, PatientEntity> {
     return patients.map(patient => ({
       id: patient.id,
       name: patient.name,
+      dateAdded: patient.dateAdded?.toUnixInteger(),
     }));
   }
 
@@ -77,6 +82,7 @@ export class PatientDao extends BasicDao<Patient, PatientEntity> {
     return patientEntities.map(ent => (new Patient({
       id: ent.id,
       name: ent.name,
+      dateAdded: DateTime.fromSeconds(ent.dateAdded),
     })));
   }
 }
