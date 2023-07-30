@@ -9,7 +9,7 @@ export function setPatientHandlers() {
     const patients = await patientDao.listPages(limit, offset);
 
     return patients.map(patient => ({
-      id: patient.id,
+      id: patient.id?.toString(),
       name: patient.name,
       dateAdded: patient.dateAdded.toLocaleString(DateTime.DATETIME_MED),
     }));

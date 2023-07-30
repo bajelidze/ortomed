@@ -1,49 +1,19 @@
 <template>
-  <v-card>
-    <v-table>
-      <thead>
-        <tr>
-          <th width="33%" class="text-left">
-            ID
-          </th>
-          <th width="33%" class="text-left">
-            Name
-          </th>
-          <th width="33%" class="text-left">
-            Date Added
-          </th>
-          <th width="1%"/>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="patient in patients"
-          class="text-left"
-          :key="patient.name"
-        >
-          <td>{{ patient.id }}</td>
-          <td>{{ patient.name }}</td>
-          <td>{{ patient.dateAdded }}</td>
-          <td>
-            <v-btn
-              icon="mdi-trash-can"
-              flat
-            />
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-  </v-card>
+  <ItemsList :title="'Cheli'" :table="table"/>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import ItemsList from './ItemsList.vue';
+import { Table } from '../common/interfaces';
+
 const patients = await window.api.listPatients(10, 0);
 
-export default {
-  data() {
-    return {
-      patients,
-    };
-  },
+const table: Table = {
+  header: ['ID', 'Name', 'Date Added'],
+  rows: patients.map(patient => ({
+    key: patient.id,
+    content: [patient.id, patient.name, patient.dateAdded],
+  })),
 };
+
 </script>
