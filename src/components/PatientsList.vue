@@ -3,15 +3,16 @@
     <v-table>
       <thead>
         <tr>
-          <th class="text-left">
+          <th width="33%" class="text-left">
             ID
           </th>
-          <th class="text-left">
+          <th width="33%" class="text-left">
             Name
           </th>
-          <th class="text-left">
+          <th width="33%" class="text-left">
             Date Added
           </th>
+          <th width="1%"/>
         </tr>
       </thead>
       <tbody>
@@ -23,6 +24,12 @@
           <td>{{ patient.id }}</td>
           <td>{{ patient.name }}</td>
           <td>{{ patient.dateAdded }}</td>
+          <td>
+            <v-btn
+              icon="mdi-trash-can"
+              flat
+            />
+          </td>
         </tr>
       </tbody>
     </v-table>
@@ -30,7 +37,7 @@
 </template>
 
 <script lang="ts">
-const patients = await window.api.listPatients();
+const patients = await window.api.listPatients(10, 0);
 
 export default {
   data() {

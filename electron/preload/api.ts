@@ -3,7 +3,9 @@ import { Patient } from '@/modules/actors/patient';
 import { NFP } from '@/common/typing';
 
 export const API = {
-  listPatients: (): Promise<NFP<Patient>[]> => ipcRenderer.invoke('listPatients'),
+  listPatients: (limit: number, offset: number): Promise<NFP<Patient>[]> => {
+    return ipcRenderer.invoke('listPatients', limit, offset);
+  },
 };
 
 declare global {

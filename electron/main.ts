@@ -4,102 +4,102 @@ sourceMapSupport.install();
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import { setHandlers } from '@/api/api';
+// import { Patient } from '@/modules/actors/patient';
 
-// (async () => {
+(async () => {
 // const course = new Course({
 //   name: 'LFK',
 //   description: 'massage...',
 //   repetitions: 2,
 // });
 
-// await course.commit();
+  // await course.commit();
 
-// const act = new Activity({
-//   name: 'LFK',
-//   description: 'massage',
-//   capacity: 1,
-// });
+  // const act = new Activity({
+  //   name: 'LFK',
+  //   description: 'massage',
+  //   capacity: 1,
+  // });
 
-// await act.commit();
+  // await act.commit();
 
-// const ca1 = new CourseActivity({
-//   pause: Duration.fromObject({hour: 2}),
-// }).setActivity(act);
+  // const ca1 = new CourseActivity({
+  //   pause: Duration.fromObject({hour: 2}),
+  // }).setActivity(act);
 
-// const ca2 = new CourseActivity({
-//   pause: Duration.fromObject({hour: 2}),
-// }).setActivity(act);
+  // const ca2 = new CourseActivity({
+  //   pause: Duration.fromObject({hour: 2}),
+  // }).setActivity(act);
 
-// await course.addActivities(ca1, ca2);
+  // await course.addActivities(ca1, ca2);
 
-// // const result = await dao.listAll();
+  // // const result = await dao.listAll();
 
-// const doctor = await new Doctor({
-//   name: 'Strong',
-//   schedule: new RRule({
-//     freq: RRule.WEEKLY,
-//     dtstart: DateTime.now().toJSDate(),
-//     byweekday: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR],
-//   }),
-// }).commit();
+  // const doctor = await new Doctor({
+  //   name: 'Strong',
+  //   schedule: new RRule({
+  //     freq: RRule.WEEKLY,
+  //     dtstart: DateTime.now().toJSDate(),
+  //     byweekday: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR],
+  //   }),
+  // }).commit();
 
-// await doctor.addHolidays(new Holiday({
-//   date: DateTime.fromObject({
-//     day: 30,
-//     month: 11,
-//     year: 2023,
-//   }),
-// }));
+  // await doctor.addHolidays(new Holiday({
+  //   date: DateTime.fromObject({
+  //     day: 30,
+  //     month: 11,
+  //     year: 2023,
+  //   }),
+  // }));
 
-// const patient = await new Patient({name: 'John'}).commit();
+  // const patient = await new Patient({name: 'John'}).commit();
 
-// for (const weekday of [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR]) {
-//   const av = await new Availability({
-//     weekday: weekday,
-//     interval: {
-//       st: Duration.fromObject({hour: 9}),
-//       et: Duration.fromObject({hour: 18}),
-//     },
-//   }).commit();
+  // for (const weekday of [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR]) {
+  //   const av = await new Availability({
+  //     weekday: weekday,
+  //     interval: {
+  //       st: Duration.fromObject({hour: 9}),
+  //       et: Duration.fromObject({hour: 18}),
+  //     },
+  //   }).commit();
 
-//   await doctor.addAvailability(av);
-// }
+  //   await doctor.addAvailability(av);
+  // }
 
-// const now = DateTime.now();
+  // const now = DateTime.now();
 
-// for (const ca of [ca1, ca2]) {
-//   await Session.new(
-//     doctor, patient, ca,
-//     Interval.fromDateTimes(
-//       now.plus(Duration.fromObject({hour: 2})),
-//       now.plus(Duration.fromObject({hour: 3})),
-//     ),
-//   ).commit();
-// }
+  // for (const ca of [ca1, ca2]) {
+  //   await Session.new(
+  //     doctor, patient, ca,
+  //     Interval.fromDateTimes(
+  //       now.plus(Duration.fromObject({hour: 2})),
+  //       now.plus(Duration.fromObject({hour: 3})),
+  //     ),
+  //   ).commit();
+  // }
 
-// // const sessDao = new SessionDao(db);
+  // // const sessDao = new SessionDao(db);
 
-// // const result = await sessDao.listFrom(DateTime.fromObject({year: 2020, month: 1, day: 1}), true);
+  // // const result = await sessDao.listFrom(DateTime.fromObject({year: 2020, month: 1, day: 1}), true);
 
-// // console.log(result);
-// const patient2 = new Patient({name: 'Flashy'});
+  // // console.log(result);
 
-// const scheduler = new Scheduler(db);
+  // const scheduler = new Scheduler(db);
 
-// const sessions = await scheduler.scheduleCourse(doctor, patient, course, now);
+  // const sessions = await scheduler.scheduleCourse(doctor, patient, course, now);
 
-// for (const session of sessions) {
-//   console.log(session.interval?.toString());
-// }
+  // for (const session of sessions) {
+  //   console.log(session.interval?.toString());
+  // }
 
-// const sessions2 = await scheduler.scheduleCourse(doctor, patient2, course, now);
+  // const sessions2 = await scheduler.scheduleCourse(doctor, patient2, course, now);
 
-// for (const session of sessions2) {
-//   console.log(session.interval?.toString());
-// }
+  // for (const session of sessions2) {
+  //   console.log(session.interval?.toString());
+  // }
 
 // scheduler.commitSessions(...sessions);
-// })();
+})();
 
 // The built directory structure
 //
