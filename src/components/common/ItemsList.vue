@@ -39,13 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { Table } from '../common/interfaces';
+import { ItemsListProps } from '../../common/props';
 
-interface Props {
-  title: string
-  table: Table,
-}
-
-defineProps<Props>();
-
+defineProps<ItemsListProps>();
 </script>

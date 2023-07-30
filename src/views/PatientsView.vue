@@ -1,39 +1,22 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col align="left">
-        <v-card-title class="text-h4">
-          Patients
-        </v-card-title>
-      </v-col>
-      <v-spacer></v-spacer>
-      <v-col align="right">
-        <v-btn
-          append-icon="mdi-plus"
-          class="mt-3"
-          flat
-          color="primary"
-        >
-          Add
-        </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col>
-      <Suspense>
-        <template #default>
-          <PatientsList />
-        </template>
-        <template #fallback>
-          Loading...
-        </template>
-      </Suspense>
-      </v-col>
-    </v-row>
-  </v-container>
+  <ItemsManager 
+    title="Patients"
+    :table="table"
+    :add-button="true"
+  />
 </template>
 
 <script setup lang="ts">
-import PatientsList from '../components/PatientsList.vue';
+import ItemsManager from '../components/common/ItemsManager.vue';
+import { Table } from '../common/interfaces';
+
+const patients = await window.api.listPatients(10, 0);
+
+const table: Table = {
+  header: ['ID', 'Name', 'Date Added'],
+  rows: patients.map(patient => ({
+    key: patient.id,
+    content: [patient.id, patient.name, patient.dateAdded],
+  })),
+};
 </script>

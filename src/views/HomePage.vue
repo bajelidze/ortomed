@@ -6,14 +6,7 @@
       >
         <v-list density="compact" nav>
           <router-link to="/patients">
-          <Suspense>
-            <template #default>
-              <v-list-item prepend-icon="mdi-account" title="Patients" value="patients"></v-list-item>
-            </template>
-            <template #fallback>
-              Loading...
-            </template>
-          </Suspense>
+            <v-list-item prepend-icon="mdi-account" title="Patients" value="patients"></v-list-item>
           </router-link>
           <router-link to="/doctors">
             <v-list-item prepend-icon="mdi-medical-bag" title="Doctors" value="doctors"></v-list-item>
@@ -23,7 +16,14 @@
       </v-navigation-drawer>
 
       <v-main>
-        <router-view />
+        <Suspense>
+          <template #default>
+            <router-view />
+          </template>
+          <template #fallback>
+            Loading...
+          </template>
+        </Suspense>
       </v-main>
 </template>
 
