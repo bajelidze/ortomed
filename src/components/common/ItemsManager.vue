@@ -8,17 +8,14 @@
       </v-col>
       <v-spacer></v-spacer>
       <v-col v-if="addButton" align="right">
-        <v-btn
+        <TextButton
+          text="Add"
           append-icon="mdi-plus"
           class="mt-3"
-          flat
-          color="primary"
-        >
-          Add
-        </v-btn>
+          @click="$emit(Events.ADD_ITEM_CLICKED)"
+        />
       </v-col>
     </v-row>
-
     <v-row>
       <v-col>
         <ItemsList :table="table" />
@@ -29,7 +26,10 @@
 
 <script setup lang="ts">
 import ItemsList from './ItemsList.vue';
+import TextButton from './TextButton.vue';
 import { ItemsManagerProps } from '../../common/props';
+import { Events } from '../../common/events';
 
 defineProps<ItemsManagerProps>();
+defineEmits([Events.ADD_ITEM_CLICKED]);
 </script>
