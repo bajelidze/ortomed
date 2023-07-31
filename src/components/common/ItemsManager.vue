@@ -9,11 +9,13 @@
       <v-spacer></v-spacer>
       <v-col v-if="addButton" align="right">
         <TextButton
-          text="Add"
           append-icon="mdi-plus"
           class="mt-3"
           @click="$emit(Events.ADD_ITEM_CLICKED)"
-        />
+        >
+          Add
+          <slot name="addBtn"></slot>
+        </TextButton>
       </v-col>
     </v-row>
     <v-row>
