@@ -6,16 +6,9 @@
           {{ title }}
         </v-card-title>
       </v-col>
-      <v-spacer></v-spacer>
+      <v-spacer/>
       <v-col v-if="addButton" align="right">
-        <TextButton
-          append-icon="mdi-plus"
-          class="mt-3"
-          @click="$emit(Events.ADD_ITEM_CLICKED)"
-        >
-          Add
-          <slot name="addBtn"></slot>
-        </TextButton>
+        <slot name="addBtn"/>
       </v-col>
     </v-row>
     <v-row>
@@ -28,10 +21,7 @@
 
 <script setup lang="ts">
 import ItemsList from './ItemsList.vue';
-import TextButton from './TextButton.vue';
 import { ItemsManagerProps } from '../../common/props';
-import { Events } from '../../common/events';
 
 defineProps<ItemsManagerProps>();
-defineEmits([Events.ADD_ITEM_CLICKED]);
 </script>
