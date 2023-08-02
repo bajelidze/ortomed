@@ -1,26 +1,47 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col align="left">
-        <v-card-title class="text-h4">
+  <v-card class="ma-12">
+  <v-data-table
+    :headers="table.header"
+    :items="table.rows"
+    :sort-by="[{ key: 'date_added', order: 'desc' }]"
+    class="elevation-1"
+  >
+    <template #top>
+      <v-toolbar flat>
+        <v-toolbar-title align="left">
           {{ title }}
-        </v-card-title>
-      </v-col>
-      <v-spacer/>
-      <v-col v-if="addButton" align="right">
-        <slot name="addBtn"/>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <ItemsList :table="table" />
-      </v-col>
-    </v-row>
-  </v-container>
+        </v-toolbar-title>
+      </v-toolbar>
+    </template>
+      <template #item.actions="{ item }">
+      <v-icon
+        size="small"
+        class="me-2"
+        @click="console.log('edit')"
+      >
+        mdi-pencil
+      </v-icon>
+      <v-icon
+        size="small"
+        @click="console.log('delete')"
+      >
+        mdi-delete
+      </v-icon>
+    </template>
+    <template v-slot:no-data>
+      <v-btn
+        color="primary"
+        @click="console.log('initialize')"
+      >
+        Reset
+      </v-btn>
+    </template>
+  </v-data-table>
+  </v-card>
 </template>
 
 <script setup lang="ts">
-import ItemsList from './ItemsList.vue';
+// import ItemsList from './ItemsList.vue';
 import { ItemsManagerProps } from '../../common/props';
 
 defineProps<ItemsManagerProps>();
