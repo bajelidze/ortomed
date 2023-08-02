@@ -28,13 +28,22 @@ import { Table, Align } from '../common/interfaces';
 
 const patients = await window.api.listPatients(10, 0);
 
-const table: Table = {
-  header: ['ID', 'Name', 'Date Added'].map(col => ({
-    title: col,
-    key: col.toLowerCase().replace(' ', '_'),
-    sortable: true,
+const header = ['ID', 'Name', 'Date Added'].map(col => ({
+  title: col,
+  key: col.toLowerCase().replace(' ', '_'),
+  sortable: true,
+  align: Align.Start,
+}));
+
+header.push({
+    title: 'Actions',
+    key: 'actions',
+    sortable: false,
     align: Align.Start,
-  })),
+})
+
+const table: Table = {
+  header,
   rows: patients.map(patient => ({
     id: patient.id,
     name: patient.name,

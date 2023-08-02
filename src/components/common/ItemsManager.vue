@@ -5,6 +5,7 @@
     :items="table.rows"
     :sort-by="[{ key: 'date_added', order: 'desc' }]"
     class="elevation-1"
+    align="center"
   >
     <template #top>
       <v-toolbar flat>
@@ -13,20 +14,18 @@
         </v-toolbar-title>
       </v-toolbar>
     </template>
-      <template #item.actions="{ item }">
-      <v-icon
-        size="small"
-        class="me-2"
+    <template #item.actions="{ item }">
+      <v-btn
+        class="ml-n3"
+        icon="mdi-pencil"
+        variant="text"
         @click="console.log('edit')"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        size="small"
+      />
+      <v-btn
+        icon="mdi-trash-can"
+        variant="text"
         @click="console.log('delete')"
-      >
-        mdi-delete
-      </v-icon>
+      />
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -41,7 +40,6 @@
 </template>
 
 <script setup lang="ts">
-// import ItemsList from './ItemsList.vue';
 import { ItemsManagerProps } from '../../common/props';
 
 defineProps<ItemsManagerProps>();

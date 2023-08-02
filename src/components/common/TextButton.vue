@@ -1,5 +1,5 @@
 <template>
   <v-btn flat color="blue">
-    <slot>Button</slot>
+    <slot/>
   </v-btn>
 </template>

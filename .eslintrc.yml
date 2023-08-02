@@ -29,3 +29,6 @@ rules:
   '@typescript-eslint/ban-ts-comment': [off]
   '@typescript-eslint/no-namespace': off
   '@typescript-eslint/ban-types': off
+  'vue/valid-v-slot': ['error', {
+    allowModifiers: true,
+  }],
