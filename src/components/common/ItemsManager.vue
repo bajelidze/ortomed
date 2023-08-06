@@ -60,7 +60,7 @@
               <v-btn
                 color="blue"
                 :disabled="submitLoading"
-                @click="dialog = false; $emit(Events.ITEMS_MANAGER_ADD_CANCEL)"
+                @click="dialog = false; $emit(Common.ITEMS_MANAGER_ADD_CANCEL)"
               >
                 Cancel
               </v-btn>
@@ -102,11 +102,11 @@ export default {
 
 <script setup lang="ts">
 import { ItemsManagerProps } from '../../common/props';
-import { Events } from '../../common/events';
+import { Common } from '../../common/events';
 
 defineProps<ItemsManagerProps>();
 defineEmits([
-  Events.ITEMS_MANAGER_ADD_SUBMIT,
-  Events.ITEMS_MANAGER_ADD_CANCEL,
+  Common.ITEMS_MANAGER_ADD_SUBMIT,
+  Common.ITEMS_MANAGER_ADD_CANCEL,
 ]);
 </script>

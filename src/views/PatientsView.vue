@@ -12,7 +12,7 @@
     <template #body>
       <AddPatient
         :form-id="formId"
-        @submitted="submitLoading = true"
+        @add-patient-submit="submitLoading = true"
       />
     </template>
   </ItemsManager>
