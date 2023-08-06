@@ -10,4 +10,10 @@ export interface ItemsManagerProps extends ItemsListProps {
   addPatientTitle: string
   sortBy: SortBy[]
   addButton: boolean
+  submitLoading: boolean
+  formId: string
+}
+
+export interface AddPatientProps {
+  formId: string
 }

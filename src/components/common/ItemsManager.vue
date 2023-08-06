@@ -13,16 +13,61 @@
           align="left">
           {{ title }}
         </v-toolbar-title>
+
         <v-spacer/>
-        <v-btn 
-          class="mr-3"
-          color="green"
-          variant="flat"
-          append-icon="mdi-plus"
+
+        <v-dialog
+          scrollable
+          width="1024"
+          v-model="dialog"
+          :persistent="submitLoading"
         >
-          Add
-          <AddDialog :title="addPatientTitle"/>
-        </v-btn>
+          <template #activator="{ props }">
+            <v-btn 
+              class="mr-4"
+              color="green"
+              variant="flat"
+              append-icon="mdi-plus"
+              v-bind="props"
+            >
+              Add
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="ma-3">
+              <span class="text-h5">{{ addPatientTitle }}</span>
+            </v-card-title>
+            <v-card-text class="ml-2">
+              <slot name="body"/>
+              <br><br>
+              <small>*indicates required field</small>
+            </v-card-text>
+            <v-card-actions class="mb-2 mr-2">
+              <v-spacer/>
+              <v-btn
+                color="blue-darken-1"
+                variant="flat"
+                type="submit"
+                :disabled="submitLoading"
+                :loading="submitLoading"
+                :form="formId"
+              >
+                Submit
+                <template v-slot:loader>
+                  <v-progress-circular indeterminate color="blue"/>
+                </template>
+              </v-btn>
+              <v-btn
+                color="blue"
+                :disabled="submitLoading"
+                @click="dialog = false; $emit(Events.ITEMS_MANAGER_ADD_CANCEL)"
+              >
+                Cancel
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
       </v-toolbar>
     </template>
     <template #item.actions="{ item }">
@@ -45,9 +90,23 @@
   </v-card>
 </template>
 
+<script lang="ts">
+export default {
+  data() {
+    return {
+      dialog: false,
+    };
+  },
+}
+</script>
+
 <script setup lang="ts">
-import AddDialog from './AddDialog.vue';
 import { ItemsManagerProps } from '../../common/props';
+import { Events } from '../../common/events';
 
 defineProps<ItemsManagerProps>();
+defineEmits([
+  Events.ITEMS_MANAGER_ADD_SUBMIT,
+  Events.ITEMS_MANAGER_ADD_CANCEL,
+]);
 </script>
