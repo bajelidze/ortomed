@@ -5,9 +5,9 @@
     @submit.prevent="submit"
   >
     <v-text-field
-      v-model="firstName"
-      label="First name"
-      :disabled="firstNameTextDisabled"
+      v-model="name"
+      label="Name*"
+      :disabled="submitLoading"
     />
   </v-form>
 </template>
@@ -24,14 +24,14 @@ defineEmits([Patient.ADD_PATIENT_SUBMIT]);
 export default {
   data() {
     return {
-      firstName: '',
-      firstNameTextDisabled: false,
+      name: '',
     };
   },
   methods: {
     submit() {
-      this.firstNameTextDisabled = true;
-      this.$emit(Patient.ADD_PATIENT_SUBMIT, { firstName: this.firstName })
+      this.$emit(Patient.ADD_PATIENT_SUBMIT, {
+        name: this.name,
+      })
     }
   },
 }

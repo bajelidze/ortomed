@@ -6,13 +6,14 @@
     :table="table"
     :add-button="true"
     :sort-by="[{ key: 'date_added', order: Order.DESC }]"
-    :submit-loading="submitLoading"
     :form-id="formId"
+    :submit-loading="submitLoading"
   >
     <template #body>
       <AddPatient
         :form-id="formId"
-        @add-patient-submit="submitLoading = true"
+        :submit-loading="submitLoading"
+        @add-patient-submit="addPatientSubmit"
       />
     </template>
   </ItemsManager>
@@ -21,10 +22,10 @@
 <script setup lang="ts">
 import ItemsManager from '../components/common/ItemsManager.vue';
 import AddPatient from '../components/patients/AddPatient.vue';
-import { Table, Align, Order } from '../common/interfaces';
+import { Table, Align, Order, AddPatientFields } from '../common/interfaces';
 
 // const patients = await window.api.listPatients(10, 0);
-const patients = await window.api.listPatients(10, 0);
+const patients = await window.api.patients.listAll();
 
 const header = ['ID', 'Name', 'Date Added'].map(col => ({
   title: col,
@@ -60,6 +61,17 @@ export default {
       lastName: '',
       submitLoading: false,
     };
+  },
+  methods: {
+    async addPatientSubmit(patient: AddPatientFields) {
+      this.submitLoading = true;
+
+      try {
+        await window.api.patients.add(patient);
+      } finally {
+        this.submitLoading = false;
+      }
+    },
   },
 }
 </script>

@@ -24,3 +24,7 @@ export interface SortBy {
   key: string
   order: Order
 }
+
+export interface AddPatientFields {
+  name: string
+}

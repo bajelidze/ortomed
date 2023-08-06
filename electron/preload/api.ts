@@ -1,10 +1,17 @@
 import { contextBridge, ipcRenderer } from 'electron';
-// import { Patient } from '@/modules/actors/patient';
-// import { NFP } from '@/common/typing';
+import { AddPatientFields } from '../../src/common/interfaces';
 
 export const API = {
-  listPatients: (limit: number, offset: number): Promise<Record<string, string>[]> => {
-    return ipcRenderer.invoke('listPatients', limit, offset);
+  patients: {
+    list(limit: number, offset: number): Promise<Record<string, string>[]> {
+      return ipcRenderer.invoke('patientsList', limit, offset);
+    },
+    listAll(): Promise<Record<string, string>[]> {
+      return ipcRenderer.invoke('patientsListAll');
+    },
+    add(patient: AddPatientFields): Promise<void> {
+      return ipcRenderer.invoke('patientsAdd', patient);
+    },
   },
 };
 

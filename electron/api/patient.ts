@@ -1,28 +1,34 @@
 import { ipcMain } from 'electron';
 import db from '@/common/db';
-import { PatientDao } from '@/modules/actors/patient';
+import { PatientDao, Patient } from '@/modules/actors/patient';
 import { DateTime } from 'luxon';
+import { AddPatientFields } from '../../src/common/interfaces';
 
 export function setPatientHandlers() {
-  ipcMain.handle('listPatients', async (_, limit: number, offset: number) => {
-    const patientDao = new PatientDao(db);
-    const patients = await patientDao.listPages(limit, offset);
-
-    return patients.map(patient => ({
-      id: patient.id?.toString(),
-      name: patient.name,
-      dateAdded: patient.dateAdded.toLocaleString(DateTime.DATETIME_MED),
-    }));
+  ipcMain.handle('patientsList', async (_, limit: number, offset: number) => {
+    const patients = await new PatientDao(db).listPages(limit, offset);
+    return formatPatients(patients);
   });
 
-  ipcMain.handle('addPatients', async () => {
-    const patientDao = new PatientDao(db);
-    const patients = await patientDao.listAll();
-
-    return patients.map(patient => ({
-      id: patient.id,
-      name: patient.name,
-      dateAdded: patient.dateAdded.toLocaleString(DateTime.DATETIME_MED),
-    }));
+  ipcMain.handle('patientsListAll', async () => {
+    const patients = await new PatientDao(db).listAll();
+    return formatPatients(patients);
   });
+
+  ipcMain.handle('patientsAdd', async (_, patient: AddPatientFields) => {
+    console.log(patient);
+    const patientCls = new Patient({
+      name: patient.name,
+    }).setDb(db)
+
+    await patientCls.commit()
+  });
+}
+
+function formatPatients(patients: Patient[]): any[] {
+  return patients.map(patient => ({
+    id: patient.id?.toString(),
+    name: patient.name,
+    dateAdded: patient.dateAdded.toLocaleString(DateTime.DATETIME_MED),
+  }));
 }
