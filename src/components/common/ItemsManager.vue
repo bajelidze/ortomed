@@ -3,15 +3,26 @@
   <v-data-table
     :headers="table.header"
     :items="table.rows"
-    :sort-by="[{ key: 'date_added', order: 'desc' }]"
+    :sort-by="sortBy"
     class="elevation-1"
     align="center"
   >
     <template #top>
       <v-toolbar flat>
-        <v-toolbar-title align="left">
+        <v-toolbar-title
+          align="left">
           {{ title }}
         </v-toolbar-title>
+        <v-spacer/>
+        <v-btn 
+          class="mr-3"
+          color="green"
+          variant="flat"
+          append-icon="mdi-plus"
+        >
+          Add
+          <AddDialog :title="addPatientTitle"/>
+        </v-btn>
       </v-toolbar>
     </template>
     <template #item.actions="{ item }">
@@ -28,18 +39,14 @@
       />
     </template>
     <template v-slot:no-data>
-      <v-btn
-        color="primary"
-        @click="console.log('initialize')"
-      >
-        Reset
-      </v-btn>
+      {{ noDataText }}
     </template>
   </v-data-table>
   </v-card>
 </template>
 
 <script setup lang="ts">
+import AddDialog from './AddDialog.vue';
 import { ItemsManagerProps } from '../../common/props';
 
 defineProps<ItemsManagerProps>();

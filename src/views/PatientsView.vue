@@ -3,6 +3,9 @@
     title="Patients"
     :table="table"
     :add-button="true"
+    :sort-by="[{ key: 'date_added', order: Order.DESC }]"
+    no-data-text="No patients"
+    add-patient-title="Add patient"
   >
     <template #addBtn>
       <TextButton
@@ -24,7 +27,7 @@
 import ItemsManager from '../components/common/ItemsManager.vue';
 import AddDialog from '../components/common/AddDialog.vue';
 import TextButton from '../components/common/TextButton.vue';
-import { Table, Align } from '../common/interfaces';
+import { Table, Align, Order } from '../common/interfaces';
 
 const patients = await window.api.listPatients(10, 0);
 
@@ -32,14 +35,14 @@ const header = ['ID', 'Name', 'Date Added'].map(col => ({
   title: col,
   key: col.toLowerCase().replace(' ', '_'),
   sortable: true,
-  align: Align.Start,
+  align: Align.START,
 }));
 
 header.push({
     title: 'Actions',
     key: 'actions',
     sortable: false,
-    align: Align.Start,
+    align: Align.START,
 })
 
 const table: Table = {

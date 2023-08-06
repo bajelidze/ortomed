@@ -1,6 +1,6 @@
 export enum Align {
-  Start = 'start',
-  End = 'end',
+  START = 'start',
+  END = 'end',
 }
 
 export interface Header {
@@ -13,4 +13,14 @@ export interface Header {
 export interface Table {
   header: Header[],
   rows: Record<string, string>[],
+}
+
+export enum Order {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
+export interface SortBy {
+  key: string
+  order: Order
 }
