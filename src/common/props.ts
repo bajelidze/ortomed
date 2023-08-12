@@ -12,6 +12,7 @@ export interface ItemsManagerProps extends ItemsListProps {
   addButton: boolean
   submitLoading: boolean
   formId: string
+  modelValue: String
 }
 
 export interface AddPatientProps {

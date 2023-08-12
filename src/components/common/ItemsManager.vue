@@ -16,23 +16,24 @@
 
         <v-spacer/>
 
+        <v-btn 
+          class="mr-4"
+          color="green"
+          variant="flat"
+          append-icon="mdi-plus"
+          @click="showDialog(true)"
+        >
+          Add
+        </v-btn>
+
         <v-dialog
           scrollable
           width="1024"
-          v-model="dialog"
+          :modelValue="modelValue"
+          @update:modelValue="$emit('update:modelValue', $event)"
           :persistent="submitLoading"
         >
-          <template #activator="{ props }">
-            <v-btn 
-              class="mr-4"
-              color="green"
-              variant="flat"
-              append-icon="mdi-plus"
-              v-bind="props"
-            >
-              Add
-            </v-btn>
-          </template>
+
           <v-card>
             <v-card-title class="ma-3">
               <span class="text-h5">{{ addPatientTitle }}</span>
@@ -60,7 +61,7 @@
               <v-btn
                 color="blue"
                 :disabled="submitLoading"
-                @click="dialog = false; $emit(Common.ITEMS_MANAGER_ADD_CANCEL)"
+                @click="showDialog(false)"
               >
                 Cancel
               </v-btn>
@@ -70,7 +71,7 @@
 
       </v-toolbar>
     </template>
-    <template #item.actions="{ item }">
+    <template #item.actions="{ }">
       <v-btn
         class="ml-n3"
         icon="mdi-pencil"
@@ -97,6 +98,11 @@ export default {
       dialog: false,
     };
   },
+  methods: {
+    showDialog(show: boolean) {
+      this.$emit(Common.UPDATE_MODULE_VALUE, show)
+    },
+  },
 }
 </script>
 
@@ -107,6 +113,6 @@ import { Common } from '../../common/events';
 defineProps<ItemsManagerProps>();
 defineEmits([
   Common.ITEMS_MANAGER_ADD_SUBMIT,
-  Common.ITEMS_MANAGER_ADD_CANCEL,
+  Common.UPDATE_MODULE_VALUE,
 ]);
 </script>

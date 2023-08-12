@@ -8,6 +8,7 @@
     :sort-by="[{ key: 'date_added', order: Order.DESC }]"
     :form-id="formId"
     :submit-loading="submitLoading"
+    v-model="showDialog"
   >
     <template #body>
       <AddPatient
@@ -60,6 +61,7 @@ export default {
       firstName: '',
       lastName: '',
       submitLoading: false,
+      showDialog: false,
     };
   },
   methods: {
@@ -70,6 +72,7 @@ export default {
         await window.api.patients.add(patient);
       } finally {
         this.submitLoading = false;
+        this.showDialog = false;
       }
     },
   },
