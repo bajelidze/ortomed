@@ -4,15 +4,17 @@ export enum Align {
 }
 
 export interface Header {
-  title: string,
-  key: string,
-  align: Align,
-  sortable: boolean,
+  title: string
+  key: string
+  align: Align
+  sortable: boolean
 }
 
+export type Row = Record<string, string>
+
 export interface Table {
-  header: Header[],
-  rows: Record<string, string>[],
+  header: Header[]
+  rows?: Row[]
 }
 
 export enum Order {

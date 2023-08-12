@@ -21,12 +21,12 @@
 </template>
 
 <script setup lang="ts">
+import { ref, reactive, watch } from 'vue';
 import ItemsManager from '../components/common/ItemsManager.vue';
 import AddPatient from '../components/patients/AddPatient.vue';
 import { Table, Align, Order, AddPatientFields } from '../common/interfaces';
 
-// const patients = await window.api.listPatients(10, 0);
-const patients = await window.api.patients.listAll();
+const formId = 'add-patient-form';
 
 const header = ['ID', 'Name', 'Date Added'].map(col => ({
   title: col,
@@ -42,39 +42,37 @@ header.push({
     align: Align.START,
 })
 
-const table: Table = {
-  header,
-  rows: patients.map(patient => ({
+const recomputePatients = ref(false);
+const submitLoading = ref(false);
+const showDialog = ref(false);
+
+const table = reactive({ header, rows: [] } as Table)
+
+async function resetPatientsTable() {
+  // TODO: Add pagination for scalability.
+  const patients = await window.api.patients.listAll();
+
+  table.rows =  patients.map(patient => ({
     id: patient.id,
     name: patient.name,
     date_added: patient.dateAdded,
-  })),
-};
-
-const formId = 'add-patient-form';
-</script>
-
-<script lang="ts">
-export default {
-  data() {
-    return {
-      firstName: '',
-      lastName: '',
-      submitLoading: false,
-      showDialog: false,
-    };
-  },
-  methods: {
-    async addPatientSubmit(patient: AddPatientFields) {
-      this.submitLoading = true;
-
-      try {
-        await window.api.patients.add(patient);
-      } finally {
-        this.submitLoading = false;
-        this.showDialog = false;
-      }
-    },
-  },
+  }));
 }
+
+await resetPatientsTable();
+
+watch(recomputePatients, resetPatientsTable);
+
+const addPatientSubmit = async (patient: AddPatientFields) => {
+  submitLoading.value = true;
+
+  try {
+    await window.api.patients.add(patient);
+  } finally {
+    submitLoading.value = false;
+    showDialog.value = false;
+  }
+
+  recomputePatients.value = !recomputePatients.value;
+};
 </script>
