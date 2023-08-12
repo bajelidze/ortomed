@@ -16,16 +16,6 @@
 
         <v-spacer/>
 
-        <v-btn 
-          class="mr-4"
-          color="green"
-          variant="flat"
-          append-icon="mdi-plus"
-          @click="showDialog(true)"
-        >
-          Add
-        </v-btn>
-
         <v-dialog
           scrollable
           width="1024"
@@ -33,6 +23,17 @@
           @update:modelValue="$emit('update:modelValue', $event)"
           :persistent="submitLoading"
         >
+          <template #activator="{ props }">
+            <v-btn 
+              class="mr-4"
+              color="green"
+              variant="flat"
+              append-icon="mdi-plus"
+              v-bind="props"
+            >
+              Add
+            </v-btn>
+          </template>
 
           <v-card>
             <v-card-title class="ma-3">
