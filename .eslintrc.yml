@@ -23,12 +23,14 @@ rules:
   no-multiple-empty-lines: [error, {max: 1}]
   no-multi-spaces: error
   keyword-spacing: error
+  require-await: error
+  space-infix-ops: error
 
   '@typescript-eslint/no-var-requires': 0
   '@typescript-eslint/no-explicit-any': [off]
   '@typescript-eslint/ban-ts-comment': [off]
   '@typescript-eslint/no-namespace': off
   '@typescript-eslint/ban-types': off
-  'vue/valid-v-slot': ['error', {
-    allowModifiers: true,
-  }],
+  '@typescript-eslint/member-delimiter-style': error
+
+  'vue/valid-v-slot': [error, { allowModifiers: true }]

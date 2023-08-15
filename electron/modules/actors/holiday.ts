@@ -78,7 +78,7 @@ export class HolidayDao extends BasicDao<Holiday, HolidayEntity> {
   }
 
   protected async createTable(): Promise<void> {
-    return this.db.schema.createTable(this.table, table => {
+    return await this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.integer('doctorId')
         .unsigned()
@@ -106,6 +106,6 @@ export class HolidayDao extends BasicDao<Holiday, HolidayEntity> {
   }
 
   async listHolidaysForDoctor(doctorId: number): Promise<Holiday[]> {
-    return this.list(query => query.where('doctorId', doctorId));
+    return await this.list(query => query.where('doctorId', doctorId));
   }
 }

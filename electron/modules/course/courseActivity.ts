@@ -80,7 +80,7 @@ export class CourseActivityDao extends BasicDao<CourseActivity, CourseActivityEn
   }
 
   protected async createTable(): Promise<void> {
-    return this.db.schema.createTable(this.table, table => {
+    return await this.db.schema.createTable(this.table, table => {
       table.increments();
       table.integer('courseId')
         .unsigned()
@@ -118,6 +118,6 @@ export class CourseActivityDao extends BasicDao<CourseActivity, CourseActivityEn
   }
 
   async listByCourse(courseId: number): Promise<CourseActivity[]> {
-    return this.list(query => query.where('courseId', courseId));
+    return await this.list(query => query.where('courseId', courseId));
   }
 }

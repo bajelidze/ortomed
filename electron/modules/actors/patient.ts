@@ -63,7 +63,7 @@ export class PatientDao extends BasicDao<Patient, PatientEntity> {
   }
 
   protected async createTable(): Promise<void> {
-    return this.db.schema.createTable(this.table, table => {
+    return await this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.string('name').notNullable();
       table.integer('dateAdded').unsigned();

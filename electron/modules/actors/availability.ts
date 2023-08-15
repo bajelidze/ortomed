@@ -81,7 +81,7 @@ export class AvailabilityDao extends BasicDao<Availability, AvailabilityEntity> 
   }
 
   protected async createTable(): Promise<void> {
-    return this.db.schema.createTable(this.table, table => {
+    return await this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.integer('doctorId')
         .unsigned()
@@ -117,6 +117,6 @@ export class AvailabilityDao extends BasicDao<Availability, AvailabilityEntity> 
   }
 
   async listAvailabilitysForDoctor(doctorId: number): Promise<Availability[]> {
-    return this.list(query => query.where('doctorId', doctorId));
+    return await this.list(query => query.where('doctorId', doctorId));
   }
 }

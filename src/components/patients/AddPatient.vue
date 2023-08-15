@@ -31,8 +31,8 @@ export default {
     submit() {
       this.$emit(Patient.ADD_PATIENT_SUBMIT, {
         name: this.name,
-      })
-    }
+      });
+    },
   },
-}
+};
 </script>

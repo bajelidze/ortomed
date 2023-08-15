@@ -79,7 +79,7 @@ export class Doctor {
       throw new Error('id is undefined');
     }
 
-    return this.holidayDao.listHolidaysForDoctor(this.id);
+    return await this.holidayDao.listHolidaysForDoctor(this.id);
   }
 
   async listAvailabilities(): Promise<Availability[]> {
@@ -91,7 +91,7 @@ export class Doctor {
       throw new Error('id is undefined');
     }
 
-    return this.availabilityDao?.listAvailabilitysForDoctor(this.id);
+    return await this.availabilityDao?.listAvailabilitysForDoctor(this.id);
   }
 
   async addAvailability(...availabilities: Availability[]): Promise<void> {
@@ -146,7 +146,7 @@ export class Doctor {
 export interface DoctorEntity {
   id?: number;
   name?: string;
-  schedule?: string
+  schedule?: string;
 }
 
 export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
@@ -155,7 +155,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
   }
 
   protected async createTable(): Promise<void> {
-    return this.db.schema.createTable(this.table, table => {
+    return await this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.string('name').notNullable();
       table.string('schedule').notNullable();

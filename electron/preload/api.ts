@@ -1,16 +1,21 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { AddPatientFields } from '../../src/common/interfaces';
+import { AddPatientFields } from '../../common/fields';
+import { FormattedPatient } from '../../common/interfaces';
+import { Patients } from '../api/endpoints/endpoints';
 
 export const API = {
   patients: {
-    list(limit: number, offset: number): Promise<Record<string, string>[]> {
-      return ipcRenderer.invoke('patientsList', limit, offset);
+    list(limit: number, offset: number): Promise<FormattedPatient[]> {
+      return ipcRenderer.invoke(Patients.LIST, limit, offset);
     },
-    listAll(): Promise<Record<string, string>[]> {
-      return ipcRenderer.invoke('patientsListAll');
+    listAll(): Promise<FormattedPatient[]> {
+      return ipcRenderer.invoke(Patients.LIST_ALL);
     },
     add(patient: AddPatientFields): Promise<void> {
-      return ipcRenderer.invoke('patientsAdd', patient);
+      return ipcRenderer.invoke(Patients.ADD, patient);
+    },
+    delete(id: number): Promise<void> {
+      return ipcRenderer.invoke(Patients.DELETE, id);
     },
   },
 };

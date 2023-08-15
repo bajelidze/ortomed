@@ -1,21 +1,21 @@
 import { Table, SortBy } from './interfaces';
 
 export interface ItemsListProps {
-  table: Table
+  table: Table;
 }
 
 export interface ItemsManagerProps extends ItemsListProps {
-  title: string
-  noDataText: string
-  addPatientTitle: string
-  sortBy: SortBy[]
-  addButton: boolean
-  submitLoading: boolean
-  formId: string
-  modelValue: boolean
+  title: string;
+  noDataText: string;
+  addPatientTitle: string;
+  sortBy: SortBy[];
+  addButton: boolean;
+  submitLoading: boolean;
+  formId: string;
+  modelValue: boolean;
 }
 
 export interface AddPatientProps {
-  formId: string
-  submitLoading: boolean
+  formId: string;
+  submitLoading: boolean;
 }

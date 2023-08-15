@@ -72,17 +72,17 @@
 
       </v-toolbar>
     </template>
-    <template #item.actions="{ }">
+    <template #item.actions="{ item }">
       <v-btn
         class="ml-n3"
         icon="mdi-pencil"
         variant="text"
-        @click="console.log('edit')"
+        @click="$emit(Common.ITEMS_MANAGER_EDIT, item)"
       />
       <v-btn
         icon="mdi-trash-can"
         variant="text"
-        @click="console.log('delete')"
+        @click="$emit(Common.ITEMS_MANAGER_DELETE, item)"
       />
     </template>
     <template v-slot:no-data>
@@ -92,28 +92,19 @@
   </v-card>
 </template>
 
-<script lang="ts">
-export default {
-  data() {
-    return {
-      dialog: false,
-    };
-  },
-  methods: {
-    showDialog(show: boolean) {
-      this.$emit(Common.UPDATE_MODULE_VALUE, show)
-    },
-  },
-}
-</script>
-
 <script setup lang="ts">
 import { ItemsManagerProps } from '../../common/props';
 import { Common } from '../../common/events';
 
-defineProps<ItemsManagerProps>();
-defineEmits([
+const emit = defineEmits([
   Common.ITEMS_MANAGER_ADD_SUBMIT,
   Common.UPDATE_MODULE_VALUE,
+  Common.ITEMS_MANAGER_DELETE,
+  Common.ITEMS_MANAGER_EDIT,
 ]);
+defineProps<ItemsManagerProps>();
+
+function showDialog(show: boolean) {
+  emit(Common.UPDATE_MODULE_VALUE, show);
+}
 </script>

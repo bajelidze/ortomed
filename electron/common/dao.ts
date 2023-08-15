@@ -58,11 +58,11 @@ export abstract class BasicDao<Cls extends Class, Entity> {
   }
 
   async listAll(): Promise<Cls[]> {
-    return this.list();
+    return await this.list();
   }
 
   async listPages(limit: number, offset: number): Promise<Cls[]> {
-    return this.list(query => query.limit(limit).offset(offset));
+    return await this.list(query => query.limit(limit).offset(offset));
   }
 
   async getById(id: number): Promise<Cls> {
@@ -124,5 +124,13 @@ export abstract class BasicDao<Cls extends Class, Entity> {
     }
 
     return ids;
+  }
+
+  async deleteById(id: number): Promise<void> {
+    console.log('id:', + id);
+    await this.init();
+    await this.db.from(this.table).where('id', id).del();
+
+    log.info(`Deleted item with id ${id} from ${this.table}`);
   }
 }

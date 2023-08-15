@@ -13,15 +13,15 @@ import { Activity, ActivityDao } from '../course/activity';
 import errs from '@/common/errors';
 
 type WeekdayMap = {
-  [key: number]: time.IntervalD[]
+  [key: number]: time.IntervalD[];
 }
 
 type Cache<T> = {
-  [id: number]: T
+  [id: number]: T;
 }
 
 type CapacityMap = {
-  [capacity: number]: Interval[]
+  [capacity: number]: Interval[];
 }
 
 const oneDay = Duration.fromObject({day: 1});

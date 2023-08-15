@@ -4,17 +4,17 @@ export enum Align {
 }
 
 export interface Header {
-  title: string
-  key: string
-  align: Align
-  sortable: boolean
+  title: string;
+  key: string;
+  align: Align;
+  sortable: boolean;
 }
 
 export type Row = Record<string, string>
 
 export interface Table {
-  header: Header[]
-  rows?: Row[]
+  header: Header[];
+  rows?: Row[];
 }
 
 export enum Order {
@@ -23,10 +23,6 @@ export enum Order {
 }
 
 export interface SortBy {
-  key: string
-  order: Order
-}
-
-export interface AddPatientFields {
-  name: string
+  key: string;
+  order: Order;
 }

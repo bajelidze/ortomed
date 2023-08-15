@@ -45,7 +45,7 @@ export namespace time {
       const newIntervals: Interval[] = [];
 
       for (let j = 1; j < intervals.length; j++) {
-        const intersect = intervals[j-1].intersection(intervals[j]);
+        const intersect = intervals[j - 1].intersection(intervals[j]);
         if (intersect == null) {
           continue;
         }
@@ -68,7 +68,7 @@ export namespace time {
     }
 
     for (let i = 1; i < intervals.length; i++) {
-      const intersection = intervals[i-1].intersection(intervals[i]);
+      const intersection = intervals[i - 1].intersection(intervals[i]);
       if (intersection == null) {
         console.log(null);
         continue;

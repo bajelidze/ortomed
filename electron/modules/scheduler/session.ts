@@ -104,7 +104,7 @@ export class SessionDao extends BasicDao<Session, SessionEntity> {
   }
 
   protected async createTable(): Promise<void> {
-    return this.db.schema.createTable(this.table, table => {
+    return await this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.integer('doctorId')
         .unsigned()
@@ -159,7 +159,7 @@ export class SessionDao extends BasicDao<Session, SessionEntity> {
   }
 
   async listByDoctorId(doctorId: number, from: DateTime): Promise<Session[]> {
-    return this.list(query => query
+    return await this.list(query => query
       .where('endTime', '>', from.toUnixInteger())
       .where('doctorId', doctorId),
     );
