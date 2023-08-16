@@ -27,7 +27,6 @@ export function setPatientHandlers() {
   });
 
   ipcMain.handle(Patients.DELETE, async (_, id: number) => {
-    console.log('here:', id);
     await new PatientDao(db).deleteById(id);
   });
 }

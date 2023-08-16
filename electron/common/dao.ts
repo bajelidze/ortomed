@@ -127,7 +127,6 @@ export abstract class BasicDao<Cls extends Class, Entity> {
   }
 
   async deleteById(id: number): Promise<void> {
-    console.log('id:', + id);
     await this.init();
     await this.db.from(this.table).where('id', id).del();
 

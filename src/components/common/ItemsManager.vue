@@ -9,8 +9,7 @@
   >
     <template #top>
       <v-toolbar flat>
-        <v-toolbar-title
-          align="left">
+        <v-toolbar-title align="left">
           {{ title }}
         </v-toolbar-title>
 
