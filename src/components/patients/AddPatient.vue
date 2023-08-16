@@ -13,26 +13,20 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { AddPatientProps } from '../../common/props';
 import { Patient } from '../../common/events';
+import { AddPatientFields } from '../../../common/fields';
+
+const name = ref('');
+
+const emit = defineEmits<{
+  (e: typeof Patient.ADD_PATIENT_SUBMIT, fields: AddPatientFields): void;
+}>();
 
 defineProps<AddPatientProps>();
-defineEmits([Patient.ADD_PATIENT_SUBMIT]);
-</script>
 
-<script lang="ts">
-export default {
-  data() {
-    return {
-      name: '',
-    };
-  },
-  methods: {
-    submit() {
-      this.$emit(Patient.ADD_PATIENT_SUBMIT, {
-        name: this.name,
-      });
-    },
-  },
-};
+function submit() {
+  emit(Patient.ADD_PATIENT_SUBMIT, { name: name.value });
+}
 </script>

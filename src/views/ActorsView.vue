@@ -19,6 +19,7 @@
         :sort-by="[{ key: 'date_added', order: Order.DESC }]"
         :form-id="formId"
         :submit-loading="submitLoading"
+        :delete-disabled="deleteDisabled"
         @items-manager-delete="deletePatient"
       >
         <template #body>
@@ -62,6 +63,7 @@ header.push({
 
 const recomputePatients = ref(false);
 const submitLoading = ref(false);
+const deleteDisabled = ref(false);
 const showDialog = ref(false);
 const tab = ref(null);
 
@@ -100,11 +102,17 @@ async function addPatientSubmit(patient: AddPatientFields) {
 }
 
 async function deletePatient(patientData: { raw: FormattedPatient }) {
+  deleteDisabled.value = true;
+
   if (patientData.raw.id == undefined) {
     throw Error('selected patient id is undefined');
   }
 
-  await window.api.patients.delete(+patientData.raw.id);
+  try {
+    await window.api.patients.delete(+patientData.raw.id);
+  } finally {
+    deleteDisabled.value = false;
+  }
 
   rerenderPatients();
 }

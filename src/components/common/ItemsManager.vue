@@ -81,6 +81,7 @@
       <v-btn
         icon="mdi-trash-can"
         variant="text"
+        :disabled="deleteDisabled"
         @click="$emit(Common.ITEMS_MANAGER_DELETE, item)"
       />
     </template>
