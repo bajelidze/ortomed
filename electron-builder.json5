@@ -22,11 +22,14 @@
     "target": [
       {
         "target": "nsis",
-        "arch": [
-          "x64"
-        ]
+        "arch": ["x64"]
       }
     ],
+    "extraResources": [{
+      "from": "./share/",
+      "to": "share/",
+      "filter": ["**/*"]
+    }],
     "artifactName": "${productName}_${version}.${ext}"
   },
   "linux": {
