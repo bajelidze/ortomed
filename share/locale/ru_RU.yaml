@@ -1,0 +1,12 @@
+lang: ru_RU
+strings:
+  PATIENTS: 'Пациенты'
+  NAME: 'Имя'
+  DATE_ADDED: 'Дата Добавления'
+  ACTIONS: 'Действия'
+  ADD_PATIENT: 'Добавить пациента'
+  INDICATED_REQUIRED_FIELD: 'обозначает обязательное поле'
+  SUBMIT: 'Отправить'
+  CANCEL: 'Отменить'
+  DOCTORS: 'Доктора'
+  ADD: 'Добавить'

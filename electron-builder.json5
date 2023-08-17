@@ -30,7 +30,12 @@
     "artifactName": "${productName}_${version}.${ext}"
   },
   "linux": {
-	"target": "AppImage",
+    "target": "AppImage",
+    "extraResources": [{
+      "from": "./share/",
+      "to": "share/",
+      "filter": ["**/*"]
+    }]
   },
   "nsis": {
     "oneClick": false,

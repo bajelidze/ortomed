@@ -1,7 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { AddPatientFields } from '../../common/fields';
 import { FormattedPatient } from '../../common/interfaces';
-import { Patients } from '../api/endpoints/endpoints';
+import { Patients, Locale } from '../api/endpoints/endpoints';
+import { LocaleFile } from '../common/locale';
 
 export const API = {
   patients: {
@@ -16,6 +17,11 @@ export const API = {
     },
     delete(id: number): Promise<void> {
       return ipcRenderer.invoke(Patients.DELETE, id);
+    },
+  },
+  locale: {
+    readFile(fileName: LocaleFile): Promise<string> {
+      return ipcRenderer.invoke(Locale.READ_FILE, fileName);
     },
   },
 };

@@ -32,7 +32,7 @@
       </ItemsManager>
     </v-window-item>
     <v-window-item :key="2" :value="2">
-      <p>Hello!</p>
+      <p>{{ result }}</p>
     </v-window-item>
   </v-window>
 </template>
@@ -116,4 +116,7 @@ async function deletePatient(patientData: { raw: FormattedPatient }) {
 
   rerenderPatients();
 }
+
+const result = await window.api.locale.readFile('ru_RU');
+console.log(result);
 </script>

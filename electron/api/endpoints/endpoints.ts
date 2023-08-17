@@ -6,3 +6,9 @@ export enum Patients {
   ADD = patientsPrefix + 'Add',
   DELETE = patientsPrefix + 'Delete',
 }
+
+const localePrefix = 'locale';
+
+export enum Locale {
+  READ_FILE = localePrefix + 'ReadFile'
+}

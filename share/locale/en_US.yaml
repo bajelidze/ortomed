@@ -1,0 +1,12 @@
+lang: en_US
+strings:
+  PATIENTS: 'Patients'
+  NAME: 'Name'
+  DATE_ADDED: 'Date Added'
+  ACTIONS: 'Actions'
+  ADD_PATIENT: 'Add patient'
+  INDICATED_REQUIRED_FIELD: 'indicates required field'
+  SUBMIT: 'Submit'
+  CANCEL: 'Cancel'
+  DOCTORS: 'Doctors'
+  ADD: 'Add'
