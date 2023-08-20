@@ -117,6 +117,7 @@ async function deletePatient(patientData: { raw: FormattedPatient }) {
   rerenderPatients();
 }
 
-const result = await window.api.locale.readFile('ru_RU');
+import { LocaleFile } from '../../common/enums';
+const result = await window.api.locale.readFile(LocaleFile.ruRU);
 console.log(result);
 </script>
