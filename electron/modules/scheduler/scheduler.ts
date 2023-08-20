@@ -24,7 +24,7 @@ type CapacityMap = {
   [capacity: number]: Interval[];
 }
 
-const oneDay = Duration.fromObject({day: 1});
+const oneDay = Duration.fromObject({ day: 1 });
 
 export class Scheduler {
   db?: Knex;

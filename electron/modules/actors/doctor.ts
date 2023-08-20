@@ -124,7 +124,7 @@ export class Doctor {
     }
 
     if (lookAhead == undefined) {
-      lookAhead = Duration.fromObject({year: 1});
+      lookAhead = Duration.fromObject({ year: 1 });
     }
 
     startTime = startTime.startOf('day');
@@ -137,7 +137,7 @@ export class Doctor {
     return scheduleDates.map(sc => {
       const st = DateTime.fromJSDate(sc).startOf('day');
       return Interval.fromDateTimes(
-        st, st.plus(Duration.fromObject({day: 1})),
+        st, st.plus(Duration.fromObject({ day: 1 })),
       );
     });
   }

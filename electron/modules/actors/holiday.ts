@@ -6,7 +6,7 @@ import db from '@/common/db';
 
 export const _holidaysTable = 'holidays';
 
-const oneDay = Duration.fromObject({day: 1});
+const oneDay = Duration.fromObject({ day: 1 });
 
 export class Holiday {
   id?: number;

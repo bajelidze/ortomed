@@ -110,8 +110,8 @@ export class AvailabilityDao extends BasicDao<Availability, AvailabilityEntity> 
       doctorId: availability.doctorId,
       weekday: Weekday.fromStr(availability.weekday as WeekdayStr),
       interval: {
-        st: Duration.fromObject({second: availability.startTime}),
-        et: Duration.fromObject({second: availability.endTime}),
+        st: Duration.fromObject({ second: availability.startTime }),
+        et: Duration.fromObject({ second: availability.endTime }),
       },
     })));
   }

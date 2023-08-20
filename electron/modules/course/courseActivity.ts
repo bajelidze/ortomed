@@ -7,7 +7,7 @@ import db from '@/common/db';
 
 export const _courseActivitiesTable = 'courseActivities';
 
-const defaultPause = Duration.fromObject({hours: 12});
+const defaultPause = Duration.fromObject({ hours: 12 });
 
 export class CourseActivity {
   id?: number;
@@ -112,7 +112,7 @@ export class CourseActivityDao extends BasicDao<CourseActivity, CourseActivityEn
       id: ca.id,
       courseId: ca.courseId,
       activityId: ca.activityId,
-      pause: Duration.fromObject({seconds: ca.pause}),
+      pause: Duration.fromObject({ seconds: ca.pause }),
       index: ca.index,
     })));
   }

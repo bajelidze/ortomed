@@ -115,7 +115,7 @@ export abstract class BasicDao<Cls extends Class, Entity> {
 
       for (const upd of toUpdate) {
         const result: resultT[] = await this.db(this.table)
-          .where({id: upd.id})
+          .where({ id: upd.id })
           .update(this.toEntities(upd)[0], ['id']);
         ids.push(result[0].id);
       }

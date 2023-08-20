@@ -9,7 +9,7 @@ export class Activity {
   id?: number;
   name = '';
   description = '';
-  duration: Duration = Duration.fromObject({hour: 1});
+  duration: Duration = Duration.fromObject({ hour: 1 });
 
   // capacity is the maximum number of patients that
   // can participate in the activity at the same time.
