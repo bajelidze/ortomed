@@ -14,6 +14,7 @@ interface Common {
   ADD: string;
   LOADING: string;
   ACTORS: string;
+  ACTIONS: string;
 }
 
 interface Patient {
@@ -31,7 +32,6 @@ interface Doctors {
 interface Courses {
   COURSES: string;
   ADD_COURSE: string;
-  ACTIONS: string;
 }
 
 interface Strings {

@@ -69,7 +69,7 @@ for (const key in cols) {
 }
 
 header.push({
-  title: 'Actions',
+  title: locale.common.ACTIONS,
   key: 'actions',
   sortable: false,
   align: Align.START,

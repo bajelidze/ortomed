@@ -9,6 +9,7 @@ strings:
     ADD: 'Add'
     LOADING: 'Loading'
     ACTORS: 'Actors'
+    ACTIONS: 'Actions'
   patients:
     PATIENTS: 'Patients'
     ADD_PATIENT: 'Add patient'
@@ -20,4 +21,3 @@ strings:
   courses:
     COURSES: 'Courses'
     ADD_COURSE: 'Add course'
-    ACTIONS: 'Actions'

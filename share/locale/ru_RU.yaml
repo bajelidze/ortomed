@@ -9,6 +9,7 @@ strings:
     ADD: 'Добавить'
     LOADING: 'Загрузка'
     ACTORS: 'Акторы'
+    ACTIONS: 'Действия'
   patients:
     PATIENTS: 'Пациенты'
     ADD_PATIENT: 'Добавить пациента'
@@ -20,4 +21,3 @@ strings:
   courses:
     COURSES: 'Курсы'
     ADD_COURSE: 'Добавить курс'
-    ACTIONS: 'Действия'
