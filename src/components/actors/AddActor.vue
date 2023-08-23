@@ -6,7 +6,7 @@
   >
     <v-text-field
       v-model="name"
-      label="Name*"
+      :label="locale.common.NAME + '*'"
       :disabled="submitLoading"
     />
   </v-form>
@@ -17,7 +17,9 @@ import { ref } from 'vue';
 import { AddPatientProps } from '../../common/props';
 import { Patient } from '../../common/events';
 import { AddPatientFields } from '../../../common/fields';
+import { readFile, LocaleFile } from '../../common/locale';
 
+const locale = await readFile(LocaleFile.ruRU);
 const name = ref('');
 
 const emit = defineEmits<{

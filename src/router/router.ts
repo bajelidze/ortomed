@@ -11,8 +11,8 @@ const routes = [
     component: ActorsView,
   },
   {
-    path: '/doctors',
-    name: 'Doctors',
+    path: '/courses',
+    name: 'Courses',
     component: DoctorsView,
   },
 ];

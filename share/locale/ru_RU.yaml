@@ -1,12 +1,23 @@
 lang: ru_RU
 strings:
-  PATIENTS: 'Пациенты'
-  NAME: 'Имя'
-  DATE_ADDED: 'Дата Добавления'
-  ACTIONS: 'Действия'
-  ADD_PATIENT: 'Добавить пациента'
-  INDICATED_REQUIRED_FIELD: 'обозначает обязательное поле'
-  SUBMIT: 'Отправить'
-  CANCEL: 'Отменить'
-  DOCTORS: 'Доктора'
-  ADD: 'Добавить'
+  common:
+    NAME: 'Имя'
+    DATE_ADDED: 'Дата Добавления'
+    INDICATES_REQUIRED_FIELD: 'обозначает обязательное поле'
+    SUBMIT: 'Отправить'
+    CANCEL: 'Отменить'
+    ADD: 'Добавить'
+    LOADING: 'Загрузка'
+    ACTORS: 'Акторы'
+  patients:
+    PATIENTS: 'Пациенты'
+    ADD_PATIENT: 'Добавить пациента'
+    NO_PATIENTS: 'Пациентов отсутствуют'
+  doctors:
+    DOCTORS: 'Докторы'
+    ADD_DOCTOR: 'Добавить доктора'
+    NO_DOCTORS: 'Докторы отсутствуют'
+  courses:
+    COURSES: 'Курсы'
+    ADD_COURSE: 'Добавить курс'
+    ACTIONS: 'Действия'

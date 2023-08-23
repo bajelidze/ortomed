@@ -4,16 +4,16 @@
       color="blue"
       align-tabs="center"
     >
-    <v-tab :value="1"><v-icon start icon="mdi-account"/>Patients</v-tab>
-    <v-tab :value="2"><v-icon start icon="mdi-medical-bag"/>Doctors</v-tab>
+    <v-tab :value="1"><v-icon start icon="mdi-account"/>{{ locale.patients.PATIENTS }}</v-tab>
+    <v-tab :value="2"><v-icon start icon="mdi-medical-bag"/>{{ locale.doctors.DOCTORS }}</v-tab>
   </v-tabs>
   <v-window v-model="tab">
     <v-window-item :value="1">
       <ItemsManager
         v-model="showDialog"
-        title="Patients"
-        no-data-text="No patients"
-        add-patient-title="Add patient"
+        :title="locale.patients.PATIENTS"
+        :no-data-text="locale.patients.NO_PATIENTS"
+        :add-patient-title="locale.patients.ADD_PATIENT"
         :table="table"
         :add-button="true"
         :sort-by="[{ key: 'date_added', order: Order.DESC }]"
@@ -32,7 +32,7 @@
       </ItemsManager>
     </v-window-item>
     <v-window-item :key="2" :value="2">
-      <p>{{ result }}</p>
+      <p>Doctors...</p>
     </v-window-item>
   </v-window>
 </template>
@@ -40,19 +40,33 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
 import ItemsManager from '../components/common/ItemsManager.vue';
-import AddPatient from '../components/patients/AddPatient.vue';
+import AddPatient from '../components/actors/AddActor.vue';
 import { Table, Align, Order } from '../common/interfaces';
 import { AddPatientFields } from '../../common/fields';
 import { FormattedPatient } from '../../common/interfaces';
+import { readFile, LocaleFile } from '../common/locale';
 
 const formId = 'add-patient-form';
 
-const header = ['ID', 'Name', 'Date Added'].map(col => ({
-  title: col,
-  key: col.toLowerCase().replace(' ', '_'),
-  sortable: true,
-  align: Align.START,
-}));
+const locale = await readFile(LocaleFile.ruRU);
+
+const header = [];
+
+const cols = {
+  'ID': 'ID',
+  'Name': locale.common.NAME,
+  'Date Added': locale.common.DATE_ADDED,
+};
+
+for (const key in cols) {
+  header.push({
+    //@ts-ignore
+    title: cols[key],
+    key: key.toLowerCase().replace(' ', '_'),
+    sortable: true,
+    align: Align.START,
+  });
+}
 
 header.push({
   title: 'Actions',
@@ -116,8 +130,4 @@ async function deletePatient(patientData: { raw: FormattedPatient }) {
 
   rerenderPatients();
 }
-
-import { LocaleFile } from '../../common/enums';
-const result = await window.api.locale.readFile(LocaleFile.ruRU);
-console.log(result);
 </script>

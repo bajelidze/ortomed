@@ -4,7 +4,9 @@ import HomePage from './views/HomePage.vue';
 
 <template>
   <v-app>
-    <HomePage/>
+    <Suspense>
+      <HomePage/>
+    </Suspense>
   </v-app>
   <div class="absolute-square"></div>
 </template>

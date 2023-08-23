@@ -19,7 +19,7 @@
           scrollable
           width="1024"
           :modelValue="modelValue"
-          @update:modelValue="$emit('update:modelValue', $event)"
+          @update:modelValue="showDialog($event)"
           :persistent="submitLoading"
         >
           <template #activator="{ props }">
@@ -30,7 +30,7 @@
               append-icon="mdi-plus"
               v-bind="props"
             >
-              Add
+              {{ locale.common.ADD }}
             </v-btn>
           </template>
 
@@ -41,7 +41,7 @@
             <v-card-text class="ml-2">
               <slot name="body"/>
               <br><br>
-              <small>*indicates required field</small>
+              <small>*{{ locale.common.INDICATES_REQUIRED_FIELD }}</small>
             </v-card-text>
             <v-card-actions class="mb-2 mr-2">
               <v-spacer/>
@@ -53,7 +53,7 @@
                 :loading="submitLoading"
                 :form="formId"
               >
-                Submit
+                {{ locale.common.SUBMIT }}
                 <template v-slot:loader>
                   <v-progress-circular indeterminate color="blue"/>
                 </template>
@@ -63,7 +63,7 @@
                 :disabled="submitLoading"
                 @click="showDialog(false)"
               >
-                Cancel
+                {{ locale.common.CANCEL }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -95,6 +95,9 @@
 <script setup lang="ts">
 import { ItemsManagerProps } from '../../common/props';
 import { Common } from '../../common/events';
+import { readFile, LocaleFile } from '../../common/locale';
+
+const locale = await readFile(LocaleFile.ruRU);
 
 const emit = defineEmits([
   Common.ITEMS_MANAGER_ADD_SUBMIT,

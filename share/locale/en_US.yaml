@@ -1,12 +1,23 @@
 lang: en_US
 strings:
-  PATIENTS: 'Patients'
-  NAME: 'Name'
-  DATE_ADDED: 'Date Added'
-  ACTIONS: 'Actions'
-  ADD_PATIENT: 'Add patient'
-  INDICATED_REQUIRED_FIELD: 'indicates required field'
-  SUBMIT: 'Submit'
-  CANCEL: 'Cancel'
-  DOCTORS: 'Doctors'
-  ADD: 'Add'
+  common:
+    NAME: 'Name'
+    DATE_ADDED: 'Date Added'
+    INDICATES_REQUIRED_FIELD: 'indicates required field'
+    SUBMIT: 'Submit'
+    CANCEL: 'Cancel'
+    ADD: 'Add'
+    LOADING: 'Loading'
+    ACTORS: 'Actors'
+  patients:
+    PATIENTS: 'Patients'
+    ADD_PATIENT: 'Add patient'
+    NO_PATIENTS: 'No patients'
+  doctors:
+    DOCTORS: 'Doctors'
+    ADD_DOCTOR: 'Add doctor'
+    NO_DOCTORS: 'No doctors'
+  courses:
+    COURSES: 'Courses'
+    ADD_COURSE: 'Add course'
+    ACTIONS: 'Actions'

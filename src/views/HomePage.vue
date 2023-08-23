@@ -6,12 +6,11 @@
   >
     <v-list density="compact" nav>
       <router-link to="/actors">
-        <v-list-item prepend-icon="mdi-account" title="Actors" value="actors"></v-list-item>
+        <v-list-item prepend-icon="mdi-account" :title="locale.common.ACTORS" value="actors"/>
       </router-link>
-      <router-link to="/doctors">
-        <v-list-item prepend-icon="mdi-medical-bag" title="Doctors" value="doctors"></v-list-item>
+      <router-link to="/courses">
+        <v-list-item prepend-icon="mdi-medical-bag" :title="locale.courses.COURSES" value="courses"/>
       </router-link>
-      <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
     </v-list>
   </v-navigation-drawer>
 
@@ -21,11 +20,13 @@
         <router-view />
       </template>
       <template #fallback>
-        Loading...
+        {{ locale.common.LOADING }}...
       </template>
     </Suspense>
   </v-main>
 </template>
 
 <script setup lang="ts">
+import { readFile, LocaleFile } from '../common/locale';
+const locale = await readFile(LocaleFile.ruRU);
 </script>

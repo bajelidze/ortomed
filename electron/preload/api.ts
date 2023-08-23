@@ -1,8 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { AddPatientFields } from '../../common/fields';
 import { FormattedPatient } from '../../common/interfaces';
+import { LocaleFile } from '../../common/enums';
 import { Patients, Locale } from '../api/endpoints/endpoints';
-import { LocaleFile } from '../common/locale';
 
 export const API = {
   patients: {
