@@ -1,13 +1,11 @@
 import { app } from 'electron';
 import { Mutex } from 'async-mutex';
-import Ajv from 'ajv';
+import { DefinedError } from 'ajv';
 import path from 'path';
 import { LocaleFile } from '../../common/enums';
 import fs from 'fs/promises';
-import { settingsSchema } from './schema';
+import { validate } from './schema';
 import { fileExists } from '../../common/utils/fs';
-
-const ajv = new Ajv();
 
 const configName = 'config.json';
 const configIndentation = 2;
@@ -32,8 +30,6 @@ export class SettingsManager {
   }
 
   async init() {
-    const validate = ajv.compile(settingsSchema);
-
     return await this.mutex.runExclusive(async () => {
       // If the config file doesn't exist, write a new one
       // with the defaults.
@@ -41,13 +37,21 @@ export class SettingsManager {
         return await this.writeConfig();
       }
 
-      const result = await fs.readFile(this.fullPath);
+      const settingsBytes = await fs.readFile(this.fullPath);
+      const settings = JSON.parse(settingsBytes.toString());
 
-      if (!validate(result)) {
-        throw Error('invalid config file: ' + validate.errors?.toString());
+      if (!validate(settings)) {
+        let msg = 'invalid config file';
+
+        for (const err of validate.errors as DefinedError[]) {
+          msg += ': ' + err.message;
+          break;
+        }
+
+        throw Error(msg);
       }
 
-      this.value = JSON.parse(result.toString());
+      this.value = settings;
     });
   }
 

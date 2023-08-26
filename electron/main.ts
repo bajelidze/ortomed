@@ -56,8 +56,7 @@ app.on('window-all-closed', () => {
 
 setHandlers();
 
-(async () => {
+app.on('ready', async () => {
   await Settings.init();
-})();
-
-app.whenReady().then(createWindow);
+  createWindow();
+});

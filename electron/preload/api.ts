@@ -2,26 +2,35 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { AddPatientFields } from '../../common/fields';
 import { FormattedPatient } from '../../common/interfaces';
 import { LocaleFile } from '../../common/enums';
-import { Patients, Locale } from '../api/endpoints/endpoints';
+import { Settings, Patients, Locale } from '../api/endpoints/endpoints';
+import { SettingsValue } from '../settings/settings';
 
 export const API = {
+  settings: {
+    async get(): Promise<SettingsValue> {
+      return await ipcRenderer.invoke(Settings.GET);
+    },
+    async set(settings: SettingsValue) {
+      return await ipcRenderer.invoke(Settings.SET, settings);
+    },
+  },
   patients: {
-    list(limit: number, offset: number): Promise<FormattedPatient[]> {
-      return ipcRenderer.invoke(Patients.LIST, limit, offset);
+    async list(limit: number, offset: number): Promise<FormattedPatient[]> {
+      return await ipcRenderer.invoke(Patients.LIST, limit, offset);
     },
-    listAll(): Promise<FormattedPatient[]> {
-      return ipcRenderer.invoke(Patients.LIST_ALL);
+    async listAll(): Promise<FormattedPatient[]> {
+      return await ipcRenderer.invoke(Patients.LIST_ALL);
     },
-    add(patient: AddPatientFields): Promise<void> {
-      return ipcRenderer.invoke(Patients.ADD, patient);
+    async add(patient: AddPatientFields) {
+      return await ipcRenderer.invoke(Patients.ADD, patient);
     },
-    delete(id: number): Promise<void> {
-      return ipcRenderer.invoke(Patients.DELETE, id);
+    async delete(id: number) {
+      return await ipcRenderer.invoke(Patients.DELETE, id);
     },
   },
   locale: {
-    readFile(fileName: LocaleFile): Promise<string> {
-      return ipcRenderer.invoke(Locale.READ_FILE, fileName);
+    async readFile(fileName: LocaleFile): Promise<string> {
+      return await ipcRenderer.invoke(Locale.READ_FILE, fileName);
     },
   },
 };

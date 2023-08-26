@@ -1,8 +1,10 @@
-import { JSONSchemaType } from 'ajv';
+import Ajv, { JSONSchemaType } from 'ajv';
 import { LocaleFile } from '../../common/enums';
 import { SettingsValue } from './settings';
 
-export const settingsSchema: JSONSchemaType<SettingsValue> = {
+const ajv = new Ajv();
+
+const settingsSchema: JSONSchemaType<SettingsValue> = {
   type: 'object',
   properties: {
     locale: {
@@ -13,3 +15,5 @@ export const settingsSchema: JSONSchemaType<SettingsValue> = {
   required: ['locale'],
   additionalProperties: false,
 };
+
+export const validate = ajv.compile(settingsSchema);
