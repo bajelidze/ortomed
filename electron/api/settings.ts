@@ -1,10 +1,13 @@
 import { ipcMain } from 'electron';
-import { Settings } from '../api/endpoints/endpoints';
-import { readFile } from '../common/locale';
-import { LocaleFile } from '../../common/enums';
+import { Settings as SettingsActions } from '../api/endpoints/endpoints';
+import { Settings, SettingsValue } from '../settings/settings';
 
 export function setSettingsHandlers() {
-  ipcMain.handle(Settings.GET, async () => {
-    return await readFile(fileName);
+  ipcMain.handle(SettingsActions.GET, (): SettingsValue => {
+    return Settings.get();
+  });
+
+  ipcMain.handle(SettingsActions.SET, async (_, settings: SettingsValue) => {
+    return await Settings.set(settings);
   });
 }

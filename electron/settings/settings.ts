@@ -21,7 +21,7 @@ export class SettingsManager {
   // mutex to ensure exclusive access.
   mutex = new Mutex();
 
-  value: SettingsValue = {
+  private value: SettingsValue = {
     locale: LocaleFile.enUS,
   };
 
@@ -48,6 +48,16 @@ export class SettingsManager {
       }
 
       this.value = JSON.parse(result.toString());
+    });
+  }
+
+  get(): SettingsValue {
+    return this.value;
+  }
+
+  async set(settingsValue: SettingsValue) {
+    return await this.mutex.runExclusive(() => {
+      this.value = settingsValue;
     });
   }
 
