@@ -36,7 +36,7 @@ export class Patient {
     return this;
   }
 
-  // commit adds the Course to the store.
+  // commit adds the Patient to the store.
   async commit() {
     this.init();
 

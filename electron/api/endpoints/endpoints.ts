@@ -10,5 +10,12 @@ export enum Patients {
 const localePrefix = 'locale';
 
 export enum Locale {
-  READ_FILE = localePrefix + 'ReadFile'
+  READ_FILE = localePrefix + 'ReadFile',
+}
+
+const settingsPrefix = 'settings';
+
+export enum Settings {
+  GET = settingsPrefix + 'GET',
+  SET = settingsPrefix + 'SET',
 }

@@ -46,7 +46,7 @@ export class Activity {
     return this;
   }
 
-  // commit adds the Course to the store.
+  // commit adds the Activity to the store.
   async commit() {
     this.init();
 

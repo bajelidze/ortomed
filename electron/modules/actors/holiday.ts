@@ -39,7 +39,7 @@ export class Holiday {
     return this;
   }
 
-  // commit adds the Course to the store.
+  // commit adds the Holiday to the store.
   async commit() {
     this.init();
 

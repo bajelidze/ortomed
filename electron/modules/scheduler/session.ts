@@ -42,7 +42,7 @@ export class Session {
     return this;
   }
 
-  // commit adds the Course to the store.
+  // commit adds the Session to the store.
   async commit() {
     this.init();
 
