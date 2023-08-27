@@ -3,6 +3,7 @@ import { Mutex } from 'async-mutex';
 import { DefinedError } from 'ajv';
 import path from 'path';
 import { LocaleFile } from '../../common/enums';
+import { SettingsValue } from '../../common/interfaces';
 import fs from 'fs/promises';
 import { validate } from './schema';
 import { fileExists } from '../../common/utils/fs';
@@ -11,9 +12,7 @@ const configName = 'config.json';
 const configIndentation = 2;
 const userDataPath = app.getPath('userData');
 
-export interface SettingsValue {
-  locale: LocaleFile;
-}
+const fullPath = path.join(userDataPath, configName);
 
 export class SettingsManager {
   // mutex to ensure exclusive access.
@@ -23,21 +22,19 @@ export class SettingsManager {
     locale: LocaleFile.enUS,
   };
 
-  private fullPath = path.join(userDataPath, configName);
-
   constructor() {
-    return this;
+    return;
   }
 
   async init() {
     return await this.mutex.runExclusive(async () => {
       // If the config file doesn't exist, write a new one
       // with the defaults.
-      if (!await fileExists(this.fullPath)) {
+      if (!await fileExists(fullPath)) {
         return await this.writeConfig();
       }
 
-      const settingsBytes = await fs.readFile(this.fullPath);
+      const settingsBytes = await fs.readFile(fullPath);
       const settings = JSON.parse(settingsBytes.toString());
 
       if (!validate(settings)) {
@@ -45,7 +42,10 @@ export class SettingsManager {
 
         for (const err of validate.errors as DefinedError[]) {
           msg += ': ' + err.message;
-          break;
+
+          if (err.params) {
+            msg += ': ' + JSON.stringify(err.params);
+          }
         }
 
         throw Error(msg);
@@ -66,12 +66,14 @@ export class SettingsManager {
   }
 
   async commit() {
-    return await this.mutex.runExclusive(this.writeConfig);
+    return await this.mutex.runExclusive(async () => {
+      return await this.writeConfig();
+    });
   }
 
   private async writeConfig() {
     await fs.writeFile(
-      this.fullPath,
+      fullPath,
       JSON.stringify(this.value, null, configIndentation) + '\n',
     );
   }

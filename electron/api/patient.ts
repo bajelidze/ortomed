@@ -18,7 +18,6 @@ export function setPatientHandlers() {
   });
 
   ipcMain.handle(Patients.ADD, async (_, patient: AddPatientFields) => {
-    console.log(patient);
     const patientCls = new Patient({
       name: patient.name,
     }).setDb(db);

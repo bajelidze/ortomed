@@ -1,6 +1,6 @@
 import Ajv, { JSONSchemaType } from 'ajv';
 import { LocaleFile } from '../../common/enums';
-import { SettingsValue } from './settings';
+import { SettingsValue } from '../../common/interfaces';
 
 const ajv = new Ajv();
 
@@ -10,6 +10,7 @@ const settingsSchema: JSONSchemaType<SettingsValue> = {
     locale: {
       type: 'string',
       default: LocaleFile.enUS,
+      enum: Object.values(LocaleFile),
     },
   },
   required: ['locale'],

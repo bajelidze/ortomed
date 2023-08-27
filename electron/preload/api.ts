@@ -3,7 +3,7 @@ import { AddPatientFields } from '../../common/fields';
 import { FormattedPatient } from '../../common/interfaces';
 import { LocaleFile } from '../../common/enums';
 import { Settings, Patients, Locale } from '../api/endpoints/endpoints';
-import { SettingsValue } from '../settings/settings';
+import { SettingsValue } from '../../common/interfaces';
 
 export const API = {
   settings: {

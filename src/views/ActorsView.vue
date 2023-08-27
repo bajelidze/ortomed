@@ -44,11 +44,14 @@ import AddPatient from '../components/actors/AddActor.vue';
 import { Table, Align, Order } from '../common/interfaces';
 import { AddPatientFields } from '../../common/fields';
 import { FormattedPatient } from '../../common/interfaces';
-import { readFile, LocaleFile } from '../common/locale';
+import { readFile } from '../common/locale';
+import { useSettingsStore } from '../store/settings';
+
+const settings = await useSettingsStore().get();
 
 const formId = 'add-patient-form';
 
-const locale = await readFile(LocaleFile.ruRU);
+const locale = await readFile(settings.locale);
 
 const header = [];
 

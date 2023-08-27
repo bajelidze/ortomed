@@ -5,10 +5,13 @@ import { createApp } from 'vue';
 import './style.css';
 import router from './router/router';
 import { DateTime } from 'luxon';
+import { createPinia } from 'pinia';
 
+const pinia = createPinia();
 const app = createApp(App);
 
 app.use(vuetify)
+  .use(pinia)
   .use(router)
   .mount('#app')
   .$nextTick(() => postMessage({ payload: 'removeLoading' }, '*'));
