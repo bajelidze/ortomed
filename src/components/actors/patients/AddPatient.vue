@@ -14,11 +14,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { AddPatientProps } from '../../common/props';
-import { Patient } from '../../common/events';
-import { AddPatientFields } from '../../../common/fields';
-import { readFile } from '../../common/locale';
-import { useSettingsStore } from '../../store/settings';
+import { AddPatientProps } from '../../../common/props';
+import { Patient } from '../../../common/events';
+import { AddPatientFields } from '../../../../common/fields';
+import { readFile } from '../../../common/locale';
+import { useSettingsStore } from '../../../store/settings';
 
 const name = ref('');
 
