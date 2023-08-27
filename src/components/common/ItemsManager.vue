@@ -95,9 +95,11 @@
 <script setup lang="ts">
 import { ItemsManagerProps } from '../../common/props';
 import { Common } from '../../common/events';
-import { readFile, LocaleFile } from '../../common/locale';
+import { readFile } from '../../common/locale';
+import { useSettingsStore } from '../../store/settings';
 
-const locale = await readFile(LocaleFile.ruRU);
+const settings = await useSettingsStore().get();
+const locale = await readFile(settings.locale);
 
 const emit = defineEmits([
   Common.ITEMS_MANAGER_ADD_SUBMIT,

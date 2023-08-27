@@ -47,10 +47,10 @@ import { FormattedPatient } from '../../common/interfaces';
 import { readFile } from '../common/locale';
 import { useSettingsStore } from '../store/settings';
 
-const settings = await useSettingsStore().get();
-
 const formId = 'add-patient-form';
 
+// Read the current locale.
+const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
 
 const header = [];

@@ -27,6 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { readFile, LocaleFile } from '../common/locale';
-const locale = await readFile(LocaleFile.ruRU);
+import { readFile } from '../common/locale';
+import { useSettingsStore } from '../store/settings';
+
+const settings = await useSettingsStore().get();
+const locale = await readFile(settings.locale);
 </script>

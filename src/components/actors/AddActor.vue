@@ -17,10 +17,13 @@ import { ref } from 'vue';
 import { AddPatientProps } from '../../common/props';
 import { Patient } from '../../common/events';
 import { AddPatientFields } from '../../../common/fields';
-import { readFile, LocaleFile } from '../../common/locale';
+import { readFile } from '../../common/locale';
+import { useSettingsStore } from '../../store/settings';
 
-const locale = await readFile(LocaleFile.ruRU);
 const name = ref('');
+
+const settings = await useSettingsStore().get();
+const locale = await readFile(settings.locale);
 
 const emit = defineEmits<{
   (e: typeof Patient.ADD_PATIENT_SUBMIT, fields: AddPatientFields): void;
