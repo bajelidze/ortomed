@@ -15,8 +15,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { SubmitFormProps } from '../../../common/props';
-import { Patient } from '../../../common/events';
-import { AddPatientFields } from '../../../../common/fields';
+import { Doctor } from '../../../common/events';
+import { AddDoctorFields } from '../../../../common/fields';
 import { readFile } from '../../../common/locale';
 import { useSettingsStore } from '../../../store/settings';
 
@@ -26,12 +26,12 @@ const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
 
 const emit = defineEmits<{
-  (e: typeof Patient.ADD_PATIENT_SUBMIT, fields: AddPatientFields): void;
+  (e: typeof Doctor.ADD_DOCTOR_SUBMIT, fields: AddDoctorFields): void;
 }>();
 
 defineProps<SubmitFormProps>();
 
 function submit() {
-  emit(Patient.ADD_PATIENT_SUBMIT, { name: name.value });
+  emit(Doctor.ADD_DOCTOR_SUBMIT, { name: name.value, schedule: { 'FR': { start: 123, end: 333 } } });
 }
 </script>

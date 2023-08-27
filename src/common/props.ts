@@ -16,7 +16,7 @@ export interface ItemsManagerProps extends ItemsListProps {
   deleteDisabled: boolean;
 }
 
-export interface AddPatientProps {
+export interface SubmitFormProps {
   formId: string;
   submitLoading: boolean;
 }

@@ -9,3 +9,7 @@ export namespace Common {
 export namespace Patient {
   export const ADD_PATIENT_SUBMIT = 'addPatientSubmit';
 }
+
+export namespace Doctor {
+  export const ADD_DOCTOR_SUBMIT = 'addDoctorSubmit';
+}

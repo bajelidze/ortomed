@@ -12,7 +12,7 @@
       <PatientsManager />
     </v-window-item>
     <v-window-item :key="2" :value="2">
-      <p>Doctors...</p>
+      <DoctorsManager />
     </v-window-item>
   </v-window>
 </template>
@@ -20,6 +20,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import PatientsManager from '../components/actors/patients/PatientsManager.vue';
+import DoctorsManager from '../components/actors/doctors/DoctorsManager.vue';
 import { useSettingsStore } from '../store/settings';
 import { readFile } from '../common/locale';
 

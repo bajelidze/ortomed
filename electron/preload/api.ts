@@ -1,8 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { AddPatientFields } from '../../common/fields';
-import { FormattedPatient } from '../../common/interfaces';
+import { AddPatientFields, AddDoctorFields } from '../../common/fields';
+import { FormattedPatient, FormattedDoctor } from '../../common/interfaces';
 import { LocaleFile } from '../../common/enums';
-import { Settings, Patients, Locale } from '../api/endpoints/endpoints';
+import { Settings, Patients, Doctors, Locale } from '../api/endpoints/endpoints';
 import { SettingsValue } from '../../common/interfaces';
 
 export const API = {
@@ -26,6 +26,20 @@ export const API = {
     },
     async delete(id: number) {
       return await ipcRenderer.invoke(Patients.DELETE, id);
+    },
+  },
+  doctors: {
+    async list(limit: number, offset: number): Promise<FormattedDoctor[]> {
+      return await ipcRenderer.invoke(Doctors.LIST, limit, offset);
+    },
+    async listAll(): Promise<FormattedDoctor[]> {
+      return await ipcRenderer.invoke(Doctors.LIST_ALL);
+    },
+    async add(doctor: AddDoctorFields) {
+      return await ipcRenderer.invoke(Doctors.ADD, doctor);
+    },
+    async delete(id: number) {
+      return await ipcRenderer.invoke(Doctors.DELETE, id);
     },
   },
   locale: {

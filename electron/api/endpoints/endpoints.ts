@@ -7,6 +7,15 @@ export enum Patients {
   DELETE = patientsPrefix + 'Delete',
 }
 
+const doctorsPrefix = 'doctors';
+
+export enum Doctors {
+  LIST = doctorsPrefix + 'List',
+  LIST_ALL = doctorsPrefix + 'ListAll',
+  ADD = doctorsPrefix + 'Add',
+  DELETE = doctorsPrefix + 'Delete',
+}
+
 const localePrefix = 'locale';
 
 export enum Locale {

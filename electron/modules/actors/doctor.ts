@@ -12,6 +12,7 @@ export class Doctor {
   id?: number;
   name = '';
   schedule?: RRule;
+  dateAdded = DateTime.now();
 
   private initialized = false;
   private db?: Knex;
@@ -147,6 +148,7 @@ export interface DoctorEntity {
   id?: number;
   name?: string;
   schedule?: string;
+  dateAdded: number;
 }
 
 export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
@@ -159,6 +161,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
       table.increments('id');
       table.string('name').notNullable();
       table.string('schedule').notNullable();
+      table.integer('dateAdded').unsigned();
     });
   }
 
@@ -167,6 +170,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
       id: doctor.id,
       name: doctor.name,
       schedule: doctor.schedule?.toString(),
+      dateAdded: doctor.dateAdded?.toUnixInteger(),
     }));
   }
 
