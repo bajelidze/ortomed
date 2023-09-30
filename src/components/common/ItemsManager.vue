@@ -38,15 +38,16 @@
             <v-card-title class="ma-3">
               <span class="text-h5">{{ addPatientTitle }}</span>
             </v-card-title>
-            <v-card-text class="ml-2">
+            <v-card-text class="ml-2 scrollable">
               <slot name="body"/>
-              <br><br>
-              <small>*{{ locale.common.INDICATES_REQUIRED_FIELD }}</small>
             </v-card-text>
             <v-card-actions class="mb-2 mr-2">
+              <small class="ml-5">
+                *{{ locale.common.INDICATES_REQUIRED_FIELD }}
+              </small>
               <v-spacer/>
               <v-btn
-                color="blue-darken-1"
+                color="blue"
                 variant="flat"
                 type="submit"
                 :disabled="submitLoading"

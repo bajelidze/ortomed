@@ -21,26 +21,21 @@ export function setDoctorHandlers() {
   });
 
   ipcMain.handle(Doctors.ADD, async (_, doctor: AddDoctorFields) => {
-    const weekdays = Object.keys(doctor.schedule);
+    const weekdays: WeekdayStr[] = doctor.schedule.map(item => item.weekday);
 
     const schedule = new RRule({
       freq: RRule.WEEKLY,
-      byweekday: weekdays.map(weekday => Weekday.fromStr(
-        weekday as WeekdayStr,
-      )),
+      byweekday: weekdays,
     });
 
     const availabilities: Availability[] = [];
 
-    for (const weekday in doctor.schedule) {
-      console.log('WEEKDAY:', weekday);
-      const interval = doctor.schedule[weekday as WeekdayStr];
-
+    for (const item of doctor.schedule) {
       const av = new Availability({
-        weekday: Weekday.fromStr(weekday as WeekdayStr),
+        weekday: Weekday.fromStr(item.weekday),
         interval: {
-          st: Duration.fromObject({ seconds: interval?.start }),
-          et: Duration.fromObject({ seconds: interval?.end }),
+          st: Duration.fromObject({ seconds: item.interval?.start }),
+          et: Duration.fromObject({ seconds: item.interval?.end }),
         },
       }).setDb(db);
 

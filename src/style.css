@@ -79,3 +79,22 @@ button:hover {
 ::-webkit-scrollbar {
     display: none;
 }
+
+.scrollable::-webkit-scrollbar {
+  display: inline;
+  width: 7px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background: white;
+  border-radius: 5px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

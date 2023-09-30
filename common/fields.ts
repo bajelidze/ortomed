@@ -1,5 +1,4 @@
-import { WeekdayStr } from 'rrule';
-import { Interval } from './interfaces';
+import { WeekdayInterval } from './interfaces';
 
 export interface AddPatientFields {
   name: string;
@@ -7,5 +6,5 @@ export interface AddPatientFields {
 
 export interface AddDoctorFields {
   name: string;
-  schedule: Partial<Record<WeekdayStr, Interval>>;
+  schedule: WeekdayInterval[];
 }

@@ -1,4 +1,4 @@
-import { Duration } from 'luxon';
+import { WeekdayStr } from 'rrule';
 import { LocaleFile } from './enums';
 
 export interface FormattedPatient {
@@ -20,4 +20,9 @@ export interface SettingsValue {
 export interface Interval {
   start: number;
   end: number;
+}
+
+export interface WeekdayInterval {
+  weekday: WeekdayStr;
+  interval: Interval;
 }

@@ -15,6 +15,8 @@ interface Common {
   LOADING: string;
   ACTORS: string;
   ACTIONS: string;
+  WEEKLY_SCHEDULE: string;
+  HOLIDAYS: string;
 }
 
 interface Patient {

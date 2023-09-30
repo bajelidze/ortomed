@@ -10,6 +10,8 @@ strings:
     LOADING: 'Загрузка'
     ACTORS: 'Акторы'
     ACTIONS: 'Действия'
+    WEEKLY_SCHEDULE: 'Еженедельное Расписание'
+    HOLIDAYS: 'Выходные'
   patients:
     PATIENTS: 'Пациенты'
     ADD_PATIENT: 'Добавить пациента'

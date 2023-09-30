@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
 import ItemsManager from '../../common/ItemsManager.vue';
-import AddDoctor from './AddDoctor.vue';
+import AddDoctor from './components/AddDoctor.vue';
 import { Table, Align, Order } from '../../../common/interfaces';
 import { AddDoctorFields } from '../../../../common/fields';
 // import { FormattedDoctor } from '../../../../common/interfaces';
