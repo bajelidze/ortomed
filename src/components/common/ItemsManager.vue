@@ -23,7 +23,7 @@
           :persistent="submitLoading"
         >
           <template #activator="{ props }">
-            <v-btn 
+            <v-btn
               class="mr-4"
               color="green"
               variant="flat"
@@ -36,7 +36,7 @@
 
           <v-card>
             <v-card-title class="ma-3">
-              <span class="text-h5">{{ addPatientTitle }}</span>
+              <span class="text-h5">{{ addItemTitle }}</span>
             </v-card-title>
             <v-card-text class="ml-2 scrollable">
               <slot name="body"/>
@@ -108,6 +108,7 @@ const emit = defineEmits([
   Common.ITEMS_MANAGER_DELETE,
   Common.ITEMS_MANAGER_EDIT,
 ]);
+
 defineProps<ItemsManagerProps>();
 
 function showDialog(show: boolean) {

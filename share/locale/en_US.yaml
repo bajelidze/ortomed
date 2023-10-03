@@ -10,8 +10,6 @@ strings:
     LOADING: 'Loading'
     ACTORS: 'Actors'
     ACTIONS: 'Actions'
-    WEEKLY_SCHEDULE: 'Weekly Schedule'
-    HOLIDAYS: 'Holidays'
   patients:
     PATIENTS: 'Patients'
     ADD_PATIENT: 'Add patient'
@@ -23,3 +21,9 @@ strings:
   courses:
     COURSES: 'Courses'
     ADD_COURSE: 'Add course'
+  holidays:
+    HOLIDAYS: 'Holidays'
+    ADD_HOLIDAY: 'Add Holiday'
+  availability:
+    WEEKLY_SCHEDULE: 'Weekly Schedule'
+    ADD_AVAILABILITY: 'Add Availability'

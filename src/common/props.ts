@@ -6,14 +6,22 @@ export interface ItemsListProps {
 
 export interface ItemsManagerProps extends ItemsListProps {
   title: string;
+  addItemTitle: string;
   noDataText: string;
-  addPatientTitle: string;
   sortBy: SortBy[];
   addButton: boolean;
   submitLoading: boolean;
   formId: string;
   modelValue: boolean;
   deleteDisabled: boolean;
+}
+
+export interface ItemsListManagerProps {
+  title: string;
+  addItemTitle: string;
+  formId: string;
+  modelValue: boolean;
+  items: readonly any[];
 }
 
 export interface SubmitFormProps {

@@ -82,7 +82,7 @@ button:hover {
 
 .scrollable::-webkit-scrollbar {
   display: inline;
-  width: 7px;
+  width: 6px;
 }
 
 .scrollable::-webkit-scrollbar-track {

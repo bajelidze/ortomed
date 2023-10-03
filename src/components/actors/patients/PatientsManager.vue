@@ -3,7 +3,7 @@
     v-model="showDialog"
     :title="locale.patients.PATIENTS"
     :no-data-text="locale.patients.NO_PATIENTS"
-    :add-patient-title="locale.patients.ADD_PATIENT"
+    :add-item-title="locale.patients.ADD_PATIENT"
     :table="table"
     :add-button="true"
     :sort-by="[{ key: 'date_added', order: Order.DESC }]"

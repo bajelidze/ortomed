@@ -15,8 +15,6 @@ interface Common {
   LOADING: string;
   ACTORS: string;
   ACTIONS: string;
-  WEEKLY_SCHEDULE: string;
-  HOLIDAYS: string;
 }
 
 interface Patient {
@@ -31,6 +29,16 @@ interface Doctors {
   NO_DOCTORS: string;
 }
 
+interface Holidays {
+  HOLIDAYS: string;
+  ADD_HOLIDAY: string;
+}
+
+interface Availability {
+  WEEKLY_SCHEDULE: string;
+  ADD_AVAILABILITY: string;
+}
+
 interface Courses {
   COURSES: string;
   ADD_COURSE: string;
@@ -41,6 +49,8 @@ interface Strings {
   patients: Patient;
   doctors: Doctors;
   courses: Courses;
+  holidays: Holidays;
+  availability: Availability;
 }
 
 export import LocaleFile = enumsLocaleFile;

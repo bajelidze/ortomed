@@ -7,7 +7,7 @@
   >
     <template #default="{ item }">
       <v-list-item
-          :title="item"
+          :title="'9:00-10:00'"
           :subtitle="`${item}`"
         >
           <template v-slot:prepend>
