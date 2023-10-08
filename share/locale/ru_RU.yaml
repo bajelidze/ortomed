@@ -10,6 +10,7 @@ strings:
     LOADING: 'Загрузка'
     ACTORS: 'Акторы'
     ACTIONS: 'Действия'
+    NO_DATA: 'Нет Данных'
   patients:
     PATIENTS: 'Пациенты'
     ADD_PATIENT: 'Добавить пациента'
@@ -27,3 +28,11 @@ strings:
   availability:
     WEEKLY_SCHEDULE: 'Еженедельное Расписание'
     ADD_AVAILABILITY: 'Добавить Расписание'
+  weekday:
+    MONDAY: 'Понедельник'
+    TUESDAY: 'Вторник'
+    WEDNESDAY: 'Среда'
+    THURSDAY: 'Четверг'
+    FRIDAY: 'Пятница'
+    SATURDAY: 'Суббота'
+    SUNDAY: 'Воскресенье'

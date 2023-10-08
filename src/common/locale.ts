@@ -15,6 +15,7 @@ interface Common {
   LOADING: string;
   ACTORS: string;
   ACTIONS: string;
+  NO_DATA: string;
 }
 
 interface Patient {
@@ -44,6 +45,16 @@ interface Courses {
   ADD_COURSE: string;
 }
 
+interface Weekday {
+  MONDAY: string;
+  TUESDAY: string;
+  WEDNESDAY: string;
+  THURSDAY: string;
+  FRIDAY: string;
+  SATURDAY: string;
+  SUNDAY: string;
+}
+
 interface Strings {
   common: Common;
   patients: Patient;
@@ -51,6 +62,7 @@ interface Strings {
   courses: Courses;
   holidays: Holidays;
   availability: Availability;
+  weekday: Weekday;
 }
 
 export import LocaleFile = enumsLocaleFile;

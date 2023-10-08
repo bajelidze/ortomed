@@ -77,13 +77,13 @@
         class="ml-n3"
         icon="mdi-pencil"
         variant="text"
-        @click="$emit(Common.ITEMS_MANAGER_EDIT, item)"
+        @click="$emit(ItemsManager.EDIT, item)"
       />
       <v-btn
         icon="mdi-trash-can"
         variant="text"
         :disabled="deleteDisabled"
-        @click="$emit(Common.ITEMS_MANAGER_DELETE, item)"
+        @click="$emit(ItemsManager.EDIT, item)"
       />
     </template>
     <template v-slot:no-data>
@@ -95,7 +95,7 @@
 
 <script setup lang="ts">
 import { ItemsManagerProps } from '../../common/props';
-import { Common } from '../../common/events';
+import { Common, ItemsManager } from '../../common/events';
 import { readFile } from '../../common/locale';
 import { useSettingsStore } from '../../store/settings';
 
@@ -103,10 +103,9 @@ const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
 
 const emit = defineEmits([
-  Common.ITEMS_MANAGER_ADD_SUBMIT,
   Common.UPDATE_MODULE_VALUE,
-  Common.ITEMS_MANAGER_DELETE,
-  Common.ITEMS_MANAGER_EDIT,
+  ItemsManager.DELETE,
+  ItemsManager.EDIT,
 ]);
 
 defineProps<ItemsManagerProps>();

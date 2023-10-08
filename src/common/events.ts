@@ -1,9 +1,16 @@
 export namespace Common {
-  export const ITEMS_MANAGER_EDIT_CLICKED = 'itemsManagerEditClicked';
-  export const ITEMS_MANAGER_ADD_SUBMIT = 'itemsManagerAddSubmit';
-  export const ITEMS_MANAGER_DELETE = 'itemsManagerDelete';
-  export const ITEMS_MANAGER_EDIT = 'itemsManagerEdit';
   export const UPDATE_MODULE_VALUE = 'update:modelValue';
+}
+
+export namespace ItemsManager {
+  export const EDIT_CLICKED = 'itemsManagerEditClicked';
+  export const DELETE = 'itemsManagerDelete';
+  export const EDIT = 'itemsManagerEdit';
+}
+
+export namespace ItemsListManager {
+  export const ADD_SUBMIT = 'itemsListManagerAddSubmit';
+  export const DELETE = 'itemsListManagerDelete';
 }
 
 export namespace Patient {
@@ -12,4 +19,12 @@ export namespace Patient {
 
 export namespace Doctor {
   export const ADD_DOCTOR_SUBMIT = 'addDoctorSubmit';
+}
+
+export namespace Availability {
+  export const ADD_AVAILABILITY_SUBMIT = 'addAvailabilitySubmit';
+}
+
+export namespace Holiday {
+  export const ADD_HOLIDAY_SUBMIT = 'addHolidaySubmit';
 }

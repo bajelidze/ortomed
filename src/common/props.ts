@@ -19,9 +19,12 @@ export interface ItemsManagerProps extends ItemsListProps {
 export interface ItemsListManagerProps {
   title: string;
   addItemTitle: string;
+  noDataText?: string;
+  submitLoading: boolean;
   formId: string;
   modelValue: boolean;
   items: readonly any[];
+  showIndicatesRequiredField: boolean;
 }
 
 export interface SubmitFormProps {

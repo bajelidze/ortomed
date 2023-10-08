@@ -8,7 +8,7 @@
 
     <v-dialog
       scrollable
-      width="512"
+      max-width="1200"
       :modelValue="modelValue"
       @update:modelValue="showDialog($event)"
     >
@@ -33,7 +33,7 @@
         </v-card-text>
 
         <v-card-actions class="mb-2 mr-2">
-          <small class="ml-5">
+          <small v-if="showIndicatesRequiredField" class="ml-5">
             *{{ locale.common.INDICATES_REQUIRED_FIELD }}
           </small>
           <v-spacer/>
@@ -41,6 +41,8 @@
             color="blue"
             variant="flat"
             type="submit"
+            :disabled="submitLoading"
+            :loading="submitLoading"
             :form="formId"
           >
             {{ locale.common.SUBMIT }}
@@ -61,9 +63,16 @@
 
   <v-divider/>
 
+  <div
+    v-if="items.length == 0"
+    :style="'height:'+defaultHeightPx+'px;text-align:center'"
+  >
+    {{ noDataText ? noDataText : 'No Data' }}
+  </div>
   <v-virtual-scroll
+     v-else
      :items="items"
-     height="320"
+     :height="defaultHeightPx"
      item-height="48"
      class="scrollable"
    >
@@ -75,15 +84,18 @@
 
 <script setup lang="ts">
 import { ItemsListManagerProps } from '../../common/props';
-import { Common } from '../../common/events';
+import { Common, ItemsListManager } from '../../common/events';
 import { readFile } from '../../common/locale';
 import { useSettingsStore } from '../../store/settings';
+
+const defaultHeightPx = 320;
 
 const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
 
 const emit = defineEmits([
   Common.UPDATE_MODULE_VALUE,
+  ItemsListManager.ADD_SUBMIT,
 ]);
 
 defineProps<ItemsListManagerProps>();

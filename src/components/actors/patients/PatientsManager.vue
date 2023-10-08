@@ -70,7 +70,7 @@ const showDialog = ref(false);
 
 const table = reactive({ header, rows: [] } as Table);
 
-async function resetPatientsTable() {
+async function listPatientsTable() {
   // TODO: Add pagination for scalability.
   const patients = await window.api.patients.listAll();
 
@@ -81,9 +81,9 @@ async function resetPatientsTable() {
   }));
 }
 
-await resetPatientsTable();
+await listPatientsTable();
 
-watch(recomputePatients, resetPatientsTable);
+watch(recomputePatients, listPatientsTable);
 
 function rerenderPatients() {
   recomputePatients.value = !recomputePatients.value;

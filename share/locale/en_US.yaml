@@ -10,6 +10,7 @@ strings:
     LOADING: 'Loading'
     ACTORS: 'Actors'
     ACTIONS: 'Actions'
+    NO_DATA: 'No Data'
   patients:
     PATIENTS: 'Patients'
     ADD_PATIENT: 'Add patient'
@@ -27,3 +28,11 @@ strings:
   availability:
     WEEKLY_SCHEDULE: 'Weekly Schedule'
     ADD_AVAILABILITY: 'Add Availability'
+  weekday:
+    MONDAY: 'Monday'
+    TUESDAY: 'Tuesday'
+    WEDNESDAY: 'Wednesday'
+    THURSDAY: 'Thursday'
+    FRIDAY: 'Friday'
+    SATURDAY: 'Saturday'
+    SUNDAY: 'Sunday'
