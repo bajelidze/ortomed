@@ -14,36 +14,17 @@
       <v-row>
         <v-col>
           <v-card>
-            <v-toolbar>
-              <v-toolbar-title>
-                {{ locale.availability.WEEKLY_SCHEDULE }}
-              </v-toolbar-title>
-
-              <v-spacer/>
-
-              <v-dialog
-                scrollable
-                width="1024"
-              >
-                <template #activator="{ props }">
-                  <v-btn
-                    size="small"
-                    color="green"
-                    variant="flat"
-                    icon="mdi-plus"
-                    v-bind="props"
-                  >
-                  </v-btn>
-                </template>
-
-                <v-card>
-                  hello
-                </v-card>
-              </v-dialog>
-            </v-toolbar>
-
-            <v-divider/>
-            <MutableList />
+            <ItemsListManager
+              v-model="showAvailabilityDialog"
+              :title="locale.availability.WEEKLY_SCHEDULE"
+              :add-item-title="locale.availability.ADD_AVAILABILITY"
+              form-id="blank"
+              :items="[]"
+            >
+              <template #body>
+                <p>Form body!</p>
+              </template>
+            </ItemsListManager>
           </v-card>
         </v-col>
 
@@ -59,7 +40,6 @@
               <template #body>
                 <p>Form body!</p>
               </template>
-
             </ItemsListManager>
           </v-card>
         </v-col>
@@ -70,7 +50,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import MutableList from './components/MutableList.vue';
 import { SubmitFormProps } from '../../../../common/props';
 import { Doctor } from '../../../../common/events';
 import { AddDoctorFields } from '../../../../../common/fields';
@@ -89,6 +68,7 @@ const emit = defineEmits<{
 
 defineProps<SubmitFormProps>();
 
+const showAvailabilityDialog = ref(false);
 const showHolidayDialog = ref(false);
 
 function submit() {
