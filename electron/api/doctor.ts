@@ -1,13 +1,12 @@
 import { ipcMain } from 'electron';
-import { RRule, WeekdayStr, Weekday } from 'rrule';
-import { Duration } from 'luxon';
+import { RRule, WeekdayStr } from 'rrule';
 import db from '@/common/db';
 import { DoctorDao, Doctor } from '@/modules/actors/doctor';
-import { Availability } from '@/modules/actors/availability';
 import { DateTime } from 'luxon';
 import { AddDoctorFields } from '../../common/fields';
 import { Doctors } from '../api/endpoints/endpoints';
 import { FormattedDoctor } from '../../common/interfaces';
+import { addAvailabilities } from './availability';
 
 export function setDoctorHandlers() {
   ipcMain.handle(Doctors.LIST, async (_, limit: number, offset: number) => {
@@ -28,27 +27,13 @@ export function setDoctorHandlers() {
       byweekday: weekdays,
     });
 
-    const availabilities: Availability[] = [];
-
-    for (const item of doctor.schedule) {
-      const av = new Availability({
-        weekday: Weekday.fromStr(item.weekday),
-        interval: {
-          st: Duration.fromObject({ seconds: item.interval?.start }),
-          et: Duration.fromObject({ seconds: item.interval?.end }),
-        },
-      }).setDb(db);
-
-      availabilities.push(av);
-    }
-
     const doctorCls = new Doctor({
       name: doctor.name,
       schedule: schedule,
     }).setDb(db);
 
     await doctorCls.commit();
-    await doctorCls.addAvailability(...availabilities);
+    await addAvailabilities(doctor.schedule);
   });
 
   ipcMain.handle(Doctors.DELETE, async (_, id: number) => {

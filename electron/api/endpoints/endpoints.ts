@@ -16,6 +16,14 @@ export enum Doctors {
   DELETE = doctorsPrefix + 'Delete',
 }
 
+const availabilityPrefix = 'availability';
+
+export enum Availability {
+  LIST_ALL = availabilityPrefix + 'ListAll',
+  ADD = availabilityPrefix + 'Add',
+  DELETE = availabilityPrefix + 'Delete',
+}
+
 const localePrefix = 'locale';
 
 export enum Locale {

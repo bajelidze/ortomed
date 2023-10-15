@@ -7,15 +7,16 @@
     <v-container>
       <v-row>
         <v-col
-          v-for="weekday in locale.weekday"
-          :key="weekday"
+          v-for="(weekday, field) in locale.weekday"
+          :key="field"
           class="pa-0"
         >
           <v-checkbox
-            v-model="selected"
+            v-model="selectedWeekdays"
             :label="weekday"
-            :value="weekday"
+            :value="WEEKDAY_MAP[field]"
             :disabled="submitLoading"
+            :rules="selectedWeekdaysRules"
           />
         </v-col>
       </v-row>
@@ -24,6 +25,7 @@
         <v-col cols="2"/>
         <v-col cols="2">
           <v-autocomplete
+            v-model="selectedStartHours"
             density="compact"
             label="Hours"
             :items="hours"
@@ -31,6 +33,7 @@
         </v-col>
         <v-col cols="2">
           <v-autocomplete
+            v-model="selectedStartMinutes"
             density="compact"
             label="Minutes"
             :items="minutes"
@@ -45,6 +48,7 @@
 
         <v-col cols="2">
           <v-autocomplete
+            v-model="selectedEndHours"
             density="compact"
             label="Hours"
             :items="hours"
@@ -52,6 +56,7 @@
         </v-col>
         <v-col cols="2">
           <v-autocomplete
+            v-model="selectedEndMinutes"
             density="compact"
             label="Minutes"
             :items="minutes"
@@ -66,29 +71,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { SubmitFormProps } from '../../../../../common/props';
 import { Availability } from '../../../../../common/events';
-import { AddPatientFields } from '../../../../../../common/fields';
+import { WeekdayInterval } from '../../../../../../common/interfaces';
 import { readFile } from '../../../../../common/locale';
 import { useSettingsStore } from '../../../../../store/settings';
-
-const name = ref('');
+import { WEEKDAY_MAP } from '../../../../../../common/consts';
+import { WeekdayStr } from 'rrule';
 
 const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
 
 const emit = defineEmits<{
-  (e: typeof Availability.ADD_AVAILABILITY_SUBMIT, fields: AddPatientFields): void;
+  (e: typeof Availability.ADD_AVAILABILITY_SUBMIT, fields: WeekdayInterval): void;
 }>();
 
 defineProps<SubmitFormProps>();
 
+const selectedWeekdaysRules = computed(() => ([
+  selectedWeekdays.value.length > 0,
+]));
+
 function submit() {
-  emit(Availability.ADD_AVAILABILITY_SUBMIT, { name: name.value });
+// const weekdayInterval: WeekdayInterval[] = { 
+//   weekday: selectedWeekdays.value,
+// };
+
+  emit(Availability.ADD_AVAILABILITY_SUBMIT, [] as WeekdayInterval[]);
 }
 
-const selected = ref([]);
+const selectedWeekdays = ref([] as WeekdayStr[]);
+const selectedStartHours = ref('9');
+const selectedStartMinutes = ref('00');
+const selectedEndHours = ref('18');
+const selectedEndMinutes = ref('00');
 
 // Constants.
 //
