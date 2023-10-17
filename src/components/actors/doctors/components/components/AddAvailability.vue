@@ -16,7 +16,7 @@
             :label="weekday"
             :value="WEEKDAY_MAP[field]"
             :disabled="submitLoading"
-            :rules="selectedWeekdaysRules"
+            :rules="field == 'MONDAY' ? selectedWeekdaysRules : undefined"
           />
         </v-col>
       </v-row>
@@ -29,6 +29,7 @@
             density="compact"
             label="Hours"
             :items="hours"
+            :rules="selectedStartHoursRules"
           />
         </v-col>
         <v-col cols="2">
@@ -37,6 +38,7 @@
             density="compact"
             label="Minutes"
             :items="minutes"
+            :rules="selectedStartMinutesRules"
           />
         </v-col>
 
@@ -52,6 +54,7 @@
             density="compact"
             label="Hours"
             :items="hours"
+            :rules="selectedEndHoursRules"
           />
         </v-col>
         <v-col cols="2">
@@ -60,6 +63,7 @@
             density="compact"
             label="Minutes"
             :items="minutes"
+            :rules="selectedEndMinutesRules"
           />
         </v-col>
       </v-row>
@@ -89,29 +93,43 @@ const emit = defineEmits<{
 
 defineProps<SubmitFormProps>();
 
-const selectedWeekdaysRules = computed(() => ([
-  selectedWeekdays.value.length > 0,
-]));
-
-function submit() {
-// const weekdayInterval: WeekdayInterval[] = { 
-//   weekday: selectedWeekdays.value,
-// };
-
-  emit(Availability.ADD_AVAILABILITY_SUBMIT, [] as WeekdayInterval[]);
-}
-
 const selectedWeekdays = ref([] as WeekdayStr[]);
 const selectedStartHours = ref('9');
 const selectedStartMinutes = ref('00');
 const selectedEndHours = ref('18');
 const selectedEndMinutes = ref('00');
 
+const selectedWeekdaysRules = computed(() => ([
+  selectedWeekdays.value.length > 0 || 'Select at least one weekday',
+]));
+
+const selectedStartHoursRules = computed(() => _newNumericRules(selectedStartHours.value, 0, 24));
+const selectedStartMinutesRules = computed(() => _newNumericRules(selectedStartMinutes.value, 0, 60));
+const selectedEndHoursRules = computed(() => _newNumericRules(selectedEndHours.value, 0, 24));
+const selectedEndMinutesRules = computed(() => _newNumericRules(selectedEndMinutes.value, 0, 60));
+
+function _newNumericRules(value: string, min: number, max: number): (boolean|string)[] {
+  return [
+    value != null || 'The value must not be empty',
+    !isNaN(+value) || 'The value must be a number',
+    +value >= min || `The value must be greater than or equal ${min}`,
+    +value < max || `The value must be less than ${max}`,
+  ];
+}
+
+function submit() {
+  const weekdayInterval: WeekdayInterval[] = {
+    weekday: selectedWeekdays.value,
+  };
+
+  emit(Availability.ADD_AVAILABILITY_SUBMIT, [] as WeekdayInterval[]);
+}
+
 // Constants.
 //
 const hours: string[] = [];
 
-for (let i = 1; i <= 24; i++) {
+for (let i = 0; i < 24; i++) {
   let iStr = i.toString();
   if (i < 10) {
     iStr = '0' + iStr;
