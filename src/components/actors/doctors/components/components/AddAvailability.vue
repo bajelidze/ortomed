@@ -88,7 +88,7 @@ const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
 
 const emit = defineEmits<{
-  (e: typeof Availability.ADD_AVAILABILITY_SUBMIT, fields: WeekdayInterval): void;
+  (e: typeof Availability.ADD_AVAILABILITY_SUBMIT, fields: WeekdayInterval[]): void;
 }>();
 
 defineProps<SubmitFormProps>();
@@ -102,7 +102,6 @@ const selectedEndMinutes = ref('00');
 const selectedWeekdaysRules = computed(() => ([
   selectedWeekdays.value.length > 0 || 'Select at least one weekday',
 ]));
-
 const selectedStartHoursRules = computed(() => _newNumericRules(selectedStartHours.value, 0, 24));
 const selectedStartMinutesRules = computed(() => _newNumericRules(selectedStartMinutes.value, 0, 60));
 const selectedEndHoursRules = computed(() => _newNumericRules(selectedEndHours.value, 0, 24));
@@ -117,12 +116,47 @@ function _newNumericRules(value: string, min: number, max: number): (boolean|str
   ];
 }
 
+function validate(): boolean {
+  for (const validators of [
+    selectedWeekdaysRules.value,
+    selectedStartHoursRules.value,
+    selectedStartMinutesRules.value,
+    selectedEndHoursRules.value,
+    selectedEndMinutesRules.value,
+  ]) {
+    for (const validator of validators) {
+      if (typeof validator === 'string' || !validator) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 function submit() {
-  const weekdayInterval: WeekdayInterval[] = {
-    weekday: selectedWeekdays.value,
+  if (!validate()) {
+    return;
+  }
+
+  const toSeconds = (hours: string, minutes: string): number => {
+    return +hours * 60 * 60 + +minutes * 60;
   };
 
-  emit(Availability.ADD_AVAILABILITY_SUBMIT, [] as WeekdayInterval[]);
+  const start = toSeconds(selectedStartHours.value, selectedStartMinutes.value);
+  const end = toSeconds(selectedEndHours.value, selectedEndMinutes.value);
+
+  const weekdayInterval: WeekdayInterval[] = selectedWeekdays.value.map(
+    (weekday: WeekdayStr): WeekdayInterval => ({
+      weekday,
+      interval: {
+        start,
+        end,
+      },
+    }),
+  );
+
+  emit(Availability.ADD_AVAILABILITY_SUBMIT, weekdayInterval);
 }
 
 // Constants.
