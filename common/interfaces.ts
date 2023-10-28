@@ -1,6 +1,10 @@
 import { WeekdayStr } from 'rrule';
 import { LocaleFile } from './enums';
 
+export interface WithID {
+  id: number;
+}
+
 export interface FormattedPatient {
   id?: string;
   name: string;
@@ -26,3 +30,5 @@ export interface WeekdayInterval {
   weekday: WeekdayStr;
   interval: Interval;
 }
+
+export interface Schedule extends WithID, WeekdayInterval {}

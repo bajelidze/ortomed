@@ -9,7 +9,7 @@
           :value="wd"
         />
       </v-col>
-      <v-col class="pa-0" v-if="selected.includes(wd)">
+      <v-col class="pa-0">
         <v-row>
           <v-col class="pa-0 pr-3">
             <v-autocomplete

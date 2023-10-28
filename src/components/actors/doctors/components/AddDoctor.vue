@@ -54,19 +54,27 @@
         </v-col>
       </v-row>
     </v-container>
+
+  <MsgSnackbar
+    v-model="showAvailabilityError"
+    :msg="showAvailabilityErrorMsg"
+    :timeout="3000"
+    color="error"
+  />
   </v-form>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { SubmitFormProps } from '../../../../common/props';
-import { WeekdayInterval } from '../../../../../common/interfaces';
+import { WeekdayInterval, Schedule } from '../../../../../common/interfaces';
 import { Doctor } from '../../../../common/events';
 import { AddDoctorFields } from '../../../../../common/fields';
 import { readFile } from '../../../../common/locale';
 import { useSettingsStore } from '../../../../store/settings';
 import ItemsListManager from '../../../common/ItemsListManager.vue';
 import AddAvailability from './components/AddAvailability.vue';
+import MsgSnackbar from '../../../common/MsgSnackbar.vue';
 
 const name = ref('');
 const availabilityFormID = 'availabilityForm';
@@ -81,24 +89,55 @@ const nameRules = computed(() => [
   name.value.length <= nameMaxLength || `The name length must be less than or equal ${nameMaxLength}`,
 ]);
 
-const emit = defineEmits<{
+defineEmits<{
   (e: typeof Doctor.ADD_DOCTOR_SUBMIT, fields: AddDoctorFields): void;
 }>();
 
 defineProps<SubmitFormProps>();
 
+const availabilities = ref([] as Schedule[]);
+
 const showAvailabilityDialog = ref(false);
 const showHolidayDialog = ref(false);
 const submitLoading = ref(false);
+const showAvailabilityError = ref(false);
+
+const showAvailabilityErrorMsg = ref('');
 
 function validate(): boolean {
   for (const validator of nameRules.value) {
-    if (typeof validator === 'string' || !validator) {
+    if (typeof validator === 'string') {
       return false;
     }
   }
 
   return true;
+}
+
+function validateEndGreaterThanStart(availability: WeekdayInterval): boolean|string {
+  return availability.interval.start < availability.interval.end || 'Start time must be earlier than end time';
+}
+
+function validateAvailabilities(newAvailabilities: WeekdayInterval[]): boolean|string {
+  const mergedAvailabilities: Schedule[] = [];
+  availabilities.value.forEach(av => mergedAvailabilities.push(Object.assign({}, av)));
+
+  // mergedAvailabilities.sort
+
+  for (const newAv of newAvailabilities) {
+    const result = validateEndGreaterThanStart(newAv);
+    if (typeof result === 'string') {
+      return result;
+    }
+
+    for (const av of mergedAvailabilities) {
+      if (av.weekday != newAv.weekday) {
+        continue;
+      }
+
+      // av.interval.
+    }
+  }
 }
 
 function submit() {
@@ -109,8 +148,9 @@ function submit() {
   // emit(Doctor.ADD_DOCTOR_SUBMIT, { name.value, schedule: { 'FR': { start: 123, end: 333 } } });
 }
 
-function addAvailabilitySubmit(fields: WeekdayInterval[]) {
-  const fieldsJSON = JSON.stringify(fields);
+function addAvailabilitySubmit(schedule: WeekdayInterval[]) {
+  const fieldsJSON = JSON.stringify(schedule);
   console.log(fieldsJSON);
+  submitLoading.value = !submitLoading.value;
 }
 </script>

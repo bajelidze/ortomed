@@ -28,6 +28,7 @@
             v-model="selectedStartHours"
             density="compact"
             label="Hours"
+            :disabled="submitLoading"
             :items="hours"
             :rules="selectedStartHoursRules"
           />
@@ -37,6 +38,7 @@
             v-model="selectedStartMinutes"
             density="compact"
             label="Minutes"
+            :disabled="submitLoading"
             :items="minutes"
             :rules="selectedStartMinutesRules"
           />
@@ -53,6 +55,7 @@
             v-model="selectedEndHours"
             density="compact"
             label="Hours"
+            :disabled="submitLoading"
             :items="hours"
             :rules="selectedEndHoursRules"
           />
@@ -62,6 +65,7 @@
             v-model="selectedEndMinutes"
             density="compact"
             label="Minutes"
+            :disabled="submitLoading"
             :items="minutes"
             :rules="selectedEndMinutesRules"
           />

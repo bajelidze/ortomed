@@ -9,6 +9,7 @@
     <v-dialog
       scrollable
       max-width="1200"
+      :persistent="submitLoading"
       :modelValue="modelValue"
       @update:modelValue="showDialog($event)"
     >
@@ -52,6 +53,7 @@
           </v-btn>
           <v-btn
             color="blue"
+            :disabled="submitLoading"
             @click="showDialog(false)"
           >
             {{ locale.common.CANCEL }}

@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { AddPatientFields, AddDoctorFields, AddAvailabilityFields } from '../../common/fields';
+import { AddPatientFields, AddDoctorFields } from '../../common/fields';
 import { FormattedPatient, FormattedDoctor, WeekdayInterval } from '../../common/interfaces';
 import { LocaleFile } from '../../common/enums';
 import { Settings, Patients, Doctors, Availability, Locale } from '../api/endpoints/endpoints';
@@ -46,9 +46,9 @@ export const API = {
     async listAll(doctorID: number): Promise<WeekdayInterval[]> {
       return await ipcRenderer.invoke(Availability.LIST_ALL, doctorID);
     },
-    async add(availabilities: AddAvailabilityFields[]) {
-      return await ipcRenderer.invoke(Availability.ADD, availabilities);
-    },
+    // async add(availabilities: AddAvailabilityFields[]) {
+    //   return await ipcRenderer.invoke(Availability.ADD, availabilities);
+    // },
     async delete(id: number) {
       return await ipcRenderer.invoke(Availability.DELETE, id);
     },

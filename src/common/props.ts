@@ -1,10 +1,14 @@
 import { Table, SortBy } from './interfaces';
 
+export interface ModelProps {
+  modelValue: boolean;
+}
+
 export interface ItemsListProps {
   table: Table;
 }
 
-export interface ItemsManagerProps extends ItemsListProps {
+export interface ItemsManagerProps extends ItemsListProps, ModelProps {
   title: string;
   addItemTitle: string;
   noDataText: string;
@@ -12,17 +16,15 @@ export interface ItemsManagerProps extends ItemsListProps {
   addButton: boolean;
   submitLoading: boolean;
   formId: string;
-  modelValue: boolean;
   deleteDisabled: boolean;
 }
 
-export interface ItemsListManagerProps {
+export interface ItemsListManagerProps extends ModelProps {
   title: string;
   addItemTitle: string;
   noDataText?: string;
   submitLoading: boolean;
   formId: string;
-  modelValue: boolean;
   items: readonly any[];
   showIndicatesRequiredField: boolean;
 }
@@ -30,4 +32,10 @@ export interface ItemsListManagerProps {
 export interface SubmitFormProps {
   formId: string;
   submitLoading: boolean;
+}
+
+export interface MsgSnackbarProps extends ModelProps {
+  timeout: number;
+  msg: string;
+  color?: string;
 }
