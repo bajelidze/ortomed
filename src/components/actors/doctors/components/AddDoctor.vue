@@ -68,6 +68,7 @@
 import { ref, computed } from 'vue';
 import { SubmitFormProps } from '../../../../common/props';
 import { WeekdayInterval, Schedule } from '../../../../../common/interfaces';
+import { formatInterval } from '../../../../../common/utils/format';
 import { Doctor } from '../../../../common/events';
 import { AddDoctorFields } from '../../../../../common/fields';
 import { readFile } from '../../../../common/locale';
@@ -104,6 +105,38 @@ const showAvailabilityError = ref(false);
 
 const showAvailabilityErrorMsg = ref('');
 
+function validateEndGreaterThanStart(availability: WeekdayInterval): boolean {
+  return availability.interval.start < availability.interval.end;
+}
+
+function validateOverlap(av: WeekdayInterval, newAv: WeekdayInterval): boolean {
+  return av.interval.end <= newAv.interval.start || av.interval.start > newAv.interval.end;
+}
+
+function validateAvailabilities(newAvailabilities: WeekdayInterval[]): boolean|string {
+  const mergedAvailabilities: Schedule[] = [];
+  availabilities.value.forEach(av => mergedAvailabilities.push(Object.assign({}, av)));
+
+  for (const newAv of newAvailabilities) {
+    if (!validateEndGreaterThanStart(newAv)) {
+      return `Start time must be earlier than end time: ${formatInterval(newAv.interval)}`;
+    }
+
+    for (const av of mergedAvailabilities) {
+      if (av.weekday !== newAv.weekday) {
+        continue;
+      }
+
+      // Check overlap. Reject overlapping intervals.
+      if (!validateOverlap(av, newAv)) {
+        return `Intervals overlap: ${formatInterval(av.interval)}, ${formatInterval(newAv.interval)}`;
+      }
+    }
+  }
+
+  return 'passed xdd';
+}
+
 function validate(): boolean {
   for (const validator of nameRules.value) {
     if (typeof validator === 'string') {
@@ -114,32 +147,6 @@ function validate(): boolean {
   return true;
 }
 
-function validateEndGreaterThanStart(availability: WeekdayInterval): boolean|string {
-  return availability.interval.start < availability.interval.end || 'Start time must be earlier than end time';
-}
-
-function validateAvailabilities(newAvailabilities: WeekdayInterval[]): boolean|string {
-  const mergedAvailabilities: Schedule[] = [];
-  availabilities.value.forEach(av => mergedAvailabilities.push(Object.assign({}, av)));
-
-  // mergedAvailabilities.sort
-
-  for (const newAv of newAvailabilities) {
-    const result = validateEndGreaterThanStart(newAv);
-    if (typeof result === 'string') {
-      return result;
-    }
-
-    for (const av of mergedAvailabilities) {
-      if (av.weekday != newAv.weekday) {
-        continue;
-      }
-
-      // av.interval.
-    }
-  }
-}
-
 function submit() {
   if (!validate()) {
     return;
@@ -148,9 +155,15 @@ function submit() {
   // emit(Doctor.ADD_DOCTOR_SUBMIT, { name.value, schedule: { 'FR': { start: 123, end: 333 } } });
 }
 
-function addAvailabilitySubmit(schedule: WeekdayInterval[]) {
-  const fieldsJSON = JSON.stringify(schedule);
-  console.log(fieldsJSON);
-  submitLoading.value = !submitLoading.value;
+function addAvailabilitySubmit(newAvailabilities: WeekdayInterval[]) {
+  const validateResult = validateAvailabilities(newAvailabilities);
+  if (typeof validateResult === 'string') {
+    showAvailabilityErrorMsg.value = validateResult;
+    showAvailabilityError.value = true;
+    return;
+  }
+
+  console.log(JSON.stringify(newAvailabilities));
+  // submitLoading.value = !submitLoading.value;
 }
 </script>

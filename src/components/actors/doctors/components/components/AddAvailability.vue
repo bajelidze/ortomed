@@ -98,7 +98,7 @@ const emit = defineEmits<{
 defineProps<SubmitFormProps>();
 
 const selectedWeekdays = ref([] as WeekdayStr[]);
-const selectedStartHours = ref('9');
+const selectedStartHours = ref('09');
 const selectedStartMinutes = ref('00');
 const selectedEndHours = ref('18');
 const selectedEndMinutes = ref('00');
