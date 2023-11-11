@@ -32,7 +32,21 @@
                 />
               </template>
               <template #listItem="{ item }: { item: Schedule }">
-                {{ item }}
+                <v-row no-gutters>
+                  <v-col cols="auto">
+                    <v-card
+                      prepend-icon="mdi-calendar-clock"
+                      elevation="0"
+                      :title="formatInterval(item.interval)"
+                      :subtitle="weekdayToLocale(item.weekday)"
+                    />
+                  </v-col>
+                  <v-spacer/>
+                  <v-col cols="auto" class="mt-3 mr-5">
+                    <v-btn flat icon="mdi-trash-can"/>
+                  </v-col>
+                </v-row>
+                <v-divider/>
               </template>
             </ItemsListManager>
           </v-card>
@@ -70,6 +84,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { WeekdayStr } from 'rrule';
 import { SubmitFormProps } from '../../../../common/props';
 import { WeekdayInterval, Schedule } from '../../../../../common/interfaces';
 import { formatInterval } from '../../../../../common/utils/format';
@@ -111,6 +126,11 @@ const showAvailabilityError = ref(false);
 
 const showAvailabilityErrorMsg = ref('');
 
+function weekdayToLocale(weekday: WeekdayStr): string {
+  //@ts-ignore
+  return locale.weekday[WEEKDAY_MAP_REV[weekday]];
+}
+
 function pushAvailabilities(...newAvailabilities: Schedule[]) {
   availabilities.value.push(...newAvailabilities);
   availabilities.value.sort((curr, next) => {
@@ -145,7 +165,7 @@ function validateAvailabilities(newAvailabilities: WeekdayInterval[]): boolean|s
       // Check overlap. Reject overlapping intervals.
       if (!validateOverlap(av, newAv)) {
         //@ts-ignore
-        return `Intervals overlap: ${locale.weekday[WEEKDAY_MAP_REV[av.weekday]]}: ${formatInterval(av.interval)}, ${formatInterval(newAv.interval)}`;
+        return `Intervals overlap: ${weekdayToLocale(av.weekday)}: ${formatInterval(av.interval)}, ${formatInterval(newAv.interval)}`;
       }
     }
   }

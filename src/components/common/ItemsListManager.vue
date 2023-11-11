@@ -20,8 +20,7 @@
           variant="flat"
           icon="mdi-plus"
           v-bind="props"
-        >
-        </v-btn>
+        />
       </template>
 
       <v-card>
