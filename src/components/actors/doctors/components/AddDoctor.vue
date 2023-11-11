@@ -22,14 +22,17 @@
               :form-id="availabilityFormID"
               :submit-loading="submitLoading"
               :show-indicates-required-field="false"
-              :items="[]"
+              :items="availabilities"
             >
               <template #body>
                 <AddAvailability
                   :form-id="availabilityFormID"
-                  :submit-loading="submitLoading"
+                  :submit-loading="availabilitySubmitLoading"
                   @add-availability-submit="addAvailabilitySubmit"
                 />
+              </template>
+              <template #listItem="{ item }: { item: Schedule }">
+                {{ item }}
               </template>
             </ItemsListManager>
           </v-card>
@@ -59,6 +62,7 @@
     v-model="showAvailabilityError"
     :msg="showAvailabilityErrorMsg"
     :timeout="3000"
+    icon="mdi-alert-circle-outline"
     color="error"
   />
   </v-form>
@@ -76,6 +80,7 @@ import { useSettingsStore } from '../../../../store/settings';
 import ItemsListManager from '../../../common/ItemsListManager.vue';
 import AddAvailability from './components/AddAvailability.vue';
 import MsgSnackbar from '../../../common/MsgSnackbar.vue';
+import { ALL_WEEKDAYS, WEEKDAY_MAP_REV } from '../../../../../common/consts';
 
 const name = ref('');
 const availabilityFormID = 'availabilityForm';
@@ -101,16 +106,26 @@ const availabilities = ref([] as Schedule[]);
 const showAvailabilityDialog = ref(false);
 const showHolidayDialog = ref(false);
 const submitLoading = ref(false);
+const availabilitySubmitLoading = ref(false);
 const showAvailabilityError = ref(false);
 
 const showAvailabilityErrorMsg = ref('');
+
+function pushAvailabilities(...newAvailabilities: Schedule[]) {
+  availabilities.value.push(...newAvailabilities);
+  availabilities.value.sort((curr, next) => {
+    const currWeekdayIdx = ALL_WEEKDAYS.indexOf(curr.weekday);
+    const nextWeekdayIdx = ALL_WEEKDAYS.indexOf(next.weekday);
+    return (currWeekdayIdx === nextWeekdayIdx && curr.interval.start < next.interval.start) || currWeekdayIdx < nextWeekdayIdx ? -1 : 1;
+  });
+}
 
 function validateEndGreaterThanStart(availability: WeekdayInterval): boolean {
   return availability.interval.start < availability.interval.end;
 }
 
 function validateOverlap(av: WeekdayInterval, newAv: WeekdayInterval): boolean {
-  return av.interval.end <= newAv.interval.start || av.interval.start > newAv.interval.end;
+  return av.interval.end <= newAv.interval.start || av.interval.start >= newAv.interval.end;
 }
 
 function validateAvailabilities(newAvailabilities: WeekdayInterval[]): boolean|string {
@@ -129,12 +144,13 @@ function validateAvailabilities(newAvailabilities: WeekdayInterval[]): boolean|s
 
       // Check overlap. Reject overlapping intervals.
       if (!validateOverlap(av, newAv)) {
-        return `Intervals overlap: ${formatInterval(av.interval)}, ${formatInterval(newAv.interval)}`;
+        //@ts-ignore
+        return `Intervals overlap: ${locale.weekday[WEEKDAY_MAP_REV[av.weekday]]}: ${formatInterval(av.interval)}, ${formatInterval(newAv.interval)}`;
       }
     }
   }
 
-  return 'passed xdd';
+  return true;
 }
 
 function validate(): boolean {
@@ -156,14 +172,21 @@ function submit() {
 }
 
 function addAvailabilitySubmit(newAvailabilities: WeekdayInterval[]) {
-  const validateResult = validateAvailabilities(newAvailabilities);
-  if (typeof validateResult === 'string') {
-    showAvailabilityErrorMsg.value = validateResult;
-    showAvailabilityError.value = true;
-    return;
-  }
+  availabilitySubmitLoading.value = true;
 
-  console.log(JSON.stringify(newAvailabilities));
-  // submitLoading.value = !submitLoading.value;
+  try {
+    const validateResult = validateAvailabilities(newAvailabilities);
+    if (typeof validateResult === 'string') {
+      showAvailabilityErrorMsg.value = validateResult;
+      showAvailabilityError.value = true;
+      return;
+    }
+
+    pushAvailabilities(...newAvailabilities);
+
+    showAvailabilityDialog.value = false;
+  } finally {
+    availabilitySubmitLoading.value = false;
+  }
 }
 </script>

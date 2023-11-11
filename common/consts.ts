@@ -14,3 +14,13 @@ export const WEEKDAY_MAP: Record<string, WeekdayStr> = {
   'SATURDAY': 'SA',
   'SUNDAY': 'SU',
 };
+
+export const WEEKDAY_MAP_REV: Record<WeekdayStr, string> = {
+  'MO': 'MONDAY',
+  'TU': 'TUESDAY',
+  'WE': 'WEDNESDAY',
+  'TH': 'THURSDAY',
+  'FR': 'FRIDAY',
+  'SA': 'SATURDAY',
+  'SU': 'SUNDAY',
+};

@@ -2,7 +2,7 @@ import { WeekdayStr } from 'rrule';
 import { LocaleFile } from './enums';
 
 export interface WithID {
-  id: number;
+  id?: number;
 }
 
 export interface FormattedPatient {

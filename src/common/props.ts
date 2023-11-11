@@ -37,5 +37,6 @@ export interface SubmitFormProps {
 export interface MsgSnackbarProps extends ModelProps {
   timeout: number;
   msg: string;
+  icon: string;
   color?: string;
 }

@@ -6,15 +6,8 @@
       :color="color"
       :timeout="timeout"
     >
+      <v-icon start :icon="icon"/>
       {{ msg }}
-      <template v-slot:actions>
-        <v-btn
-          variant="text"
-          @click="showSnackbar(false)"
-        >
-          Close
-        </v-btn>
-      </template>
     </v-snackbar>
   </div>
 </template>
