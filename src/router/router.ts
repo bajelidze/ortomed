@@ -1,19 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router';
 // @ts-ignore
-import ActorsView from '../views/ActorsView.vue';
+import PatientsView from '../views/PatientsView.vue';
 // @ts-ignore
 import DoctorsView from '../views/DoctorsView.vue';
+// @ts-ignore
+import CoursesView from '../views/CoursesView.vue';
 
 const routes = [
   {
-    path: '/actors',
-    name: 'Actors',
-    component: ActorsView,
+    path: '/patients',
+    name: 'Patients',
+    component: PatientsView,
+  },
+  {
+    path: '/doctors',
+    name: 'Doctors',
+    component: DoctorsView,
   },
   {
     path: '/courses',
     name: 'Courses',
-    component: DoctorsView,
+    component: CoursesView,
   },
 ];
 

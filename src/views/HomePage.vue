@@ -5,11 +5,14 @@
     permanent
   >
     <v-list density="compact" nav>
-      <router-link to="/actors">
-        <v-list-item prepend-icon="mdi-account" :title="locale.common.ACTORS" value="actors"/>
+      <router-link to="/patients">
+        <v-list-item prepend-icon="mdi-account" :title="locale.patients.PATIENTS" value="patients"/>
+      </router-link>
+      <router-link to="/doctors">
+        <v-list-item prepend-icon="mdi-medical-bag" :title="locale.doctors.DOCTORS" value="doctors"/>
       </router-link>
       <router-link to="/courses">
-        <v-list-item prepend-icon="mdi-medical-bag" :title="locale.courses.COURSES" value="courses"/>
+        <v-list-item prepend-icon="mdi-list-box" :title="locale.courses.COURSES" value="courses"/>
       </router-link>
     </v-list>
   </v-navigation-drawer>
