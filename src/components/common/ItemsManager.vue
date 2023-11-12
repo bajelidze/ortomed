@@ -83,7 +83,7 @@
         icon="mdi-trash-can"
         variant="text"
         :disabled="deleteDisabled"
-        @click="$emit(ItemsManager.EDIT, item)"
+        @click="$emit(ItemsManager.DELETE, item)"
       />
     </template>
     <template v-slot:no-data>

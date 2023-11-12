@@ -65,6 +65,16 @@ export class Availability {
     this.id = ids[0];
     return this;
   }
+
+  async del() {
+    this.init();
+
+    if (this.id == undefined) {
+      throw Error('cannot delete availability with undefined id');
+    }
+
+    await this.dao?.deleteById(this.id);
+  }
 }
 
 export interface AvailabilityEntity {

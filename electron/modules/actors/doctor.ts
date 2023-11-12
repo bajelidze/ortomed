@@ -176,6 +176,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return doctors.map(doctor => (new Doctor({
       id: doctor.id,
       name: doctor.name,
+      dateAdded: DateTime.fromSeconds(doctor.dateAdded),
       // schedule: RRule.fromString(doctor.schedule == undefined ? '' : doctor.schedule),
     })));
   }

@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { RRule, WeekdayStr } from 'rrule';
 import db from '@/common/db';
 import { DoctorDao, Doctor } from '@/modules/actors/doctor';
+import { AvailabilityDao } from '@/modules/actors/availability';
 import { DateTime } from 'luxon';
 import { AddDoctorFields } from '../../common/fields';
 import { Doctors } from '../api/endpoints/endpoints';
@@ -44,6 +45,16 @@ export function setDoctorHandlers() {
 
   ipcMain.handle(Doctors.DELETE, async (_, id: number) => {
     await new DoctorDao(db).deleteById(id);
+
+    const availabilities = await new AvailabilityDao(db).listAvailabilitysForDoctor(id);
+
+    const availabilitiesDel: Promise<void>[] = [];
+
+    for (const availability of availabilities) {
+      availabilitiesDel.push(availability.del());
+    }
+
+    await Promise.all(availabilitiesDel);
   });
 }
 

@@ -28,7 +28,7 @@ import ItemsManager from '../../common/ItemsManager.vue';
 import AddDoctor from './components/AddDoctor.vue';
 import { Table, Align, Order } from '../../../common/interfaces';
 import { AddDoctorFields } from '../../../../common/fields';
-// import { FormattedDoctor } from '../../../../common/interfaces';
+import { FormattedDoctor } from '../../../../common/interfaces';
 import { readFile } from '../../../common/locale';
 import { useSettingsStore } from '../../../store/settings';
 
@@ -102,7 +102,7 @@ async function addDoctorSubmit(doctor: AddDoctorFields) {
   rerenderDoctors();
 }
 
-async function deleteDoctor(doctorData: { raw: { id: string } }) {
+async function deleteDoctor(doctorData: { raw: FormattedDoctor }) {
   deleteDisabled.value = true;
 
   if (doctorData.raw.id == undefined) {
