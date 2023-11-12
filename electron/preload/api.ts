@@ -35,8 +35,8 @@ export const API = {
     async listAll(): Promise<FormattedDoctor[]> {
       return await ipcRenderer.invoke(Doctors.LIST_ALL);
     },
-    async add(doctor: AddDoctorFields) {
-      return await ipcRenderer.invoke(Doctors.ADD, doctor);
+    async add(doctor: string) {
+      return await ipcRenderer.invoke(Doctors.ADD, JSON.parse(doctor) as AddDoctorFields);
     },
     async delete(id: number) {
       return await ipcRenderer.invoke(Doctors.DELETE, id);

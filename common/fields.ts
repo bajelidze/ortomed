@@ -1,4 +1,4 @@
-import { WeekdayInterval } from './interfaces';
+import { Schedule } from './interfaces';
 
 export interface AddPatientFields {
   name: string;
@@ -6,5 +6,5 @@ export interface AddPatientFields {
 
 export interface AddDoctorFields {
   name: string;
-  schedule: WeekdayInterval[];
+  schedule: Schedule[];
 }

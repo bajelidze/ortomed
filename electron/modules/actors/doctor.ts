@@ -147,7 +147,6 @@ export class Doctor {
 export interface DoctorEntity {
   id?: number;
   name?: string;
-  schedule?: string;
   dateAdded: number;
 }
 
@@ -160,7 +159,6 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return await this.db.schema.createTable(this.table, table => {
       table.increments('id');
       table.string('name').notNullable();
-      table.string('schedule').notNullable();
       table.integer('dateAdded').unsigned();
     });
   }
@@ -169,7 +167,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return doctors.map(doctor => ({
       id: doctor.id,
       name: doctor.name,
-      schedule: doctor.schedule?.toString(),
+      // schedule: doctor.schedule?.toString(),
       dateAdded: doctor.dateAdded?.toUnixInteger(),
     }));
   }
@@ -178,7 +176,7 @@ export class DoctorDao extends BasicDao<Doctor, DoctorEntity> {
     return doctors.map(doctor => (new Doctor({
       id: doctor.id,
       name: doctor.name,
-      schedule: RRule.fromString(doctor.schedule == undefined ? '' : doctor.schedule),
+      // schedule: RRule.fromString(doctor.schedule == undefined ? '' : doctor.schedule),
     })));
   }
 }

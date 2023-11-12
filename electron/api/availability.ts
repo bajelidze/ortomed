@@ -3,7 +3,7 @@ import { Weekday } from 'rrule';
 import { Duration } from 'luxon';
 import db from '@/common/db';
 import { AvailabilityDao, Availability } from '@/modules/actors/availability';
-import { WeekdayInterval } from '../../common/interfaces';
+import { Schedule } from '../../common/interfaces';
 import { Availability as AvailabilityE } from '../api/endpoints/endpoints';
 
 export function setAvailabilityHandlers() {
@@ -11,8 +11,8 @@ export function setAvailabilityHandlers() {
     return await new AvailabilityDao(db).listAvailabilitysForDoctor(doctorID);
   });
 
-  ipcMain.handle(AvailabilityE.ADD, async (_, availabilities: WeekdayInterval[]) =>
-    await addAvailabilities(availabilities),
+  ipcMain.handle(AvailabilityE.ADD, async (_, doctorID: number, availabilities: Schedule[]) =>
+    await addAvailabilities(doctorID, ...availabilities),
   );
 
   ipcMain.handle(AvailabilityE.DELETE, async (_, id: number) => {
@@ -20,11 +20,13 @@ export function setAvailabilityHandlers() {
   });
 }
 
-export async function addAvailabilities(availabilities: WeekdayInterval[]) {
+export async function addAvailabilities(doctorID: number, ...availabilities: Schedule[]) {
   const availabilitiesCls: Promise<Availability>[] = [];
 
   for (const availability of availabilities) {
     const av = new Availability({
+      id: availability.id,
+      doctorId: doctorID,
       weekday: Weekday.fromStr(availability.weekday),
       interval: {
         st: Duration.fromObject({ seconds: availability.interval.start }),

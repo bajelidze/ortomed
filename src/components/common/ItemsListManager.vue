@@ -9,6 +9,7 @@
     <v-dialog
       scrollable
       max-width="1200"
+      scroll-strategy="close"
       :persistent="submitLoading"
       :modelValue="modelValue"
       @update:modelValue="showDialog($event)"

@@ -33,7 +33,13 @@ export function setDoctorHandlers() {
     }).setDb(db);
 
     await doctorCls.commit();
-    await addAvailabilities(doctor.schedule);
+
+    const doctorID = doctorCls.id;
+    if (doctorID == undefined) {
+      throw Error('doctorID is undefined');
+    }
+
+    await addAvailabilities(doctorID, ...doctor.schedule);
   });
 
   ipcMain.handle(Doctors.DELETE, async (_, id: number) => {

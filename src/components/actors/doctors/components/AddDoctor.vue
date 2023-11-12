@@ -64,7 +64,7 @@
               :items="[]"
             >
               <template #body>
-                <p>Form body!</p>
+                <p>Not implemented</p>
               </template>
             </ItemsListManager>
           </v-card>
@@ -72,13 +72,13 @@
       </v-row>
     </v-container>
 
-  <MsgSnackbar
-    v-model="showAvailabilityError"
-    :msg="showAvailabilityErrorMsg"
-    :timeout="3000"
-    icon="mdi-alert-circle-outline"
-    color="error"
-  />
+    <MsgSnackbar
+      v-model="showAvailabilityError"
+      :msg="showAvailabilityErrorMsg"
+      :timeout="3000"
+      icon="mdi-alert-circle-outline"
+      color="error"
+    />
   </v-form>
 </template>
 
@@ -110,7 +110,7 @@ const nameRules = computed(() => [
   name.value.length <= nameMaxLength || `The name length must be less than or equal ${nameMaxLength}`,
 ]);
 
-defineEmits<{
+const emit = defineEmits<{
   (e: typeof Doctor.ADD_DOCTOR_SUBMIT, fields: AddDoctorFields): void;
 }>();
 
@@ -188,7 +188,7 @@ function submit() {
     return;
   }
 
-  // emit(Doctor.ADD_DOCTOR_SUBMIT, { name.value, schedule: { 'FR': { start: 123, end: 333 } } });
+  emit(Doctor.ADD_DOCTOR_SUBMIT, { name: name.value, schedule: availabilities.value });
 }
 
 function addAvailabilitySubmit(newAvailabilities: WeekdayInterval[]) {

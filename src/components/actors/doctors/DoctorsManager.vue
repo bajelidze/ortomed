@@ -93,7 +93,7 @@ async function addDoctorSubmit(doctor: AddDoctorFields) {
   submitLoading.value = true;
 
   try {
-    await window.api.doctors.add(doctor);
+    await window.api.doctors.add(JSON.stringify(doctor));
   } finally {
     submitLoading.value = false;
     showDialog.value = false;
