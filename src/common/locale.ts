@@ -43,6 +43,7 @@ interface Availability {
 interface Courses {
   COURSES: string;
   ADD_COURSE: string;
+  NO_COURSES: string;
 }
 
 interface Weekday {

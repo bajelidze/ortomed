@@ -22,6 +22,7 @@ strings:
   courses:
     COURSES: 'Курсы'
     ADD_COURSE: 'Добавить курс'
+    NO_COURSES: 'Курсы отсутствуют'
   holidays:
     HOLIDAYS: 'Выходные'
     ADD_HOLIDAY: 'Добавить Выходной'

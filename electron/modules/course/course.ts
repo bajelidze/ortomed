@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { DateTime } from 'luxon';
 import { BasicDao } from '@/common/dao';
 import { CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
 import db from '@/common/db';
@@ -10,6 +11,7 @@ export class Course {
   name = '';
   description?: string = '';
   repetitions?: number = 1;
+  dateAdded = DateTime.now();
 
   private initialized = false;
   private db?: Knex;
@@ -100,6 +102,7 @@ export class Course {
 interface CourseEntity {
   id?: number;
   name: string;
+  dateAdded: number;
   description?: string;
   repetitions?: number;
 }
@@ -122,6 +125,7 @@ export class CourseDao extends BasicDao<Course, CourseEntity> {
     return courses.map(course => ({
       id: course.id,
       name: course.name,
+      dateAdded: course.dateAdded?.toUnixInteger(),
       description: course.description,
       repetitions: course.repetitions,
     }));
@@ -131,6 +135,7 @@ export class CourseDao extends BasicDao<Course, CourseEntity> {
     return courses.map(course => (new Course({
       id: course.id,
       name: course.name,
+      dateAdded: DateTime.fromSeconds(course.dateAdded),
       description: course.description,
       repetitions: course.repetitions,
     })));

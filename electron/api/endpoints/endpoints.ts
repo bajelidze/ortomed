@@ -24,6 +24,15 @@ export enum Availability {
   DELETE = availabilityPrefix + 'Delete',
 }
 
+const coursePrefix = 'course';
+
+export enum Courses {
+  LIST = coursePrefix + 'List',
+  LIST_ALL = coursePrefix + 'ListAll',
+  ADD = coursePrefix + 'Add',
+  DELETE = coursePrefix + 'Delete',
+}
+
 const localePrefix = 'locale';
 
 export enum Locale {

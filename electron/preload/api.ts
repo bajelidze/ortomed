@@ -1,8 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { AddPatientFields, AddDoctorFields } from '../../common/fields';
+import { AddPatientFields, AddDoctorFields, AddCourseFields } from '../../common/fields';
 import { FormattedPatient, FormattedDoctor, WeekdayInterval } from '../../common/interfaces';
 import { LocaleFile } from '../../common/enums';
-import { Settings, Patients, Doctors, Availability, Locale } from '../api/endpoints/endpoints';
+import { Settings, Patients, Doctors, Availability, Courses, Locale } from '../api/endpoints/endpoints';
 import { SettingsValue } from '../../common/interfaces';
 
 export const API = {
@@ -51,6 +51,20 @@ export const API = {
     // },
     async delete(id: number) {
       return await ipcRenderer.invoke(Availability.DELETE, id);
+    },
+  },
+  courses: {
+    async list(limit: number, offset: number): Promise<FormattedDoctor[]> {
+      return await ipcRenderer.invoke(Courses.LIST, limit, offset);
+    },
+    async listAll(): Promise<FormattedDoctor[]> {
+      return await ipcRenderer.invoke(Courses.LIST_ALL);
+    },
+    async add(doctor: string) {
+      return await ipcRenderer.invoke(Courses.ADD, JSON.parse(doctor) as AddCourseFields);
+    },
+    async delete(id: number) {
+      return await ipcRenderer.invoke(Courses.DELETE, id);
     },
   },
   locale: {

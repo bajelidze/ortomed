@@ -5,17 +5,15 @@ export interface WithID {
   id?: number;
 }
 
-export interface FormattedPatient {
+interface FormattedItem {
   id?: string;
   name: string;
   dateAdded: string;
 }
 
-export interface FormattedDoctor {
-  id?: string;
-  name: string;
-  dateAdded: string;
-}
+export type FormattedPatient = FormattedItem
+export type FormattedDoctor = FormattedItem
+export type FormattedCourse = FormattedItem
 
 export interface SettingsValue {
   locale: LocaleFile;

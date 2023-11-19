@@ -8,3 +8,8 @@ export interface AddDoctorFields {
   name: string;
   schedule: Schedule[];
 }
+
+export interface AddCourseFields {
+  name: string;
+  description: string;
+}
