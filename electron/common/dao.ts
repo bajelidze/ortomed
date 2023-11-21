@@ -130,6 +130,6 @@ export abstract class BasicDao<Cls extends Class, Entity> {
     await this.init();
     await this.db.from(this.table).where('id', id).del();
 
-    log.info(`Deleted item with id ${id} from ${this.table}`);
+    log.info(`Deleted item with id ${id} from "${this.table}"`);
   }
 }

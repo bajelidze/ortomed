@@ -1,0 +1,145 @@
+<template>
+  <v-form
+    :id="formId"
+    fast-fail
+    @submit.prevent="submit"
+  >
+    <v-text-field
+      v-model="name"
+      :label="locale.common.NAME + '*'"
+      :disabled="submitLoading"
+      :rules="nameRules"
+    />
+
+    <v-textarea
+      counter
+      v-model="description"
+      label="Description"
+      :disabled="submitLoading"
+      :maxlength="descriptionMaxLength"
+    />
+
+    <v-container>
+      <v-row>
+        <v-col>
+          <v-card>
+            <ItemsListManager
+              v-model="showActivityDialog"
+              title="Activities"
+              add-item-title="Add Activity"
+              :form-id="activityFormID"
+              :submit-loading="submitLoading"
+              :show-indicates-required-field="false"
+              :items="activities"
+            >
+              <template #body>
+                <p>Not implemented</p>
+              </template>
+              <template #listItem="{ item }">
+
+              </template>
+            </ItemsListManager>
+          </v-card>
+        </v-col>
+
+        <v-col>
+          <v-card>
+            <ItemsListManager
+              v-model="showCourseActivityDialog"
+              title="Course Activities"
+              add-item-title="Add Course Activity"
+              form-id="123"
+              :submit-loading="submitLoading"
+              :show-indicates-required-field="false"
+              :items="[]"
+            >
+              <template #body>
+                <p>Not implemented</p>
+              </template>
+            </ItemsListManager>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <MsgSnackbar
+      v-model="showActivityError"
+      :msg="showActivityErrorMsg"
+      :timeout="3000"
+      icon="mdi-alert-circle-outline"
+      color="error"
+    />
+  </v-form>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { SubmitFormProps } from '../../../common/props';
+import { Course } from '../../../common/events';
+import { AddCourseFields } from '../../../../common/fields';
+import { readFile } from '../../../common/locale';
+import { useSettingsStore } from '../../../store/settings';
+import ItemsListManager from '../../common/ItemsListManager.vue';
+import MsgSnackbar from '../../common/MsgSnackbar.vue';
+
+const name = ref('');
+const description = ref('');
+const activityFormID = 'activityForm';
+
+const settings = await useSettingsStore().get();
+const locale = await readFile(settings.locale);
+
+const nameMaxLength = 50;
+const descriptionMaxLength = 500;
+
+const nameRules = computed(() => [
+  name.value.length > 0 || 'The name must not be empty',
+  name.value.length <= nameMaxLength || `The name length must be less than or equal ${nameMaxLength}`,
+]);
+
+const emit = defineEmits<{
+  (e: typeof Course.ADD_COURSE_SUBMIT, fields: AddCourseFields): void;
+}>();
+
+defineProps<SubmitFormProps>();
+
+const activities = ref([] as any[]);
+
+const showActivityDialog = ref(false);
+const showCourseActivityDialog = ref(false);
+const submitLoading = ref(false);
+const activitySubmitLoading = ref(false);
+const showActivityError = ref(false);
+
+const showActivityErrorMsg = ref('');
+
+function validate(): boolean {
+  for (const validator of nameRules.value) {
+    if (typeof validator === 'string') {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function submit() {
+  if (!validate()) {
+    return;
+  }
+
+  emit(Course.ADD_COURSE_SUBMIT, { name: name.value, description: description.value });
+}
+
+function addActivitySubmit(newActivities: any) {
+  activitySubmitLoading.value = true;
+
+  try {
+    // TODO: push activities
+
+    showActivityDialog.value = false;
+  } finally {
+    activitySubmitLoading.value = false;
+  }
+}
+</script>

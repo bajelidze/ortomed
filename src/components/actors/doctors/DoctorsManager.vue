@@ -79,7 +79,7 @@ async function resetDoctorsTable() {
     name: doctor.name,
     date_added: doctor.dateAdded,
   }));
-}resetDoctorsTable;
+}
 
 await resetDoctorsTable();
 

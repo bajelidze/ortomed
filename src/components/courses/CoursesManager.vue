@@ -13,21 +13,20 @@
     @items-manager-delete="deleteCourse"
   >
     <template #body>
-      <div>xdd</div>
+      <AddCourse
+        :form-id="formId"
+        :submit-loading="submitLoading"
+        @add-course-submit="addCourseSubmit"
+      />
     </template>
   </ItemsManager>
 </template>
 
 <script setup lang="ts">
-//     <Addcourse
-//       :form-id="formId"
-//       :submit-loading="submitLoading"
-//       @add-course-submit="addCourseSubmit"
-//     />
 
 import { ref, reactive, watch } from 'vue';
 import ItemsManager from '../common/ItemsManager.vue';
-// import AddCourse from './components/AddCourse.vue';
+import AddCourse from './components/AddCourse.vue';
 import { Table, Align, Order } from '../../common/interfaces';
 import { AddCourseFields } from '../../../common/fields';
 import { FormattedCourse } from '../../../common/interfaces';
@@ -65,14 +64,14 @@ header.push({
   align: Align.START,
 });
 
-const recomputecourses = ref(false);
+const recomputeCourses = ref(false);
 const submitLoading = ref(false);
 const deleteDisabled = ref(false);
 const showDialog = ref(false);
 
 const table = reactive({ header, rows: [] } as Table);
 
-async function resetcoursesTable() {
+async function resetCoursesTable() {
   // TODO: Add pagination for scalability.
   const courses = await window.api.courses.listAll();
 
@@ -81,14 +80,14 @@ async function resetcoursesTable() {
     name: course.name,
     date_added: course.dateAdded,
   }));
-}resetcoursesTable;
+}
 
-await resetcoursesTable();
+await resetCoursesTable();
 
-watch(recomputecourses, resetcoursesTable);
+watch(recomputeCourses, resetCoursesTable);
 
 function rerenderCourses() {
-  recomputecourses.value = !recomputecourses.value;
+  recomputeCourses.value = !recomputeCourses.value;
 }
 
 async function addCourseSubmit(course: AddCourseFields) {

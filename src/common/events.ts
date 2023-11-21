@@ -28,3 +28,7 @@ export namespace Availability {
 export namespace Holiday {
   export const ADD_HOLIDAY_SUBMIT = 'addHolidaySubmit';
 }
+
+export namespace Course {
+  export const ADD_COURSE_SUBMIT = 'addCourseSubmit';
+}
