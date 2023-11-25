@@ -3,6 +3,7 @@ import { setPatientHandlers } from '@/api/patient';
 import { setDoctorHandlers } from '@/api/doctor';
 import { setAvailabilityHandlers } from '@/api/availability';
 import { setCourseHandlers } from '@/api/course';
+import { setActivityHandlers } from '@/api/activity';
 import { setLocaleHandlers } from '@/api/locale';
 
 export function setHandlers() {
@@ -11,5 +12,6 @@ export function setHandlers() {
   setDoctorHandlers();
   setAvailabilityHandlers();
   setCourseHandlers();
+  setActivityHandlers();
   setLocaleHandlers();
 }

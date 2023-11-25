@@ -88,6 +88,7 @@ import { readFile } from '../../../../../common/locale';
 import { useSettingsStore } from '../../../../../store/settings';
 import { WEEKDAY_MAP, HOURS, MINUTES } from '../../../../../../common/consts';
 import { numericRules } from '../../../../../common/rules';
+import { toSeconds } from '../../../../../common/util';
 
 const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
@@ -134,10 +135,6 @@ function submit() {
   if (!validate()) {
     return;
   }
-
-  const toSeconds = (hours: string, minutes: string): number => {
-    return +hours * 60 * 60 + +minutes * 60;
-  };
 
   const start = toSeconds(selectedStartHours.value, selectedStartMinutes.value);
   const end = toSeconds(selectedEndHours.value, selectedEndMinutes.value);

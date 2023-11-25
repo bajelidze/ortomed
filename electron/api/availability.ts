@@ -7,9 +7,9 @@ import { Schedule } from '../../common/interfaces';
 import { Availability as AvailabilityE } from '../api/endpoints/endpoints';
 
 export function setAvailabilityHandlers() {
-  ipcMain.handle(AvailabilityE.LIST_ALL, async (_, doctorID: number): Promise<Availability[]> => {
-    return await new AvailabilityDao(db).listAvailabilitysForDoctor(doctorID);
-  });
+  // ipcMain.handle(AvailabilityE.LIST_ALL, async (_, doctorID: number): Promise<Availability[]> => {
+  //   return await new AvailabilityDao(db).listAvailabilitysForDoctor(doctorID);
+  // });
 
   ipcMain.handle(AvailabilityE.ADD, async (_, doctorID: number, availabilities: Schedule[]) =>
     await addAvailabilities(doctorID, ...availabilities),

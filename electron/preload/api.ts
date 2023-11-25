@@ -1,9 +1,17 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { AddPatientFields, AddDoctorFields, AddCourseFields } from '../../common/fields';
-import { FormattedPatient, FormattedDoctor, WeekdayInterval } from '../../common/interfaces';
 import { LocaleFile } from '../../common/enums';
-import { Settings, Patients, Doctors, Availability, Courses, Locale } from '../api/endpoints/endpoints';
 import { SettingsValue } from '../../common/interfaces';
+import {
+  AddPatientFields, AddDoctorFields, AddCourseFields,
+} from '../../common/fields';
+import {
+  FormattedPatient, FormattedDoctor, Activity,
+} from '../../common/interfaces';
+import {
+  Settings, Patients, Doctors,
+  Availability, Courses, Locale,
+  Activity as ActivityE,
+} from '../api/endpoints/endpoints';
 
 export const API = {
   settings: {
@@ -43,9 +51,9 @@ export const API = {
     },
   },
   availability: {
-    async listAll(doctorID: number): Promise<WeekdayInterval[]> {
-      return await ipcRenderer.invoke(Availability.LIST_ALL, doctorID);
-    },
+    // async listAll(doctorID: number): Promise<WeekdayInterval[]> {
+    //   return await ipcRenderer.invoke(Availability.LIST_ALL, doctorID);
+    // },
     // async add(availabilities: AddAvailabilityFields[]) {
     //   return await ipcRenderer.invoke(Availability.ADD, availabilities);
     // },
@@ -65,6 +73,17 @@ export const API = {
     },
     async delete(id: number) {
       return await ipcRenderer.invoke(Courses.DELETE, id);
+    },
+  },
+  activity: {
+    async listAll(): Promise<Activity[]> {
+      return await ipcRenderer.invoke(ActivityE.LIST_ALL);
+    },
+    async add(activities: Activity[]) {
+      return await ipcRenderer.invoke(ActivityE.ADD, activities);
+    },
+    async delete(id: number) {
+      return await ipcRenderer.invoke(ActivityE.DELETE, id);
     },
   },
   locale: {

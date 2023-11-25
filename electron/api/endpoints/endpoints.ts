@@ -33,6 +33,14 @@ export enum Courses {
   DELETE = coursePrefix + 'Delete',
 }
 
+const activityPrefix = 'activity';
+
+export enum Activity {
+  LIST_ALL = activityPrefix + 'ListAll',
+  ADD = activityPrefix + 'Add',
+  DELETE = activityPrefix + 'Delete',
+}
+
 const localePrefix = 'locale';
 
 export enum Locale {

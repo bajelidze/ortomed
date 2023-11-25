@@ -10,6 +10,7 @@
       :label="locale.common.NAME + '*'"
       :disabled="submitLoading"
       :rules="nameRules"
+      :maxlength="nameMaxLength"
     />
 
     <v-textarea
@@ -28,7 +29,10 @@
             class="pb-2"
             density="compact"
           >
-            <v-card-title>Duration</v-card-title>
+            <v-card-title>
+              <v-icon size="21">mdi-clock-outline</v-icon>
+              Duration
+            </v-card-title>
             <v-row>
               <v-col cols="1"/>
               <v-col cols="4">
@@ -60,16 +64,14 @@
             class="pb-2"
             density="compact"
           >
-            <v-card-title>
-              Capacity
-              <v-tooltip :text="capacityTooltip" location="top">
-                <template #activator="{ props }">
-                  <v-icon v-bind="props" size="18">
-                    mdi-information-slab-circle-outline
-                  </v-icon>
-                </template>
-              </v-tooltip>
-            </v-card-title>
+            <v-tooltip :text="capacityTooltip" location="left">
+              <template #activator="{ props }">
+                <v-card-title v-bind="props">
+                  <v-icon size="21">mdi-account-multiple</v-icon>
+                  Capacity
+                </v-card-title>
+              </template>
+            </v-tooltip>
             <v-row>
               <v-col cols="1"/>
               <v-col cols="4">
@@ -92,9 +94,10 @@
           <v-tooltip :text="flexibleTooltip" location="top">
             <template #activator="{ props }">
               <v-switch
+                v-model="flexible"
                 v-bind="props"
                 color="success"
-                label="Flexible 🛈"
+                label="Flexible"
               />
             </template>
           </v-tooltip>
@@ -113,6 +116,7 @@ import { HOURS, MINUTES } from '../../../../../common/consts';
 import { readFile } from '../../../../common/locale';
 import { useSettingsStore } from '../../../../store/settings';
 import { numericRules, nameRules as _nameRules } from '../../../../common/rules';
+import { toSeconds } from '../../../../common/util';
 
 const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
@@ -128,6 +132,7 @@ const description = ref('');
 const durationHours = ref('01');
 const durationMinutes = ref('00');
 const capacity = ref('1');
+const flexible = ref(false);
 
 const nameRules = computed(() => _nameRules(name.value, nameMaxLength));
 const durationHoursRules = computed(() => numericRules(durationHours.value, 0, 60));
@@ -135,13 +140,25 @@ const durationMinutesRules = computed(() => numericRules(durationMinutes.value, 
 const capacityRules = computed(() => numericRules(capacity.value, 1, 100));
 
 const emit = defineEmits<{
-  // FIXME
-  (e: typeof ActivityE.ADD_ACTIVITY_SUBMIT, fields: any[]): void;
+  (e: typeof ActivityE.ADD_ACTIVITY_SUBMIT, fields: Activity): void;
 }>();
 
 defineProps<SubmitFormProps>();
 
 function validate(): boolean {
+  for (const validators of [
+    nameRules.value,
+    durationHoursRules.value,
+    durationMinutesRules.value,
+    capacityRules.value,
+  ]) {
+    for (const validator of validators) {
+      if (typeof validator === 'string' || !validator) {
+        return false;
+      }
+    }
+  }
+
   return true;
 }
 
@@ -150,9 +167,19 @@ function submit() {
     return;
   }
 
-  emit(ActivityE.ADD_ACTIVITY_SUBMIT, {} as any);
+  const activity: Activity = {
+    name: name.value,
+    description: description.value,
+    duration: toSeconds(durationHours.value, durationMinutes.value),
+    capacity: +capacity.value,
+    flexible: flexible.value,
+  };
+
+  emit(ActivityE.ADD_ACTIVITY_SUBMIT, activity);
 }
 
+// Consts
+//
 const capacityValues: string[] = [];
 
 for (let i = 1; i < capacityMaxValue; i++) {

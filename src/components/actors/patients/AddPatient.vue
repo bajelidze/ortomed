@@ -10,6 +10,7 @@
       :label="locale.common.NAME + '*'"
       :disabled="submitLoading"
       :rules="nameRules"
+      :maxlength="nameMaxLength"
     />
   </v-form>
 </template>

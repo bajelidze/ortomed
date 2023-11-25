@@ -10,6 +10,7 @@
       :label="locale.common.NAME + '*'"
       :disabled="submitLoading"
       :rules="nameRules"
+      :maxlength="nameMaxLength"
     />
 
     <v-textarea
@@ -38,10 +39,11 @@
                 <AddActivity
                   :form-id="activityFormID"
                   :submit-loading="activitySubmitLoading"
+                  @add-activity-submit="addActivitySubmit"
                 />
               </template>
-              <template #listItem="{ item }">
-
+              <template #listItem="{ item }: { item: Activity }">
+                <div>{{ item.name }}</div>
               </template>
             </ItemsListManager>
           </v-card>
@@ -110,7 +112,7 @@ const emit = defineEmits<{
 
 defineProps<SubmitFormProps>();
 
-const activities = ref([] as Activity[]);
+const activities = ref(await listActivities());
 
 const showActivityDialog = ref(false);
 const showCourseActivityDialog = ref(false);
@@ -138,11 +140,17 @@ function submit() {
   emit(Course.ADD_COURSE_SUBMIT, { name: name.value, description: description.value });
 }
 
-function addActivitySubmit(newActivities: Activity) {
+async function listActivities(): Promise<Activity[]> {
+  return await window.api.activity.listAll();
+}
+
+async function addActivitySubmit(newActivity: Activity) {
   activitySubmitLoading.value = true;
 
   try {
-    // TODO: push activities
+    activities.value.push(newActivity);
+
+    await window.api.activity.add([newActivity]);
 
     showActivityDialog.value = false;
   } finally {
