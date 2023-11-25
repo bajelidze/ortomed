@@ -30,3 +30,11 @@ export interface WeekdayInterval {
 }
 
 export interface Schedule extends WithID, WeekdayInterval {}
+
+export interface Activity extends WithID {
+  name: string;
+  description?: string;
+  duration: number;
+  capacity: number;
+  flexible: boolean;
+}

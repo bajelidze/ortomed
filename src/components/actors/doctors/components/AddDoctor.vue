@@ -96,6 +96,7 @@ import ItemsListManager from '../../../common/ItemsListManager.vue';
 import AddAvailability from './components/AddAvailability.vue';
 import MsgSnackbar from '../../../common/MsgSnackbar.vue';
 import { ALL_WEEKDAYS, WEEKDAY_MAP_REV } from '../../../../../common/consts';
+import { nameRules as _nameRules } from '../../../../common/rules';
 
 const name = ref('');
 const availabilityFormID = 'availabilityForm';
@@ -105,10 +106,7 @@ const locale = await readFile(settings.locale);
 
 const nameMaxLength = 50;
 
-const nameRules = computed(() => [
-  name.value.length > 0 || 'The name must not be empty',
-  name.value.length <= nameMaxLength || `The name length must be less than or equal ${nameMaxLength}`,
-]);
+const nameRules = computed(() => _nameRules(name.value, nameMaxLength));
 
 const emit = defineEmits<{
   (e: typeof Doctor.ADD_DOCTOR_SUBMIT, fields: AddDoctorFields): void;

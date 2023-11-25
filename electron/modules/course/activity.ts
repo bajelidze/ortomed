@@ -66,8 +66,8 @@ export interface ActivityEntity {
   name: string;
   description?: string;
   duration: number;
-  flexible: number;
   capacity: number;
+  flexible: number;
 }
 
 export class ActivityDao extends BasicDao<Activity, ActivityEntity> {

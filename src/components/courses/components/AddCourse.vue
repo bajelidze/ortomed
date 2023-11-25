@@ -5,6 +5,7 @@
     @submit.prevent="submit"
   >
     <v-text-field
+      counter
       v-model="name"
       :label="locale.common.NAME + '*'"
       :disabled="submitLoading"
@@ -14,6 +15,7 @@
     <v-textarea
       counter
       v-model="description"
+      rows="3"
       label="Description"
       :disabled="submitLoading"
       :maxlength="descriptionMaxLength"
@@ -29,11 +31,14 @@
               add-item-title="Add Activity"
               :form-id="activityFormID"
               :submit-loading="submitLoading"
-              :show-indicates-required-field="false"
+              :show-indicates-required-field="true"
               :items="activities"
             >
               <template #body>
-                <p>Not implemented</p>
+                <AddActivity
+                  :form-id="activityFormID"
+                  :submit-loading="activitySubmitLoading"
+                />
               </template>
               <template #listItem="{ item }">
 
@@ -76,11 +81,13 @@
 import { ref, computed } from 'vue';
 import { SubmitFormProps } from '../../../common/props';
 import { Course } from '../../../common/events';
+import { Activity } from '../../../../common/interfaces';
 import { AddCourseFields } from '../../../../common/fields';
 import { readFile } from '../../../common/locale';
 import { useSettingsStore } from '../../../store/settings';
 import ItemsListManager from '../../common/ItemsListManager.vue';
 import MsgSnackbar from '../../common/MsgSnackbar.vue';
+import AddActivity from './components/AddActivity.vue';
 
 const name = ref('');
 const description = ref('');
@@ -103,7 +110,7 @@ const emit = defineEmits<{
 
 defineProps<SubmitFormProps>();
 
-const activities = ref([] as any[]);
+const activities = ref([] as Activity[]);
 
 const showActivityDialog = ref(false);
 const showCourseActivityDialog = ref(false);
@@ -131,7 +138,7 @@ function submit() {
   emit(Course.ADD_COURSE_SUBMIT, { name: name.value, description: description.value });
 }
 
-function addActivitySubmit(newActivities: any) {
+function addActivitySubmit(newActivities: Activity) {
   activitySubmitLoading.value = true;
 
   try {

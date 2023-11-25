@@ -32,3 +32,7 @@ export namespace Holiday {
 export namespace Course {
   export const ADD_COURSE_SUBMIT = 'addCourseSubmit';
 }
+
+export namespace Activity {
+  export const ADD_ACTIVITY_SUBMIT = 'addActivitySubmit';
+}

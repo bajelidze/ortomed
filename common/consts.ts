@@ -24,3 +24,33 @@ export const WEEKDAY_MAP_REV: Record<WeekdayStr, string> = {
   'SA': 'SATURDAY',
   'SU': 'SUNDAY',
 };
+
+export const HOURS: string[] = (() => {
+  const hours: string[] = [];
+
+  for (let i = 0; i < 24; i++) {
+    let iStr = i.toString();
+    if (i < 10) {
+      iStr = '0' + iStr;
+    }
+
+    hours.push(iStr);
+  }
+
+  return hours;
+})();
+
+export const MINUTES: string[] = (() => {
+  const minutes: string[] = [];
+
+  for (let i = 0; i < 60; i++) {
+    let iStr = i.toString();
+    if (i < 10) {
+      iStr = '0' + iStr;
+    }
+
+    minutes.push(iStr);
+  }
+
+  return minutes;
+})();

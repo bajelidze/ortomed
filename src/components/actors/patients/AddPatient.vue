@@ -5,6 +5,7 @@
     @submit.prevent="submit"
   >
     <v-text-field
+      counter
       v-model="name"
       :label="locale.common.NAME + '*'"
       :disabled="submitLoading"
