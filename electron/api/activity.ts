@@ -41,6 +41,7 @@ export async function addActivities(activities: Activity[]) {
 
 function formatActivity(activityC: ActivityC): Activity {
   const activity: Activity = {
+    id: activityC.id,
     name: activityC.name,
     description: activityC.description,
     duration: activityC.duration.toMillis() / 1000,

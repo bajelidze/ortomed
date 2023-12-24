@@ -135,9 +135,9 @@ const capacity = ref('1');
 const flexible = ref(false);
 
 const nameRules = computed(() => _nameRules(name.value, nameMaxLength));
-const durationHoursRules = computed(() => numericRules(durationHours.value, 0, 60));
-const durationMinutesRules = computed(() => numericRules(durationMinutes.value, 0, capacityMaxValue));
-const capacityRules = computed(() => numericRules(capacity.value, 1, 100));
+const durationHoursRules = computed(() => numericRules(durationHours.value, 0, 24));
+const durationMinutesRules = computed(() => numericRules(durationMinutes.value, 0, 60));
+const capacityRules = computed(() => numericRules(capacity.value, 1, capacityMaxValue));
 
 const emit = defineEmits<{
   (e: typeof ActivityE.ADD_ACTIVITY_SUBMIT, fields: Activity): void;

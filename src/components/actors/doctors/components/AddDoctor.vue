@@ -44,7 +44,7 @@
                     />
                   </v-col>
                   <v-spacer/>
-                  <v-col cols="auto" class="mt-3 mr-5">
+                  <v-col cols="auto" class="mt-3 mr-3">
                     <v-btn flat icon="mdi-trash-can"/>
                   </v-col>
                 </v-row>

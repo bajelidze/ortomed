@@ -38,3 +38,10 @@ export interface Activity extends WithID {
   capacity: number;
   flexible: boolean;
 }
+
+export interface CourseActivity {
+  activityName?: string;
+  activityID?: number;
+  index?: number; // The order of this activity among other activities.
+  pause: number; // Seconds. Pause is the minimal pause before next activity.
+}

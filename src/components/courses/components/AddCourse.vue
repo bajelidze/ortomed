@@ -50,8 +50,11 @@
                   :iconColor="item.flexible ? 'green' : 'gray'"
                 >
                   <template #actions>
-                    <v-col cols="auto" class="mt-3 mr-5">
+                    <v-col cols="auto" class="mt-3">
                       <v-btn flat icon="mdi-trash-can"/>
+                    </v-col>
+                    <v-col cols="auto" class="mt-3 mr-3">
+                      <v-btn flat icon="mdi-arrow-right-bold"/>
                     </v-col>
                   </template>
                 </ListItem>
@@ -72,9 +75,11 @@
               :items="[]"
               :show-add-button="false"
             >
-              <template #body>
-                <p>Not implemented</p>
-              </template>
+              <AddCourseActivity
+                :form-id="courseActivityFormID"
+                :submit-loading="submitLoading"
+                @add-activity-submit="addCourseActivitySubmit"
+              />
             </ItemsListManager>
           </v-card>
         </v-col>
@@ -95,18 +100,20 @@
 import { ref, computed } from 'vue';
 import { SubmitFormProps } from '../../../common/props';
 import { Course } from '../../../common/events';
-import { Activity } from '../../../../common/interfaces';
+import { Activity, CourseActivity } from '../../../../common/interfaces';
 import { AddCourseFields } from '../../../../common/fields';
 import { readFile } from '../../../common/locale';
 import { useSettingsStore } from '../../../store/settings';
 import ItemsListManager from '../../common/ItemsListManager.vue';
 import MsgSnackbar from '../../common/MsgSnackbar.vue';
 import AddActivity from './components/AddActivity.vue';
+import AddCourseActivity from './components/AddCourseActivity.vue';
 import ListItem from '../../common/ListItem.vue';
 
 const name = ref('');
 const description = ref('');
 const activityFormID = 'activityForm';
+const courseActivityFormID = 'courseActivityForm';
 
 const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
@@ -126,6 +133,7 @@ const emit = defineEmits<{
 defineProps<SubmitFormProps>();
 
 const activities = ref(await listActivities());
+const courseActivities = ref([] as CourseActivity[]);
 
 const showActivityDialog = ref(false);
 const showCourseActivityDialog = ref(false);
@@ -166,6 +174,20 @@ async function addActivitySubmit(newActivity: Activity) {
     await window.api.activity.add([newActivity]);
 
     showActivityDialog.value = false;
+  } finally {
+    activitySubmitLoading.value = false;
+  }
+}
+
+async function addCourseActivitySubmit(courseActivity: CourseActivity) {
+  activitySubmitLoading.value = true;
+
+  console.log(courseActivity);
+
+  try {
+    courseActivities.value.push(courseActivity);
+
+    showCourseActivityDialog.value = false;
   } finally {
     activitySubmitLoading.value = false;
   }

@@ -36,3 +36,7 @@ export namespace Course {
 export namespace Activity {
   export const ADD_ACTIVITY_SUBMIT = 'addActivitySubmit';
 }
+
+export namespace CourseActivity {
+  export const ADD_COURSE_ACTIVITY_SUBMIT = 'addCourseActivitySubmit';
+}
