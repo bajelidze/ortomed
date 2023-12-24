@@ -47,7 +47,14 @@
                   :title="item.name"
                   :subtitle="'Capacity: '+item.capacity"
                   icon="mdi-lightning-bolt"
-                />
+                  :iconColor="item.flexible ? 'green' : 'gray'"
+                >
+                  <template #actions>
+                    <v-col cols="auto" class="mt-3 mr-5">
+                      <v-btn flat icon="mdi-trash-can"/>
+                    </v-col>
+                  </template>
+                </ListItem>
               </template>
             </ItemsListManager>
           </v-card>

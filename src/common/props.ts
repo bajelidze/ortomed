@@ -45,4 +45,5 @@ export interface ListItemProps {
   title: string;
   subtitle: string;
   icon: string;
+  iconColor?: string;
 }
