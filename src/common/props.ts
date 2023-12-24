@@ -40,3 +40,9 @@ export interface MsgSnackbarProps extends ModelProps {
   icon: string;
   color?: string;
 }
+
+export interface ListItemProps {
+  title: string;
+  subtitle: string;
+  icon: string;
+}

@@ -43,7 +43,11 @@
                 />
               </template>
               <template #listItem="{ item }: { item: Activity }">
-                <div>{{ item.name }}</div>
+                <ListItem
+                  :title="item.name"
+                  :subtitle="'Capacity: '+item.capacity"
+                  icon="mdi-lightning-bolt"
+                />
               </template>
             </ItemsListManager>
           </v-card>
@@ -90,6 +94,7 @@ import { useSettingsStore } from '../../../store/settings';
 import ItemsListManager from '../../common/ItemsListManager.vue';
 import MsgSnackbar from '../../common/MsgSnackbar.vue';
 import AddActivity from './components/AddActivity.vue';
+import ListItem from '../../common/ListItem.vue';
 
 const name = ref('');
 const description = ref('');
