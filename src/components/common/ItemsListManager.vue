@@ -21,6 +21,7 @@
           variant="flat"
           icon="mdi-plus"
           v-bind="props"
+          v-if="showAddButton"
         />
       </template>
 
@@ -100,7 +101,12 @@ const emit = defineEmits([
   ItemsListManager.ADD_SUBMIT,
 ]);
 
-defineProps<ItemsListManagerProps>();
+withDefaults(
+  defineProps<ItemsListManagerProps>(),
+  {
+    showAddButton: true,
+  },
+);
 
 function showDialog(show: boolean) {
   emit(Common.UPDATE_MODULE_VALUE, show);

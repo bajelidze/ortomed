@@ -70,6 +70,7 @@
               :submit-loading="submitLoading"
               :show-indicates-required-field="false"
               :items="[]"
+              :show-add-button="false"
             >
               <template #body>
                 <p>Not implemented</p>
