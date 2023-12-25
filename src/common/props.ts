@@ -4,35 +4,35 @@ export interface ModelProps {
   modelValue: boolean;
 }
 
+export interface SubmitFormProps {
+  submitLoading: boolean;
+  formId: string;
+  showIndicatesRequiredField?: boolean;
+}
+
 export interface ItemsListProps {
   table: Table;
 }
 
-export interface ItemsManagerProps extends ItemsListProps, ModelProps {
-  title: string;
+export interface ItemsManagerProps extends ItemsListProps, ModelProps, SubmitFormProps {
   addItemTitle: string;
+  title: string;
   noDataText: string;
   sortBy: SortBy[];
   addButton: boolean;
-  submitLoading: boolean;
-  formId: string;
   deleteDisabled: boolean;
 }
 
-export interface ItemsListManagerProps extends ModelProps {
-  title: string;
+export interface ItemsListManagerProps extends ModelProps, SubmitFormProps {
   addItemTitle: string;
+  title: string;
   noDataText?: string;
-  submitLoading: boolean;
-  formId: string;
   items: readonly any[];
-  showIndicatesRequiredField: boolean;
   showAddButton?: boolean;
 }
 
-export interface SubmitFormProps {
-  formId: string;
-  submitLoading: boolean;
+export interface AddDialogProps extends ModelProps, SubmitFormProps {
+  addItemTitle: string;
 }
 
 export interface MsgSnackbarProps extends ModelProps {
