@@ -5,23 +5,29 @@
     @submit.prevent="submit"
   >
     <v-container class="margin: initial;">
-      <v-autocomplete
-        v-model="pauseHours"
-        density="compact"
-        label="Hours"
-        :disabled="submitLoading"
-        :items="HOURS"
-        :rules="pauseHoursRules"
-      />
+      <v-row>
+        <v-col cols="auto">
+          <v-autocomplete
+            v-model="pauseHours"
+            density="compact"
+            label="Hours"
+            :disabled="submitLoading"
+            :items="HOURS"
+            :rules="pauseHoursRules"
+          />
+        </v-col>
 
-      <v-autocomplete
-        v-model="pauseMinutes"
-        density="compact"
-        label="Minutes"
-        :disabled="submitLoading"
-        :items="MINUTES"
-        :rules="pauseMinutesRules"
-      />
+        <v-col cols="auto">
+          <v-autocomplete
+            v-model="pauseMinutes"
+            density="compact"
+            label="Minutes"
+            :disabled="submitLoading"
+            :items="MINUTES"
+            :rules="pauseMinutesRules"
+          />
+        </v-col>
+      </v-row>
     </v-container>
   </v-form>
 </template>
@@ -48,18 +54,18 @@ const emit = defineEmits<{
 defineProps<SubmitFormProps>();
 
 function validate(): boolean {
+  for (const validators of [
+    pauseHoursRules.value,
+    pauseMinutesRules.value,
+  ]) {
+    for (const validator of validators) {
+      if (typeof validator === 'string' || !validator) {
+        return false;
+      }
+    }
+  }
+
   return true;
-//  for (const validators of [
-//    
-//  ]) {
-//    for (const validator of validators) {
-//      if (typeof validator === 'string' || !validator) {
-//        return false;
-//      }
-//    }
-//  }
-//
-//  return true;
 }
 
 function submit() {

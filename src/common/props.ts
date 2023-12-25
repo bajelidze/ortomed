@@ -50,3 +50,13 @@ export interface ListItemProps {
   icon: string;
   iconColor?: string;
 }
+
+export interface TitledCardProps {
+  title: string;
+  icon: string;
+}
+
+export interface CardItemProps extends TitledCardProps {
+  tooltipText?: string;
+  tooltipLocation?: string;
+}

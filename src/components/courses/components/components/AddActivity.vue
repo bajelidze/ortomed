@@ -25,14 +25,10 @@
     <v-container class="margin: initial;">
       <v-row>
         <v-col cols="6">
-          <v-card
-            class="pb-2"
-            density="compact"
+          <CardItem
+            title="Duration"
+            icon="mdi-clock-outline"
           >
-            <v-card-title>
-              <v-icon size="21">mdi-clock-outline</v-icon>
-              Duration
-            </v-card-title>
             <v-row>
               <v-col cols="1"/>
               <v-col cols="4">
@@ -57,21 +53,15 @@
                 />
               </v-col>
             </v-row>
-          </v-card>
+          </CardItem>
         </v-col>
         <v-col cols="6">
-          <v-card
-            class="pb-2"
-            density="compact"
+          <CardItem
+            title="Capacity"
+            icon="mdi-account-multiple"
+            tooltip-location="left"
+            :tooltip-text="capacityTooltip"
           >
-            <v-tooltip :text="capacityTooltip" location="left">
-              <template #activator="{ props }">
-                <v-card-title v-bind="props">
-                  <v-icon size="21">mdi-account-multiple</v-icon>
-                  Capacity
-                </v-card-title>
-              </template>
-            </v-tooltip>
             <v-row>
               <v-col cols="1"/>
               <v-col cols="4">
@@ -85,7 +75,7 @@
                 />
               </v-col>
             </v-row>
-          </v-card>
+          </CardItem>
         </v-col>
       </v-row>
 
@@ -117,6 +107,7 @@ import { readFile } from '../../../../common/locale';
 import { useSettingsStore } from '../../../../store/settings';
 import { numericRules, nameRules as _nameRules } from '../../../../common/rules';
 import { toSeconds } from '../../../../common/util';
+import CardItem from '../../../common/CardItem.vue';
 
 const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
