@@ -10,15 +10,14 @@
     :form-id="formId"
     :submit-loading="submitLoading"
     :delete-disabled="deleteDisabled"
+    :show-indicates-required-field="true"
     @items-manager-delete="deleteCourse"
   >
-    <template #body>
-      <AddCourse
-        :form-id="formId"
-        :submit-loading="submitLoading"
-        @add-course-submit="addCourseSubmit"
-      />
-    </template>
+    <AddCourse
+      :form-id="formId"
+      :submit-loading="submitLoading"
+      @add-course-submit="addCourseSubmit"
+    />
   </ItemsManager>
 </template>
 

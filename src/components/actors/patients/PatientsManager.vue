@@ -12,13 +12,11 @@
     :delete-disabled="deleteDisabled"
     @items-manager-delete="deletePatient"
   >
-    <template #body>
-      <AddPatient
-        :form-id="formId"
-        :submit-loading="submitLoading"
-        @add-patient-submit="addPatientSubmit"
-      />
-    </template>
+    <AddPatient
+      :form-id="formId"
+      :submit-loading="submitLoading"
+      @add-patient-submit="addPatientSubmit"
+    />
   </ItemsManager>
 </template>
 

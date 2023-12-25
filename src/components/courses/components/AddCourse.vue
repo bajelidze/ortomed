@@ -35,13 +35,11 @@
               :show-indicates-required-field="true"
               :items="activities"
             >
-              <template #body>
-                <AddActivity
-                  :form-id="activityFormID"
-                  :submit-loading="activitySubmitLoading"
-                  @add-activity-submit="addActivitySubmit"
-                />
-              </template>
+              <AddActivity
+                :form-id="activityFormID"
+                :submit-loading="activitySubmitLoading"
+                @add-activity-submit="addActivitySubmit"
+              />
               <template #listItem="{ item }: { item: Activity }">
                 <ListItem
                   :title="item.name"
@@ -54,7 +52,10 @@
                       <v-btn flat icon="mdi-trash-can"/>
                     </v-col>
                     <v-col cols="auto" class="mt-3 mr-3">
-                      <v-btn flat icon="mdi-arrow-right-bold"/>
+                      <v-btn
+                        flat icon="mdi-arrow-right-bold"
+                        @click="showCourseActivityDialog = true"
+                      />
                     </v-col>
                   </template>
                 </ListItem>
@@ -73,18 +74,27 @@
               :submit-loading="submitLoading"
               :show-indicates-required-field="false"
               :items="[]"
-              :show-add-button="false"
+              :add-dialog="false"
             >
-              <AddCourseActivity
-                :form-id="courseActivityFormID"
-                :submit-loading="submitLoading"
-                @add-activity-submit="addCourseActivitySubmit"
-              />
             </ItemsListManager>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
+
+    <AddDialog
+      v-model="showCourseActivityDialog"
+      add-item-title="Add Course Activity"
+      :form-id="courseActivityFormID"
+      :submit-loading="submitLoading"
+      :max-width="1000"
+    >
+      <AddCourseActivity
+        :form-id="courseActivityFormID"
+        :submit-loading="submitLoading"
+        @add-activity-submit="addCourseActivitySubmit"
+      />
+    </AddDialog>
 
     <MsgSnackbar
       v-model="showActivityError"
@@ -108,6 +118,7 @@ import ItemsListManager from '../../common/ItemsListManager.vue';
 import MsgSnackbar from '../../common/MsgSnackbar.vue';
 import AddActivity from './components/AddActivity.vue';
 import AddCourseActivity from './components/AddCourseActivity.vue';
+import AddDialog from '../../common/AddDialog.vue';
 import ListItem from '../../common/ListItem.vue';
 
 const name = ref('');

@@ -13,7 +13,7 @@
       </v-card-title>
 
       <v-card-text class="ml-2 scrollable">
-        <slot name="body"/>
+        <slot/>
       </v-card-text>
 
       <v-card-actions class="mb-2 mr-2">

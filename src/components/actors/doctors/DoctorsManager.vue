@@ -10,15 +10,14 @@
     :form-id="formId"
     :submit-loading="submitLoading"
     :delete-disabled="deleteDisabled"
+    :show-indicates-required-field="true"
     @items-manager-delete="deleteDoctor"
   >
-    <template #body>
-      <AddDoctor
-        :form-id="formId"
-        :submit-loading="submitLoading"
-        @add-doctor-submit="addDoctorSubmit"
-      />
-    </template>
+    <AddDoctor
+      :form-id="formId"
+      :submit-loading="submitLoading"
+      @add-doctor-submit="addDoctorSubmit"
+    />
   </ItemsManager>
 </template>
 

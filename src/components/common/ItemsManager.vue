@@ -20,21 +20,21 @@
           color="green"
           variant="flat"
           icon="mdi-plus"
-          v-if="showAddButton"
+          v-if="addDialog"
           @click="showDialog(true)"
         />
 
         <AddDialog
+          v-if="addDialog"
           :form-id="formId"
           :submit-loading="submitLoading"
           :add-item-title="addItemTitle"
           :persistent="submitLoading"
           :modelValue="modelValue"
+          :show-indicates-required-field="showIndicatesRequiredField"
           @update:modelValue="showDialog($event)"
         >
-          <template #body>
-            <slot name="body"/>
-          </template>
+          <slot/>
         </AddDialog>
 
       </v-toolbar>
@@ -74,7 +74,7 @@ const emit = defineEmits([
 withDefaults(
   defineProps<ItemsManagerProps>(),
   {
-    showAddButton: true,
+    addDialog: true,
   },
 );
 
