@@ -4,31 +4,37 @@
     fast-fail
     @submit.prevent="submit"
   >
-    <v-container class="margin: initial;">
-      <v-row>
-        <v-col cols="auto">
-          <v-autocomplete
-            v-model="pauseHours"
-            density="compact"
-            label="Hours"
-            :disabled="submitLoading"
-            :items="HOURS"
-            :rules="pauseHoursRules"
-          />
-        </v-col>
+    <v-col cols="6">
+      <CardItem
+        title="Pause"
+        icon="mdi-timer-pause-outline"
+      >
+        <v-row>
+          <v-col cols="1"/>
+          <v-col cols="4">
+            <v-autocomplete
+              v-model="pauseHours"
+              density="compact"
+              label="Hours"
+              :disabled="submitLoading"
+              :items="HOURS_TRUNC"
+              :rules="pauseHoursRules"
+            />
+          </v-col>
 
-        <v-col cols="auto">
-          <v-autocomplete
-            v-model="pauseMinutes"
-            density="compact"
-            label="Minutes"
-            :disabled="submitLoading"
-            :items="MINUTES"
-            :rules="pauseMinutesRules"
-          />
-        </v-col>
-      </v-row>
-    </v-container>
+          <v-col cols="4">
+            <v-autocomplete
+              v-model="pauseMinutes"
+              density="compact"
+              label="Minutes"
+              :disabled="submitLoading"
+              :items="MINUTES_TRUNC"
+              :rules="pauseMinutesRules"
+            />
+          </v-col>
+        </v-row>
+      </CardItem>
+    </v-col>
   </v-form>
 </template>
 
@@ -37,12 +43,13 @@ import { ref, computed } from 'vue';
 import { SubmitFormProps } from '../../../../common/props';
 import { CourseActivity } from '../../../../../common/interfaces';
 import { CourseActivity as CourseActivityE } from '../../../../common/events';
-import { HOURS, MINUTES } from '../../../../../common/consts';
+import { HOURS_TRUNC, MINUTES_TRUNC } from '../../../../../common/consts';
 import { numericRules } from '../../../../common/rules';
 import { toSeconds } from '../../../../common/util';
+import CardItem from '../../../common/CardItem.vue';
 
-const pauseHours = ref('');
-const pauseMinutes = ref('');
+const pauseHours = ref('12');
+const pauseMinutes = ref('0');
 
 const pauseHoursRules = computed(() => numericRules(pauseHours.value, 0, 24));
 const pauseMinutesRules = computed(() => numericRules(pauseMinutes.value, 0, 60));

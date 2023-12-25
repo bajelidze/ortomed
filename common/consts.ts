@@ -54,3 +54,11 @@ export const MINUTES: string[] = (() => {
 
   return minutes;
 })();
+
+export const HOURS_TRUNC: string[] = (() => {
+  return [...Array(24).keys()].map(num => num.toString());
+})();
+
+export const MINUTES_TRUNC: string[] = (() => {
+  return [...Array(60).keys()].map(num => num.toString());
+})();
