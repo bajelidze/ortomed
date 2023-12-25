@@ -1,8 +1,8 @@
 <template>
   <v-dialog
     scrollable
-    max-width="1200"
     scroll-strategy="close"
+    :max-width="maxWidth"
     :persistent="submitLoading"
     :modelValue="modelValue"
     @update:modelValue="showDialog($event)"
@@ -59,7 +59,12 @@ const emit = defineEmits([
   Common.UPDATE_MODULE_VALUE,
 ]);
 
-defineProps<AddDialogProps>();
+withDefaults(
+  defineProps<AddDialogProps>(),
+  {
+    maxWidth: 1200,
+  },
+);
 
 function showDialog(show: boolean) {
   emit(Common.UPDATE_MODULE_VALUE, show);

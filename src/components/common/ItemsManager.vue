@@ -15,60 +15,27 @@
 
         <v-spacer/>
 
-        <v-dialog
-          scrollable
-          width="1024"
+        <v-btn
+          size="small"
+          color="green"
+          variant="flat"
+          icon="mdi-plus"
+          v-if="showAddButton"
+          @click="showDialog(true)"
+        />
+
+        <AddDialog
+          :form-id="formId"
+          :submit-loading="submitLoading"
+          :add-item-title="addItemTitle"
+          :persistent="submitLoading"
           :modelValue="modelValue"
           @update:modelValue="showDialog($event)"
-          :persistent="submitLoading"
         >
-          <template #activator="{ props }">
-            <v-btn
-              class="mr-4"
-              color="green"
-              variant="flat"
-              append-icon="mdi-plus"
-              v-bind="props"
-            >
-              {{ locale.common.ADD }}
-            </v-btn>
+          <template #body>
+            <slot name="body"/>
           </template>
-
-          <v-card>
-            <v-card-title class="ma-3">
-              <span class="text-h5">{{ addItemTitle }}</span>
-            </v-card-title>
-            <v-card-text class="ml-2 scrollable">
-              <slot name="body"/>
-            </v-card-text>
-            <v-card-actions class="mb-2 mr-2">
-              <small class="ml-5">
-                *{{ locale.common.INDICATES_REQUIRED_FIELD }}
-              </small>
-              <v-spacer/>
-              <v-btn
-                color="blue"
-                variant="flat"
-                type="submit"
-                :disabled="submitLoading"
-                :loading="submitLoading"
-                :form="formId"
-              >
-                {{ locale.common.SUBMIT }}
-                <template v-slot:loader>
-                  <v-progress-circular indeterminate color="blue"/>
-                </template>
-              </v-btn>
-              <v-btn
-                color="blue"
-                :disabled="submitLoading"
-                @click="showDialog(false)"
-              >
-                {{ locale.common.CANCEL }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        </AddDialog>
 
       </v-toolbar>
     </template>
@@ -94,13 +61,9 @@
 </template>
 
 <script setup lang="ts">
+import AddDialog from './AddDialog.vue';
 import { ItemsManagerProps } from '../../common/props';
 import { Common, ItemsManager } from '../../common/events';
-import { readFile } from '../../common/locale';
-import { useSettingsStore } from '../../store/settings';
-
-const settings = await useSettingsStore().get();
-const locale = await readFile(settings.locale);
 
 const emit = defineEmits([
   Common.UPDATE_MODULE_VALUE,
@@ -108,7 +71,12 @@ const emit = defineEmits([
   ItemsManager.EDIT,
 ]);
 
-defineProps<ItemsManagerProps>();
+withDefaults(
+  defineProps<ItemsManagerProps>(),
+  {
+    showAddButton: true,
+  },
+);
 
 function showDialog(show: boolean) {
   emit(Common.UPDATE_MODULE_VALUE, show);

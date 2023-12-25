@@ -21,6 +21,7 @@ export interface ItemsManagerProps extends ItemsListProps, ModelProps, SubmitFor
   sortBy: SortBy[];
   addButton: boolean;
   deleteDisabled: boolean;
+  showAddButton?: boolean;
 }
 
 export interface ItemsListManagerProps extends ModelProps, SubmitFormProps {
@@ -33,6 +34,7 @@ export interface ItemsListManagerProps extends ModelProps, SubmitFormProps {
 
 export interface AddDialogProps extends ModelProps, SubmitFormProps {
   addItemTitle: string;
+  maxWidth?: number;
 }
 
 export interface MsgSnackbarProps extends ModelProps {

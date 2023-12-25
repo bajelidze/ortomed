@@ -14,18 +14,20 @@
       v-if="showAddButton"
       @click="showDialog(true)"
     />
-      <AddDialog
-        :form-id="formId"
-        :submit-loading="submitLoading"
-        :add-item-title="addItemTitle"
-        :persistent="submitLoading"
-        :modelValue="modelValue"
-        @update:modelValue="showDialog($event)"
-      >
-        <template #body>
-          <slot name="body"/>
-        </template>
-      </AddDialog>
+
+    <AddDialog
+      :form-id="formId"
+      :submit-loading="submitLoading"
+      :add-item-title="addItemTitle"
+      :persistent="submitLoading"
+      :modelValue="modelValue"
+      @update:modelValue="showDialog($event)"
+      :max-width="1000"
+    >
+      <template #body>
+        <slot name="body"/>
+      </template>
+    </AddDialog>
   </v-toolbar>
 
   <v-divider/>
