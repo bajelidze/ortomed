@@ -8,6 +8,7 @@
       <CardItem
         title="Pause"
         icon="mdi-timer-pause-outline"
+        :tooltip-text="pauseTooltip"
       >
         <v-row>
           <v-col cols="1"/>
@@ -47,6 +48,8 @@ import { HOURS_TRUNC, MINUTES_TRUNC } from '../../../../../common/consts';
 import { numericRules } from '../../../../common/rules';
 import { toSeconds } from '../../../../common/util';
 import CardItem from '../../../common/CardItem.vue';
+
+const pauseTooltip = 'The minimum time before the next course activity in the series can be scheduled';
 
 const pauseHours = ref('12');
 const pauseMinutes = ref('0');

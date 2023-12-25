@@ -70,12 +70,32 @@
               v-model="showCourseActivityDialog"
               title="Course Activities"
               add-item-title="Add Course Activity"
-              form-id="123"
+              form-id="courseActivityFormID"
               :submit-loading="submitLoading"
               :show-indicates-required-field="false"
-              :items="[]"
+              :items="courseActivities"
               :add-dialog="false"
             >
+              <template #listItem="{ item }: { item: CourseActivity }">
+                <ListItem
+                  :title="item.pause.toString()"
+                  :subtitle="'subtitle'"
+                  icon="mdi-lightning-bolt"
+                  iconColor="gray"
+                >
+                  <template #actions>
+                    <v-col cols="auto" class="mt-3">
+                      <v-btn flat icon="mdi-trash-can"/>
+                    </v-col>
+                    <v-col cols="auto" class="mt-3 mr-3">
+                      <v-btn
+                        flat icon="mdi-arrow-right-bold"
+                        @click="showCourseActivityDialog = true"
+                      />
+                    </v-col>
+                  </template>
+                </ListItem>
+              </template>
             </ItemsListManager>
           </v-card>
         </v-col>
@@ -92,7 +112,7 @@
       <AddCourseActivity
         :form-id="courseActivityFormID"
         :submit-loading="submitLoading"
-        @add-activity-submit="addCourseActivitySubmit"
+        @add-course-activity-submit="addCourseActivitySubmit"
       />
     </AddDialog>
 
