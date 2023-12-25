@@ -179,7 +179,7 @@ async function addActivitySubmit(newActivity: Activity) {
   }
 }
 
-async function addCourseActivitySubmit(courseActivity: CourseActivity) {
+function addCourseActivitySubmit(courseActivity: CourseActivity) {
   activitySubmitLoading.value = true;
 
   console.log(courseActivity);

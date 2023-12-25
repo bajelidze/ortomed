@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import db from '@/common/db';
 import { CourseDao, Course } from '@/modules/course/course';
 import { DateTime } from 'luxon';
-import { AddCourseFields } from '../../common/fields';
+// import { AddCourseFields } from '../../common/fields';
 import { Courses } from '../api/endpoints/endpoints';
 import { FormattedCourse } from '../../common/interfaces';
 
@@ -17,7 +17,7 @@ export function setCourseHandlers() {
     return formatCourses(courses);
   });
 
-  ipcMain.handle(Courses.ADD, (_, course: AddCourseFields) => {
+  ipcMain.handle(Courses.ADD, (_/*, course: AddCourseFields*/) => {
     throw Error('not implemented');
   });
 
