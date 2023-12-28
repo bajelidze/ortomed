@@ -46,6 +46,7 @@
                   :subtitle="'Capacity: '+item.capacity"
                   icon="mdi-lightning-bolt"
                   :iconColor="item.flexible ? 'green' : 'gray'"
+                  tooltip-location="right"
                 >
                   <template #actions>
                     <v-col cols="auto" class="mt-3">
@@ -57,6 +58,13 @@
                         @click="doShowCourseActivityDialog(item)"
                       />
                     </v-col>
+                  </template>
+
+                  <template #tooltip>
+                    <strong>Duration</strong>: {{ formatDurationSeconds(item.duration) }}<br/>
+                    <strong>Capacity</strong>: {{ item.capacity }}<br/>
+                    <strong>Flexible</strong>: {{ item.flexible }}<br/>
+                    <strong>Description</strong>: {{ formatDescription(item.description) }}<br/>
                   </template>
                 </ListItem>
               </template>
@@ -81,7 +89,8 @@
                   :title="newCourseActivityTitle(item)"
                   :subtitle="newCourseActivitySubtitle(item)"
                   icon="mdi-run-fast"
-                  iconColor="gray"
+                  :iconColor="newCourseActivityColor(item)"
+                  tooltip-location="left"
                 >
                   <template #actions>
                     <v-col cols="auto" class="mt-3">
@@ -91,6 +100,15 @@
                         @click="deleteCourseActivity(item.index)"
                       />
                     </v-col>
+                  </template>
+                  <template #tooltip>
+                    <template v-for="activity in [findActivity(item.activityID)]" :key="activity">
+                      <strong>Duration</strong>: {{ formatDurationSeconds(activity.duration) }}<br/>
+                      <strong>Pause</strong>: {{ formatDurationSeconds(item.pause) }}<br/>
+                      <strong>Capacity</strong>: {{ activity.capacity }}<br/>
+                      <strong>Flexible</strong>: {{ activity.flexible }}<br/>
+                      <strong>Description</strong>: {{ formatDescription(activity.description) }}<br/>
+                    </template>
                   </template>
                 </ListItem>
               </template>
@@ -253,23 +271,38 @@ function newCourseActivityTitle(ca: CourseActivity): string {
   return ca.activityName ? ca.activityName : 'undefined';
 }
 
-function newCourseActivitySubtitle(ca: CourseActivity): string {
+function findActivity(id?: number): Activity {
+  if (id == undefined) {
+    throw Error('the selected activity ID is undefined');
+  }
+
   let activity: Activity | undefined;
 
   for (const act of activities.value) {
-    if (act.id == ca.activityID) {
+    if (act.id == id) {
       activity = act;
       break;
     }
   }
 
   if (activity == undefined) {
-    throw Error(`the activity with ID ${ca.activityID} is undefined`);
+    throw Error(`the activity with ID ${id} is undefined`);
   }
 
-  const duration = formatDurationSeconds(activity.duration);
-  const pause = formatDurationSeconds(ca.pause);
+  return activity;
+}
 
-  return `Activity ID: ${ca.activityID ? ca.activityID?.toString() : 'undefined'}, Duration: ${duration}, Pause: ${pause}`;
+function newCourseActivitySubtitle(ca: CourseActivity): string {
+  const activity = findActivity(ca.activityID);
+  return `ID: ${activity.id}, Activity ID: ${ca.activityID}`;
+}
+
+function newCourseActivityColor(ca: CourseActivity): string {
+  const activity = findActivity(ca.activityID);
+  return activity.flexible ? 'green' : 'gray';
+}
+
+function formatDescription(description?: string): string {
+  return description != undefined && description.length > 0 ? description : 'No description';
 }
 </script>

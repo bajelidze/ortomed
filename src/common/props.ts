@@ -50,6 +50,8 @@ export interface ListItemProps {
   subtitle: string;
   icon: string;
   iconColor?: string;
+  tooltipText?: string;
+  tooltipLocation?: string;
 }
 
 export interface TitledCardProps {
@@ -64,4 +66,8 @@ export interface CardItemProps extends TitledCardProps {
 
 export interface AddCourseActivityProps extends SubmitFormProps {
   activity: Activity;
+}
+
+export interface KeyValueTooltipProps {
+  object: any;
 }

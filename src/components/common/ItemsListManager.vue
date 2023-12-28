@@ -66,6 +66,7 @@ withDefaults(
   defineProps<ItemsListManagerProps>(),
   {
     addDialog: true,
+    tooltipText: '',
   },
 );
 
