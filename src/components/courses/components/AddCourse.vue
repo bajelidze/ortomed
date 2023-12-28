@@ -54,7 +54,7 @@
                     <v-col cols="auto" class="mt-3 mr-3">
                       <v-btn
                         flat icon="mdi-arrow-right-bold"
-                        @click="showCourseActivityDialog = true"
+                        @click="doShowCourseActivityDialog(item)"
                       />
                     </v-col>
                   </template>
@@ -78,19 +78,17 @@
             >
               <template #listItem="{ item }: { item: CourseActivity }">
                 <ListItem
-                  :title="item.pause.toString()"
-                  :subtitle="'subtitle'"
-                  icon="mdi-lightning-bolt"
+                  :title="newCourseActivityTitle(item)"
+                  :subtitle="newCourseActivitySubtitle(item)"
+                  icon="mdi-run-fast"
                   iconColor="gray"
                 >
                   <template #actions>
                     <v-col cols="auto" class="mt-3">
-                      <v-btn flat icon="mdi-trash-can"/>
-                    </v-col>
-                    <v-col cols="auto" class="mt-3 mr-3">
                       <v-btn
-                        flat icon="mdi-arrow-right-bold"
-                        @click="showCourseActivityDialog = true"
+                        flat
+                        icon="mdi-trash-can"
+                        @click="deleteCourseActivity(item.index)"
                       />
                     </v-col>
                   </template>
@@ -112,6 +110,7 @@
       <AddCourseActivity
         :form-id="courseActivityFormID"
         :submit-loading="submitLoading"
+        :activity="selectedActivity"
         @add-course-activity-submit="addCourseActivitySubmit"
       />
     </AddDialog>
@@ -128,6 +127,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { formatDurationSeconds } from '../../../../common/utils/format';
 import { SubmitFormProps } from '../../../common/props';
 import { Course } from '../../../common/events';
 import { Activity, CourseActivity } from '../../../../common/interfaces';
@@ -165,6 +165,13 @@ defineProps<SubmitFormProps>();
 
 const activities = ref(await listActivities());
 const courseActivities = ref([] as CourseActivity[]);
+
+const selectedActivity = ref({
+  name: 'undefined',
+  duration: 0,
+  capacity: 0,
+  flexible: false,
+} as Activity);
 
 const showActivityDialog = ref(false);
 const showCourseActivityDialog = ref(false);
@@ -213,14 +220,56 @@ async function addActivitySubmit(newActivity: Activity) {
 function addCourseActivitySubmit(courseActivity: CourseActivity) {
   activitySubmitLoading.value = true;
 
-  console.log(courseActivity);
-
   try {
+    courseActivity.index = courseActivities.value.length;
     courseActivities.value.push(courseActivity);
 
     showCourseActivityDialog.value = false;
   } finally {
     activitySubmitLoading.value = false;
   }
+}
+
+function doShowCourseActivityDialog(activity: Activity) {
+  selectedActivity.value = activity;
+  showCourseActivityDialog.value = true;
+}
+
+function deleteCourseActivity(index?: number) {
+  if (index == undefined) {
+    console.log('The delete index is undefined');
+    return;
+  }
+
+  for (const ca of courseActivities.value) {
+    if (ca.index == index) {
+      courseActivities.value.splice(index, 1);
+      return;
+    }
+  }
+}
+
+function newCourseActivityTitle(ca: CourseActivity): string {
+  return ca.activityName ? ca.activityName : 'undefined';
+}
+
+function newCourseActivitySubtitle(ca: CourseActivity): string {
+  let activity: Activity | undefined;
+
+  for (const act of activities.value) {
+    if (act.id == ca.activityID) {
+      activity = act;
+      break;
+    }
+  }
+
+  if (activity == undefined) {
+    throw Error(`the activity with ID ${ca.activityID} is undefined`);
+  }
+
+  const duration = formatDurationSeconds(activity.duration);
+  const pause = formatDurationSeconds(ca.pause);
+
+  return `Activity ID: ${ca.activityID ? ca.activityID?.toString() : 'undefined'}, Duration: ${duration}, Pause: ${pause}`;
 }
 </script>

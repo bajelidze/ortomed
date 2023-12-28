@@ -1,4 +1,5 @@
 import { Table, SortBy } from './interfaces';
+import { Activity } from '../../common/interfaces';
 
 export interface ModelProps {
   modelValue: boolean;
@@ -59,4 +60,8 @@ export interface TitledCardProps {
 export interface CardItemProps extends TitledCardProps {
   tooltipText?: string;
   tooltipLocation?: string;
+}
+
+export interface AddCourseActivityProps extends SubmitFormProps {
+  activity: Activity;
 }
