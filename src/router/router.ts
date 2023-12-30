@@ -8,6 +8,11 @@ import CoursesView from '../views/CoursesView.vue';
 
 const routes = [
   {
+    path: '/',
+    name: 'Main',
+    component: PatientsView,
+  },
+  {
     path: '/patients',
     name: 'Patients',
     component: PatientsView,

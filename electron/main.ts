@@ -25,7 +25,7 @@ process.traceProcessWarnings = true;
 
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.PUBLIC, 'ortomed.svg'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       sandbox: false,

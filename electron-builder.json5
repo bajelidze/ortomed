@@ -6,7 +6,7 @@
   "appId": "YourAppID",
   "asar": true,
   "directories": {
-    "output": "release/${version}"
+    "output": "build/${version}"
   },
   "files": [
     "dist-electron",
@@ -16,7 +16,8 @@
     "artifactName": "${productName}_${version}.${ext}",
     "target": [
       "dmg"
-    ]
+    ],
+    "icon": "public/ortomed1024x1024.png"
   },
   "win": {
     "target": [
@@ -30,7 +31,8 @@
       "to": "share/",
       "filter": ["**/*"]
     }],
-    "artifactName": "${productName}_${version}.${ext}"
+    "artifactName": "${productName}_${version}.${ext}",
+    "icon": "public/ortomed1024x1024.png"
   },
   "linux": {
     "target": "AppImage",
@@ -38,7 +40,8 @@
       "from": "./share/",
       "to": "share/",
       "filter": ["**/*"]
-    }]
+    }],
+    "icon": "public/ortomed1024x1024.png"
   },
   "nsis": {
     "oneClick": false,
