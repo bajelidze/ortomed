@@ -68,8 +68,8 @@ export const API = {
     async listAll(): Promise<FormattedDoctor[]> {
       return await ipcRenderer.invoke(Courses.LIST_ALL);
     },
-    async add(doctor: string) {
-      return await ipcRenderer.invoke(Courses.ADD, JSON.parse(doctor) as AddCourseFields);
+    async add(course: string) {
+      return await ipcRenderer.invoke(Courses.ADD, JSON.parse(course) as AddCourseFields);
     },
     async delete(id: number) {
       return await ipcRenderer.invoke(Courses.DELETE, id);

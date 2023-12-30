@@ -41,7 +41,6 @@ export interface Activity extends WithID {
 
 export interface CourseActivity {
   activityID?: number;
-  activityName?: string;
   index?: number; // The order of this activity among other activities.
   pause: number; // Seconds. Pause is the minimal pause before next activity.
 }

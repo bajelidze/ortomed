@@ -22,6 +22,14 @@
       :maxlength="descriptionMaxLength"
     />
 
+    <v-autocomplete
+      v-model="repetitions"
+      label="Repetitions"
+      :disabled="submitLoading"
+      :items="repetitionsValues"
+      :rules="repetitionsRules"
+    />
+
     <v-container>
       <v-row>
         <v-col>
@@ -43,7 +51,7 @@
               <template #listItem="{ item }: { item: Activity }">
                 <ListItem
                   :title="item.name"
-                  :subtitle="'Capacity: '+item.capacity"
+                  :subtitle="`ID: ${item.id}`"
                   icon="mdi-lightning-bolt"
                   :iconColor="item.flexible ? 'green' : 'gray'"
                   tooltip-location="right"
@@ -168,6 +176,7 @@ import { Activity, CourseActivity } from '../../../../common/interfaces';
 import { AddCourseFields } from '../../../../common/fields';
 import { readFile } from '../../../common/locale';
 import { useSettingsStore } from '../../../store/settings';
+import { numericRules } from '../../../common/rules';
 import ItemsListManager from '../../common/ItemsListManager.vue';
 import MsgSnackbar from '../../common/MsgSnackbar.vue';
 import AddActivity from './components/AddActivity.vue';
@@ -175,17 +184,21 @@ import AddCourseActivity from './components/AddCourseActivity.vue';
 import AddDialog from '../../common/AddDialog.vue';
 import ListItem from '../../common/ListItem.vue';
 
-const name = ref('');
-const description = ref('');
-const activityFormID = 'activityForm';
-const courseActivityFormID = 'courseActivityForm';
-
 const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
 
+const activityFormID = 'activityForm';
+const courseActivityFormID = 'courseActivityForm';
+
+const name = ref('');
+const description = ref('');
+const repetitions = ref('1');
+
 const nameMaxLength = 50;
 const descriptionMaxLength = 500;
+const repetitionsMaxValue = 100;
 
+const repetitionsRules = computed(() => numericRules(repetitions.value, 1, repetitionsMaxValue));
 const nameRules = computed(() => [
   name.value.length > 0 || 'The name must not be empty',
   name.value.length <= nameMaxLength || `The name length must be less than or equal ${nameMaxLength}`,
@@ -216,9 +229,14 @@ const showActivityError = ref(false);
 const showActivityErrorMsg = ref('');
 
 function validate(): boolean {
-  for (const validator of nameRules.value) {
-    if (typeof validator === 'string') {
-      return false;
+  for (const validators of [
+    nameRules.value,
+    repetitionsRules.value,
+  ]) {
+    for (const validator of validators) {
+      if (typeof validator === 'string') {
+        return false;
+      }
     }
   }
 
@@ -230,7 +248,14 @@ function submit() {
     return;
   }
 
-  emit(Course.ADD_COURSE_SUBMIT, { name: name.value, description: description.value });
+  const course: AddCourseFields = {
+    name: name.value,
+    description: description.value,
+    repetitions: +repetitions.value,
+    courseActivities: courseActivities.value,
+  };
+
+  emit(Course.ADD_COURSE_SUBMIT, course);
 }
 
 async function listActivities(): Promise<Activity[]> {
@@ -313,10 +338,6 @@ function moveCourseActivity(direction: Direction, index?: number) {
   }
 }
 
-function newCourseActivityTitle(ca: CourseActivity): string {
-  return ca.activityName ? ca.activityName : 'undefined';
-}
-
 function findActivity(id?: number): Activity {
   if (id == undefined) {
     throw Error('the selected activity ID is undefined');
@@ -338,6 +359,11 @@ function findActivity(id?: number): Activity {
   return activity;
 }
 
+function newCourseActivityTitle(ca: CourseActivity): string {
+  const activity = findActivity(ca.activityID);
+  return activity.name;
+}
+
 function newCourseActivityColor(ca: CourseActivity): string {
   const activity = findActivity(ca.activityID);
   return activity.flexible ? 'green' : 'gray';
@@ -345,5 +371,14 @@ function newCourseActivityColor(ca: CourseActivity): string {
 
 function formatDescription(description?: string): string {
   return description != undefined && description.length > 0 ? description : 'No description';
+}
+
+// Consts
+//
+const repetitionsValues: string[] = [];
+
+for (let i = 1; i < repetitionsMaxValue; i++) {
+  let iStr = i.toString();
+  repetitionsValues.push(iStr);
 }
 </script>
