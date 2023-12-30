@@ -85,7 +85,7 @@
               :items="courseActivities"
               :add-dialog="false"
             >
-              <template #listItem="{ item }: { item: CourseActivity }">
+              <template #listItem="{ item, index }: { item: CourseActivity, index: number }">
                 <ListItem
                   :title="newCourseActivityTitle(item)"
                   :subtitle="`Activity ID: ${item.activityID}`"
@@ -98,21 +98,21 @@
                       <v-btn
                         flat
                         icon="mdi-arrow-up-bold"
-                        @click="moveCourseActivity(Direction.LEFT, item.index)"
+                        @click="moveCourseActivity(Direction.LEFT, index)"
                       />
                     </v-col>
                     <v-col cols="auto" class="mt-3">
                       <v-btn
                         flat
                         icon="mdi-arrow-down-bold"
-                        @click="moveCourseActivity(Direction.RIGHT, item.index)"
+                        @click="moveCourseActivity(Direction.RIGHT, index)"
                       />
                     </v-col>
                     <v-col cols="auto" class="mt-3 mr-3">
                       <v-btn
                         flat
                         icon="mdi-trash-can"
-                        @click="deleteCourseActivity(item.index)"
+                        @click="deleteCourseActivity(index)"
                       />
                     </v-col>
                   </template>
@@ -289,9 +289,6 @@ enum Direction {
 }
 
 function moveCourseActivity(direction: Direction, index?: number) {
-  const result = JSON.stringify(courseActivities.value);
-  console.log(result);
-
   function moveItem(num: number) {
     if (index == undefined) {
       console.log('The move index is undefined');
@@ -302,9 +299,7 @@ function moveCourseActivity(direction: Direction, index?: number) {
 
     const temp = courseActivities.value[index];
     courseActivities.value[index] = courseActivities.value[index + num];
-    courseActivities.value[index].index = index;
     courseActivities.value[index + num] = temp;
-    courseActivities.value[index + num].index = index + num;
   }
 
   switch (direction) {

@@ -44,8 +44,8 @@
      item-height="48"
      class="scrollable"
    >
-     <template #default="{ item }">
-       <slot name="listItem" :item="item"/>
+     <template #default="{ item, index }">
+       <slot name="listItem" :item="item" :index="index"/>
      </template>
   </v-virtual-scroll>
 </template>
