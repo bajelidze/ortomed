@@ -50,7 +50,6 @@ export interface ListItemProps {
   subtitle: string;
   icon: string;
   iconColor?: string;
-  tooltipText?: string;
   tooltipLocation?: string;
 }
 

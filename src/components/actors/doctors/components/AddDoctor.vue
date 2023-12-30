@@ -26,13 +26,11 @@
               :show-indicates-required-field="false"
               :items="availabilities"
             >
-              <template #body>
-                <AddAvailability
-                  :form-id="availabilityFormID"
-                  :submit-loading="availabilitySubmitLoading"
-                  @add-availability-submit="addAvailabilitySubmit"
-                />
-              </template>
+              <AddAvailability
+                :form-id="availabilityFormID"
+                :submit-loading="availabilitySubmitLoading"
+                @add-availability-submit="addAvailabilitySubmit"
+              />
               <template #listItem="{ item }: { item: Schedule }">
                 <v-row no-gutters>
                   <v-col cols="auto">
@@ -65,9 +63,7 @@
               :show-indicates-required-field="false"
               :items="[]"
             >
-              <template #body>
-                <p>Not implemented</p>
-              </template>
+              <p>Not implemented</p>
             </ItemsListManager>
           </v-card>
         </v-col>

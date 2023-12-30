@@ -61,6 +61,7 @@
                   </template>
 
                   <template #tooltip>
+                    <strong>ID</strong>: {{ item.id }}<br/>
                     <strong>Duration</strong>: {{ formatDurationSeconds(item.duration) }}<br/>
                     <strong>Capacity</strong>: {{ item.capacity }}<br/>
                     <strong>Flexible</strong>: {{ item.flexible }}<br/>
@@ -87,13 +88,27 @@
               <template #listItem="{ item }: { item: CourseActivity }">
                 <ListItem
                   :title="newCourseActivityTitle(item)"
-                  :subtitle="newCourseActivitySubtitle(item)"
+                  :subtitle="`Activity ID: ${item.activityID}`"
                   icon="mdi-run-fast"
                   :iconColor="newCourseActivityColor(item)"
                   tooltip-location="left"
                 >
                   <template #actions>
                     <v-col cols="auto" class="mt-3">
+                      <v-btn
+                        flat
+                        icon="mdi-arrow-up-bold"
+                        @click="moveCourseActivity(Direction.LEFT, item.index)"
+                      />
+                    </v-col>
+                    <v-col cols="auto" class="mt-3">
+                      <v-btn
+                        flat
+                        icon="mdi-arrow-down-bold"
+                        @click="moveCourseActivity(Direction.RIGHT, item.index)"
+                      />
+                    </v-col>
+                    <v-col cols="auto" class="mt-3 mr-3">
                       <v-btn
                         flat
                         icon="mdi-trash-can"
@@ -103,6 +118,7 @@
                   </template>
                   <template #tooltip>
                     <template v-for="activity in [findActivity(item.activityID)]" :key="activity">
+                      <strong>Activity ID</strong>: {{ item.activityID }}<br/>
                       <strong>Duration</strong>: {{ formatDurationSeconds(activity.duration) }}<br/>
                       <strong>Pause</strong>: {{ formatDurationSeconds(item.pause) }}<br/>
                       <strong>Capacity</strong>: {{ activity.capacity }}<br/>
@@ -267,6 +283,41 @@ function deleteCourseActivity(index?: number) {
   }
 }
 
+enum Direction {
+  LEFT,
+  RIGHT,
+}
+
+function moveCourseActivity(direction: Direction, index?: number) {
+  const result = JSON.stringify(courseActivities.value);
+  console.log(result);
+
+  function moveItem(num: number) {
+    if (index == undefined) {
+      console.log('The move index is undefined');
+      return;
+    } else if (index + num >= courseActivities.value.length || index + num < 0) {
+      return;
+    }
+
+    const temp = courseActivities.value[index];
+    courseActivities.value[index] = courseActivities.value[index + num];
+    courseActivities.value[index].index = index;
+    courseActivities.value[index + num] = temp;
+    courseActivities.value[index + num].index = index + num;
+  }
+
+  switch (direction) {
+    case Direction.LEFT: {
+      moveItem(-1);
+      break;
+    } case Direction.RIGHT: {
+      moveItem(1);
+      break;
+    }
+  }
+}
+
 function newCourseActivityTitle(ca: CourseActivity): string {
   return ca.activityName ? ca.activityName : 'undefined';
 }
@@ -290,11 +341,6 @@ function findActivity(id?: number): Activity {
   }
 
   return activity;
-}
-
-function newCourseActivitySubtitle(ca: CourseActivity): string {
-  const activity = findActivity(ca.activityID);
-  return `ID: ${activity.id}, Activity ID: ${ca.activityID}`;
 }
 
 function newCourseActivityColor(ca: CourseActivity): string {
