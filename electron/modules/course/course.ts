@@ -118,6 +118,7 @@ export class CourseDao extends BasicDao<Course, CourseEntity> {
       table.string('name').notNullable();
       table.string('description').defaultTo('');
       table.integer('repetitions').unsigned().defaultTo(1);
+      table.integer('dateAdded').unsigned();
     });
   }
 

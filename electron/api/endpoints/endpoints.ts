@@ -41,6 +41,14 @@ export enum Activity {
   DELETE = activityPrefix + 'Delete',
 }
 
+const courseActivityPrefix = 'courseActivity';
+
+export enum CourseActivity {
+  LIST_ALL = courseActivityPrefix + 'ListAll',
+  ADD = courseActivityPrefix + 'Add',
+  DELETE = courseActivityPrefix + 'Delete',
+}
+
 const localePrefix = 'locale';
 
 export enum Locale {

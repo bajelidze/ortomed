@@ -86,8 +86,7 @@ function submit(activity: Activity) {
   }
 
   const courseActivity: CourseActivity = {
-    activityID: activity.id,
-    activityName: activity.name,
+    activityId: activity.id,
     pause: toSeconds(pauseHours.value, pauseMinutes.value),
   };
 

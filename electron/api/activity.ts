@@ -20,7 +20,7 @@ export function setActivityHandlers() {
   });
 }
 
-export async function addActivities(activities: Activity[]) {
+export async function addActivities(activities: Activity[]): Promise<number[]> {
   const activitiesC: Promise<ActivityC>[] = [];
 
   for (const activity of activities) {
@@ -36,7 +36,8 @@ export async function addActivities(activities: Activity[]) {
     activitiesC.push(act.commit());
   }
 
-  await Promise.all(activitiesC);
+  const acts = await Promise.all(activitiesC);
+  return acts.map(act => act.id == undefined ? 0 : act.id);
 }
 
 function formatActivity(activityC: ActivityC): Activity {

@@ -96,7 +96,7 @@
               <template #listItem="{ item, index }: { item: CourseActivity, index: number }">
                 <ListItem
                   :title="newCourseActivityTitle(item)"
-                  :subtitle="`Activity ID: ${item.activityID}`"
+                  :subtitle="`Activity ID: ${item.activityId}`"
                   icon="mdi-run-fast"
                   :iconColor="newCourseActivityColor(item)"
                   tooltip-location="left"
@@ -125,8 +125,8 @@
                     </v-col>
                   </template>
                   <template #tooltip>
-                    <template v-for="activity in [findActivity(item.activityID)]" :key="activity">
-                      <strong>Activity ID</strong>: {{ item.activityID }}<br/>
+                    <template v-for="activity in [findActivity(item.activityId)]" :key="activity">
+                      <strong>Activity ID</strong>: {{ item.activityId }}<br/>
                       <strong>Duration</strong>: {{ formatDurationSeconds(activity.duration) }}<br/>
                       <strong>Pause</strong>: {{ formatDurationSeconds(item.pause) }}<br/>
                       <strong>Capacity</strong>: {{ activity.capacity }}<br/>
@@ -268,7 +268,13 @@ async function addActivitySubmit(newActivity: Activity) {
   try {
     activities.value.push(newActivity);
 
-    await window.api.activity.add([newActivity]);
+    const id = await window.api.activity.add([newActivity]);
+
+    if (id.length == 0) {
+      console.log('The window.api.activity.add returned no ids');
+    } else {
+      newActivity.id = id[0];
+    }
 
     showActivityDialog.value = false;
   } finally {
@@ -280,9 +286,7 @@ function addCourseActivitySubmit(courseActivity: CourseActivity) {
   activitySubmitLoading.value = true;
 
   try {
-    courseActivity.index = courseActivities.value.length;
     courseActivities.value.push(courseActivity);
-
     showCourseActivityDialog.value = false;
   } finally {
     activitySubmitLoading.value = false;
@@ -300,12 +304,7 @@ function deleteCourseActivity(index?: number) {
     return;
   }
 
-  for (const ca of courseActivities.value) {
-    if (ca.index == index) {
-      courseActivities.value.splice(index, 1);
-      return;
-    }
-  }
+  courseActivities.value.splice(index, 1);
 }
 
 enum Direction {
@@ -360,12 +359,12 @@ function findActivity(id?: number): Activity {
 }
 
 function newCourseActivityTitle(ca: CourseActivity): string {
-  const activity = findActivity(ca.activityID);
+  const activity = findActivity(ca.activityId);
   return activity.name;
 }
 
 function newCourseActivityColor(ca: CourseActivity): string {
-  const activity = findActivity(ca.activityID);
+  const activity = findActivity(ca.activityId);
   return activity.flexible ? 'green' : 'gray';
 }
 

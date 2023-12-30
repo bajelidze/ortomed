@@ -79,7 +79,7 @@ export const API = {
     async listAll(): Promise<Activity[]> {
       return await ipcRenderer.invoke(ActivityE.LIST_ALL);
     },
-    async add(activities: Activity[]) {
+    async add(activities: Activity[]): Promise<number[]> {
       return await ipcRenderer.invoke(ActivityE.ADD, activities);
     },
     async delete(id: number) {

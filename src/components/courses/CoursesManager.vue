@@ -103,13 +103,12 @@ async function addCourseSubmit(course: AddCourseFields) {
 }
 
 async function deleteCourse(courseData: { raw: FormattedCourse }) {
-  deleteDisabled.value = true;
-
   if (courseData.raw.id == undefined) {
     throw Error('selected course id is undefined');
   }
 
   try {
+    deleteDisabled.value = true;
     await window.api.courses.delete(+courseData.raw.id);
   } finally {
     deleteDisabled.value = false;

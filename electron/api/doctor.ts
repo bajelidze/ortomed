@@ -1,9 +1,9 @@
 import { ipcMain } from 'electron';
 import { RRule, WeekdayStr } from 'rrule';
+import { DateTime } from 'luxon';
 import db from '@/common/db';
 import { DoctorDao, Doctor } from '@/modules/actors/doctor';
 import { AvailabilityDao } from '@/modules/actors/availability';
-import { DateTime } from 'luxon';
 import { AddDoctorFields } from '../../common/fields';
 import { Doctors } from '../api/endpoints/endpoints';
 import { FormattedDoctor } from '../../common/interfaces';
@@ -35,12 +35,12 @@ export function setDoctorHandlers() {
 
     await doctorCls.commit();
 
-    const doctorID = doctorCls.id;
-    if (doctorID == undefined) {
-      throw Error('doctorID is undefined');
+    const doctorId = doctorCls.id;
+    if (doctorId == undefined) {
+      throw Error('doctorId is undefined');
     }
 
-    await addAvailabilities(doctorID, ...doctor.schedule);
+    await addAvailabilities(doctorId, ...doctor.schedule);
   });
 
   ipcMain.handle(Doctors.DELETE, async (_, id: number) => {

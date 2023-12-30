@@ -1,11 +1,11 @@
 import { ipcMain } from 'electron';
+import { DateTime } from 'luxon';
 import db from '@/common/db';
 import { CourseDao, Course } from '@/modules/course/course';
-//import { CourseActivityDao, CourseActivity } from '@/modules/course/courseActivity';
-import { DateTime } from 'luxon';
-//import { AddCourseFields } from '../../common/fields';
+import { AddCourseFields } from '../../common/fields';
 import { Courses } from '../api/endpoints/endpoints';
 import { FormattedCourse } from '../../common/interfaces';
+import { addCourseActivities } from './courseActivity';
 
 export function setCourseHandlers() {
   ipcMain.handle(Courses.LIST, async (_, limit: number, offset: number) => {
@@ -18,13 +18,21 @@ export function setCourseHandlers() {
     return formatCourses(courses);
   });
 
-  ipcMain.handle(Courses.ADD, (/*_, course: AddCourseFields*/) => {
-    throw Error('not implemented');
-    // const courseCls = new Course({
-    //   name: course.name,
-    //   description: course.description,
-    //   repetitions: 0, // TODO: reps
-    // });
+  ipcMain.handle(Courses.ADD, async (_, course: AddCourseFields) => {
+    const courseCls = new Course({
+      name: course.name,
+      description: course.description,
+      repetitions: course.repetitions,
+    }).setDb(db);
+
+    await courseCls.commit();
+
+    const courseId = courseCls.id;
+    if (courseId == undefined) {
+      throw Error('courseId is undefined');
+    }
+
+    await addCourseActivities(courseId, ...course.courseActivities);
   });
 
   ipcMain.handle(Courses.DELETE, async (_, id: number) => {

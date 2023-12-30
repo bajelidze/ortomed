@@ -1,10 +1,17 @@
 import { Knex } from 'knex';
+import { Mutex } from 'async-mutex';
 import log from '@/common/logger';
 import errs from '@/common/errors';
 
 interface Class {
   id?: number;
 }
+
+// createTableMutexes are mutexes to synchronize concurrent table
+// creation attempts. It maps table names to the corresponding mutexes.
+//
+// A bit scuffed to do it like this (via a global variable).
+const createTableMutexes: Record<string, Mutex> = {};
 
 export abstract class BasicDao<Cls extends Class, Entity> {
   protected db: Knex;
@@ -28,11 +35,19 @@ export abstract class BasicDao<Cls extends Class, Entity> {
       return;
     }
 
-    if (!await this.db.schema.hasTable(this.table)) {
-      this.createTable();
-
-      log.info(`Created table "${this.table}"`);
+    if (!(this.table in createTableMutexes)) {
+      createTableMutexes[this.table] = new Mutex();
     }
+
+    const mutex = createTableMutexes[this.table];
+
+    await mutex.runExclusive(async () => {
+      if (!await this.db.schema.hasTable(this.table)) {
+        await this.createTable();
+
+        log.info(`Created table "${this.table}"`);
+      }
+    });
 
     this.initialized = true;
   }
