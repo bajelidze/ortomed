@@ -6,14 +6,14 @@
   "appId": "YourAppID",
   "asar": true,
   "directories": {
-    "output": "build/${version}"
+    "output": "build"
   },
   "files": [
     "dist-electron",
     "dist"
   ],
   "mac": {
-    "artifactName": "${productName}_${version}.${ext}",
+    "artifactName": "${productName}.${ext}",
     "target": [
       "dmg"
     ],
@@ -31,7 +31,7 @@
       "to": "share/",
       "filter": ["**/*"]
     }],
-    "artifactName": "${productName}_${version}.${ext}",
+    "artifactName": "${productName}.${ext}",
     "icon": "public/ortomed1024x1024.png"
   },
   "linux": {
