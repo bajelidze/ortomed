@@ -14,6 +14,9 @@
       <router-link to="/courses">
         <v-list-item prepend-icon="mdi-list-box" :title="locale.courses.COURSES" value="courses"/>
       </router-link>
+      <router-link to="/scheduler">
+        <v-list-item prepend-icon="mdi-wrench-clock" :title="locale.scheduler.SCHEDULER" value="scheduler"/>
+      </router-link>
     </v-list>
   </v-navigation-drawer>
 

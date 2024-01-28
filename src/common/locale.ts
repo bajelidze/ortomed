@@ -46,6 +46,10 @@ interface Courses {
   NO_COURSES: string;
 }
 
+interface Scheduler {
+  SCHEDULER: string;
+}
+
 interface Weekday {
   MONDAY: string;
   TUESDAY: string;
@@ -64,6 +68,7 @@ interface Strings {
   holidays: Holidays;
   availability: Availability;
   weekday: Weekday;
+  scheduler: Scheduler;
 }
 
 export import LocaleFile = enumsLocaleFile;

@@ -5,6 +5,8 @@ import PatientsView from '../views/PatientsView.vue';
 import DoctorsView from '../views/DoctorsView.vue';
 // @ts-ignore
 import CoursesView from '../views/CoursesView.vue';
+// @ts-ignore
+import SchedulerView from '../views/SchedulerView.vue';
 
 const routes = [
   {
@@ -26,6 +28,11 @@ const routes = [
     path: '/courses',
     name: 'Courses',
     component: CoursesView,
+  },
+  {
+    path: '/scheduler',
+    name: 'Scheduler',
+    component: SchedulerView,
   },
 ];
 

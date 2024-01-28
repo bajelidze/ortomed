@@ -37,3 +37,5 @@ strings:
     FRIDAY: 'Friday'
     SATURDAY: 'Saturday'
     SUNDAY: 'Sunday'
+  scheduler:
+    SCHEDULER: 'Scheduler'
