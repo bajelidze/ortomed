@@ -38,7 +38,7 @@ export namespace time {
     return false;
   }
 
-  // reduceIntervals returns the intersections between intervals that 
+  // reduceIntervals returns the intersections between intervals that
   // intersect at least `overlaps` times. Mutates the input array.
   export function reduceIntervals(intervals: Interval[], overlaps: number): Interval[] {
     for (let i = 0; i < overlaps; i++) {
