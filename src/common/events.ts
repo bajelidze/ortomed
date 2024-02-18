@@ -40,3 +40,7 @@ export namespace Activity {
 export namespace CourseActivity {
   export const ADD_COURSE_ACTIVITY_SUBMIT = 'addCourseActivitySubmit';
 }
+
+export namespace Scheduler {
+  export const ADD_SCHEDULE_SUBMIT = 'addScheduleSubmit';
+}

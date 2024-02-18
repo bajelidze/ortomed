@@ -12,7 +12,7 @@ const routes = [
   {
     path: '/',
     name: 'Main',
-    component: PatientsView,
+    component: SchedulerView,
   },
   {
     path: '/patients',

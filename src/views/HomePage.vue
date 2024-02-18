@@ -4,7 +4,7 @@
     rail
     permanent
   >
-    <v-list density="compact" nav>
+    <v-list nav>
       <router-link to="/scheduler">
         <v-list-item prepend-icon="mdi-wrench-clock" :title="locale.scheduler.SCHEDULER" value="scheduler"/>
       </router-link>
