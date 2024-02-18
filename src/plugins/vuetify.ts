@@ -1,7 +1,6 @@
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-import { VDataTable } from 'vuetify/labs/VDataTable';
 import 'vuetify/styles';
 
 import { mdi } from 'vuetify/iconsets/mdi';
@@ -16,7 +15,6 @@ export default createVuetify({
   },
   components: {
     ...components,
-    VDataTable,
   },
   directives,
 });
