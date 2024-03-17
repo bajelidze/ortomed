@@ -8,7 +8,7 @@
         <v-col cols="auto">
           <v-tabs
               v-model="tab"
-              color="blue"
+              color="primary"
            >
              <v-tab :value="1"><v-icon start icon="mdi-calendar"/>Calendar</v-tab>
           </v-tabs>

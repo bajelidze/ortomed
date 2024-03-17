@@ -9,15 +9,15 @@
       :location="tooltipLocation as any"
     >
       <template #activator="{ props }">
-        <v-card-title v-bind="props">
-          <v-icon size="21">{{ icon }}</v-icon>
+        <v-card-title class="mb-2" v-bind="props">
+          <v-icon size="21" class="mb-1">{{ icon }}</v-icon>
           {{ title }}
         </v-card-title>
       </template>
     </v-tooltip>
 
-    <v-card-title v-else>
-      <v-icon size="21">{{ icon }}</v-icon>
+    <v-card-title class="mb-2" v-else>
+      <v-icon size="21" class="mb-1">{{ icon }}</v-icon>
       {{ title }}
     </v-card-title>
     <slot/>

@@ -1,7 +1,7 @@
 <template>
   <v-tabs
       v-model="tab"
-      color="blue"
+      color="primary"
       align-tabs="center"
     >
     <v-tab :value="1"><v-icon start icon="mdi-account"/>{{ locale.patients.PATIENTS }}</v-tab>

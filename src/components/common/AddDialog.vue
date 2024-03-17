@@ -1,7 +1,6 @@
 <template>
   <v-dialog
     scrollable
-    scroll-strategy="close"
     :max-width="maxWidth"
     :persistent="submitLoading"
     :modelValue="modelValue"
@@ -22,7 +21,7 @@
         </small>
         <v-spacer/>
         <v-btn
-          color="blue"
+          color="primary"
           variant="flat"
           type="submit"
           :disabled="submitLoading"
@@ -31,11 +30,11 @@
         >
           {{ locale.common.SUBMIT }}
           <template #loader>
-            <v-progress-circular indeterminate color="blue"/>
+            <v-progress-circular indeterminate color="primary"/>
           </template>
         </v-btn>
         <v-btn
-          color="blue"
+          color="primary"
           :disabled="submitLoading"
           @click="showDialog(false)"
         >
