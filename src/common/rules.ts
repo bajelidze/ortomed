@@ -13,3 +13,9 @@ export function nameRules(name: string, maxLength: number): (boolean|string)[] {
     name.length <= maxLength || `The name length must be less than or equal ${maxLength}`,
   ];
 }
+
+export function autocompleteRules(value: any): (boolean|string)[] {
+  return [
+    value != null || 'The value must not be empty',
+  ];
+}

@@ -49,6 +49,12 @@ export enum CourseActivity {
   DELETE = courseActivityPrefix + 'Delete',
 }
 
+const sessionPrefix = 'session';
+
+export enum Session {
+  SCHEDULE = sessionPrefix + 'Schedule',
+}
+
 const localePrefix = 'locale';
 
 export enum Locale {

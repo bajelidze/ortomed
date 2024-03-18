@@ -25,7 +25,8 @@
                   density="compact"
                   label="Patient*"
                   :disabled="submitLoading"
-                  :items="patientsNames"
+                  :items="patientItems"
+                  :rules="patientRules"
                 />
               </v-col>
             </v-row>
@@ -45,7 +46,8 @@
                   density="compact"
                   label="Doctor*"
                   :disabled="submitLoading"
-                  :items="doctorNames"
+                  :items="doctorItems"
+                  :rules="doctorRules"
                 />
               </v-col>
             </v-row>
@@ -65,7 +67,8 @@
                   density="compact"
                   label="Course*"
                   :disabled="submitLoading"
-                  :items="courseNames"
+                  :items="courseItems"
+                  :rules="courseRules"
                 />
               </v-col>
             </v-row>
@@ -86,28 +89,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { DateTime } from 'luxon';
 import MsgSnackbar from '../../common/MsgSnackbar.vue';
 import CardItem from '../../common/CardItem.vue';
 import { SubmitFormProps } from '../../../common/props';
 import { Scheduler } from '../../../common/events';
+import { AddScheduleFields } from '../../../../common/fields';
+import {
+  FormattedPatient, FormattedDoctor, FormattedCourse,
+} from '../../../../common/interfaces';
 import { createDatePicker } from '@schedule-x/date-picker';
+import { autocompleteRules } from '../../../common/rules';
 import '@schedule-x/theme-default/dist/date-picker.css';
 
 const patients = await window.api.patients.listAll();
-const patientsNames = patients.map(patient => patient.name + ' (' + patient.id + ')');
+
+const patientItems = patients.map(patient => ({
+  title: patient.name + ' (' + patient.id + ')',
+  value: patient,
+}));
 
 const doctors = await window.api.doctors.listAll();
-const doctorNames = doctors.map(doctor => doctor.name + ' (' + doctor.id + ')');
+
+const doctorItems = doctors.map(doctor => ({
+  title: doctor.name + ' (' + doctor.id + ')',
+  value: doctor,
+}));
 
 const courses = await window.api.courses.listAll();
-const courseNames = courses.map(course => course.name + ' (' + course.id + ')');
+
+const courseItems = courses.map(course => ({
+  title: course.name + ' (' + course.id + ')',
+  value: course,
+}));
 
 // Contains: "$name ($id)"
-const patient = ref('');
-const doctor = ref('');
-const course = ref('');
+const patient = ref<FormattedPatient|null>(null);
+const doctor = ref<FormattedDoctor|null>(null);
+const course = ref<FormattedCourse|null>(null);
 const startDate = ref('');
+
+const patientRules = computed(() => autocompleteRules(patient.value));
+const doctorRules = computed(() => autocompleteRules(doctor.value));
+const courseRules = computed(() => autocompleteRules(course.value));
 
 const emit = defineEmits<{
  (e: typeof Scheduler.ADD_SCHEDULE_SUBMIT, fields: any): void;
@@ -124,22 +149,53 @@ onMounted(() => {
     throw Error('date-picker null');
   }
 
-  const datePicker = createDatePicker({
-    min: '2024-03-17',
+  createDatePicker({
+    min: new Date().toISOString().split('T')[0],
     locale: 'en-GB',
     listeners: {
-      onChange: date => {
-        startDate.value = date;
-      },
+      onChange: date => startDate.value = date,
     },
-  });
-  datePicker.render(dp);
+  }).render(dp);
 });
 
+function validate(): boolean {
+  for (const validators of [
+    patientRules.value,
+    doctorRules.value,
+    courseRules.value,
+  ]) {
+    for (const validator of validators) {
+      if (typeof validator === 'string' || !validator) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 function submit() {
-  // if (!validate()) {
-  //   return;
-  // }
+  if (!validate()) {
+    return;
+  }
+
+  if (doctor.value == null || doctor.value.id == undefined) {
+    throw Error('doctor is null');
+  } else if (patient.value == null || patient.value.id == undefined) {
+    throw Error('patient is null');
+  } else if (course.value == null || course.value.id == undefined) {
+    throw Error('course is null');
+  }
+
+  // const now = DateTime.now();
+  // const startTime = DateTime.fromISO(startDate.value);
+  //
+  // const schedule: AddScheduleFields = {
+  //   patientId: +patient.value.id,
+  //   doctorId: +doctor.value.id,
+  //   courseId: +course.value.id,
+  //   startTime: startDate.value,
+  // };
 
   emit(Scheduler.ADD_SCHEDULE_SUBMIT, { });
 }

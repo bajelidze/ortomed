@@ -15,3 +15,10 @@ export interface AddCourseFields {
   repetitions: number;
   courseActivities: CourseActivity[];
 }
+
+export interface AddScheduleFields {
+  doctorId: number;
+  patientId: number;
+  courseId: number;
+  startTime: string;
+}

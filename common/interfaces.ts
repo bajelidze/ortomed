@@ -43,3 +43,10 @@ export interface CourseActivity {
   activityId?: number;
   pause: number; // Seconds. Pause is the minimal pause before next activity.
 }
+
+export interface Session extends WithID {
+  doctorId?: number;
+  patientId?: number;
+  courseActivityId?: number;
+  interval: Interval;
+}

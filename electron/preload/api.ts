@@ -5,12 +5,13 @@ import {
   AddPatientFields, AddDoctorFields, AddCourseFields,
 } from '../../common/fields';
 import {
-  FormattedPatient, FormattedDoctor, Activity,
+  FormattedPatient, FormattedDoctor, Activity, Session,
 } from '../../common/interfaces';
 import {
   Settings, Patients, Doctors,
   Availability, Courses, Locale,
   Activity as ActivityE,
+  Session as SessionE,
 } from '../api/endpoints/endpoints';
 
 export const API = {
@@ -84,6 +85,11 @@ export const API = {
     },
     async delete(id: number) {
       return await ipcRenderer.invoke(ActivityE.DELETE, id);
+    },
+  },
+  session: {
+    async schedule(): Promise<Session[]> {
+      return await ipcRenderer.invoke(SessionE.SCHEDULE);
     },
   },
   locale: {
