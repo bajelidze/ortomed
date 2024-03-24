@@ -36,6 +36,7 @@
               :form-id="schedulerAddFormID"
               :show-indicates-required-field="true"
               :submit-loading="submitLoading"
+              @add-schedule-submit="addScheduleSubmit"
             />
           </AddDialog>
         </v-col>
@@ -51,6 +52,7 @@ import { ref } from 'vue';
 import AddDialog from '../common/AddDialog.vue';
 import ScheduleXCalendar from './components/ScheduleXCalendar.vue';
 import AddSchedule from './components/AddSchedule.vue';
+import { AddScheduleFields } from '../../../common/fields';
 const tab = ref(null);
 
 const schedulerAddFormID = 'availabilityForm';
@@ -60,6 +62,19 @@ const submitLoading = ref(false);
 
 function showDialog(show: boolean) {
   showAddScheduleDialog.value = show;
+}
+
+async function addScheduleSubmit(scheduleData: AddScheduleFields ) {
+  submitLoading.value = true;
+
+  console.log(JSON.stringify(scheduleData));
+
+  try {
+    await window.api.session.schedule(scheduleData);
+  } finally {
+    submitLoading.value = false;
+    showDialog(false);
+  }
 }
 </script>
 

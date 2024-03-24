@@ -135,7 +135,7 @@ const doctorRules = computed(() => autocompleteRules(doctor.value));
 const courseRules = computed(() => autocompleteRules(course.value));
 
 const emit = defineEmits<{
- (e: typeof Scheduler.ADD_SCHEDULE_SUBMIT, fields: any): void;
+ (e: typeof Scheduler.ADD_SCHEDULE_SUBMIT, fields: AddScheduleFields): void;
 }>();
 
 defineProps<SubmitFormProps>();
@@ -187,16 +187,28 @@ function submit() {
     throw Error('course is null');
   }
 
-  // const now = DateTime.now();
-  // const startTime = DateTime.fromISO(startDate.value);
-  //
-  // const schedule: AddScheduleFields = {
-  //   patientId: +patient.value.id,
-  //   doctorId: +doctor.value.id,
-  //   courseId: +course.value.id,
-  //   startTime: startDate.value,
-  // };
+  const now = DateTime.now();
+  let startTime = DateTime.fromISO(startDate.value);
 
-  emit(Scheduler.ADD_SCHEDULE_SUBMIT, { });
+  startTime = startTime.set({
+    hour: now.hour,
+    minute: now.minute,
+    second: now.second,
+    millisecond: now.millisecond,
+  });
+
+  const startTimeISO = startTime.toISO();
+  if (startTimeISO == null) {
+    throw Error('startTimeISO is null');
+  }
+
+  const schedule: AddScheduleFields = {
+    patientId: +patient.value.id,
+    doctorId: +doctor.value.id,
+    courseId: +course.value.id,
+    startTime: startTimeISO,
+  };
+
+  emit(Scheduler.ADD_SCHEDULE_SUBMIT, schedule);
 }
 </script>

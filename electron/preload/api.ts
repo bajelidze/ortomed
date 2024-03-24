@@ -3,6 +3,7 @@ import { LocaleFile } from '../../common/enums';
 import { SettingsValue } from '../../common/interfaces';
 import {
   AddPatientFields, AddDoctorFields, AddCourseFields,
+  AddScheduleFields,
 } from '../../common/fields';
 import {
   FormattedPatient, FormattedDoctor, Activity, Session,
@@ -88,8 +89,8 @@ export const API = {
     },
   },
   session: {
-    async schedule(): Promise<Session[]> {
-      return await ipcRenderer.invoke(SessionE.SCHEDULE);
+    async schedule(schedule: AddScheduleFields): Promise<Session[]> {
+      return await ipcRenderer.invoke(SessionE.SCHEDULE, schedule);
     },
   },
   locale: {
