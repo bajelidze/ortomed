@@ -1,7 +1,14 @@
 import { createLogger, format, transports } from 'winston';
+import { DateTime } from 'luxon';
 
-const myFormat = format.printf(({ level, message, timestamp }) => {
-  return `${timestamp} ${level}: ${message.trim()}`;
+const myFormat = format.printf(({ level, message, timestamp, ...meta }) => {
+  let msg = `${level}[${DateTime.fromISO(timestamp).toISO()}]: ${message.trim()}`;
+
+  if (meta != undefined && meta.length > 0) {
+    msg += ' ' + JSON.stringify(meta);
+  }
+
+  return msg;
 });
 
 const logger = createLogger({

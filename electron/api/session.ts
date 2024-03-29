@@ -49,7 +49,7 @@ function formatSessions(sessions: Session[]): SessionI[] {
       courseActivityId: session.courseActivityId,
       interval: {
         start: start,
-        end: start,
+        end: end,
       },
     };
   });

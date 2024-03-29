@@ -25,6 +25,7 @@ type CapacityMap = {
 }
 
 const oneDay = Duration.fromObject({ day: 1 });
+const oneMillisecond = Duration.fromObject({ millisecond: 1 });
 
 export class Scheduler {
   db?: Knex;
@@ -74,6 +75,8 @@ export class Scheduler {
         throw Error('the scheduled session interval end is null');
       }
 
+      log.info(`Scheduled session: ${session.interval.toISO()}`);
+
       // The next course activity needs to be after the previous one plus
       // the pause defined by the course activity itself.
       startTime = session.interval?.end.plus(courseActivity.pause);
@@ -81,13 +84,23 @@ export class Scheduler {
       newSessions.push(session);
     }
 
+    log.info(`Scheduled ${newSessions.length} sessions: ${newSessions.map(sess => sess.interval?.toISO())}`);
+
     return newSessions;
   }
 
   async commitSessions(...sessions: Session[]): Promise<void> {
     for (const session of sessions) {
+      if (session.interval == undefined) {
+        throw Error('commitSession: session interval is undefined');
+      }
+
+      log.info(`Committing session: ${session.interval.toISO()}`);
+
       await session.commit();
     }
+
+    log.info(`Committed ${sessions.length} sessions`);
   }
 
   private resetCache() {
@@ -109,6 +122,8 @@ export class Scheduler {
 
     const activity = await this.activityDao.getById(courseActivity.activityId);
 
+    log.info(`Scheduling course activity ${courseActivity.id} with activity name: ${activity.name}`);
+
     const blockset = await this.getBlockset(doctor, activity, startTime, lookAhead);
 
     if (blockset.length < 2) {
@@ -129,7 +144,7 @@ export class Scheduler {
       return Session.new(doctor, patient, courseActivity, interval);
     }
 
-    for (let i = 1; i < blockset.length - 1; i++) {
+    for (let i = 0; i < blockset.length - 1; i++) {
       const curr = blockset[i];
       const next = blockset[i + 1];
 
@@ -158,6 +173,8 @@ export class Scheduler {
     startTime: DateTime,
     lookAhead?: Duration,
   ): Promise<Interval[]> {
+    log.info('Getting blockset');
+
     let blockset = await this.getDoctorBlockset(doctor, startTime, lookAhead);
     const sessionBlockset = await this.getSessionBlockset(doctor, activity, startTime);
 
@@ -170,6 +187,8 @@ export class Scheduler {
 
       return a.start?.toUnixInteger() - b.start?.toUnixInteger();
     });
+
+    log.info(`Blockset contains ${blockset.length} intervals`);
 
     return blockset;
   }
@@ -284,10 +303,8 @@ export class Scheduler {
     const avails = this.availabilityCache[doctor.id];
     const weekdayMap = Scheduler.getWeekdayMap(...avails);
 
-    const scheduleIntervals = Doctor.scheduleToIntervals(doctor.schedule, startTime, lookAhead);
-
     // Schedule blockset.
-    const blockset = Scheduler.getAvailabilityBlockset(scheduleIntervals, weekdayMap);
+    const blockset = Scheduler.getAvailabilityBlockset(weekdayMap, startTime, lookAhead);
 
     // Holiday blockset.
     const holidays = Holiday.holidaysToIntervals(...await doctor.listHolidays());
@@ -329,7 +346,46 @@ export class Scheduler {
     return weekdayMap;
   }
 
-  private static getAvailabilityBlockset(scheduleIntervals: Interval[], weekdayMap: WeekdayMap): Interval[] {
+  private static getAvailabilityBlockset(weekdayMap: WeekdayMap, startTime: DateTime, lookAhead?: Duration): Interval[] {
+    if (lookAhead == undefined) {
+      lookAhead = Duration.fromObject({ year: 1 });
+    }
+
+    const intervals: Interval[] = [];
+
+    const startTimeVal = startTime.valueOf();
+
+    let currDay = startTime.startOf('day');
+    let currTime = currDay;
+
+    while (currTime.minus(lookAhead).valueOf() < startTimeVal) {
+      const wdIntervals = weekdayMap[currTime.weekday];
+
+      if (wdIntervals != undefined) {
+        for (const wdInterval of wdIntervals) {
+          const endTime = currDay.plus(wdInterval.st);
+
+          if (endTime.valueOf() >= startTimeVal) {
+            intervals.push(Interval.fromDateTimes(currTime, endTime));
+          }
+
+          currTime = currDay.plus(wdInterval.et);
+        }
+      }
+
+      const dayEnd = currTime.endOf('day').plus(oneMillisecond);
+
+      intervals.push(Interval.fromDateTimes(currTime, dayEnd));
+
+      currTime = dayEnd;
+      currDay = dayEnd;
+    }
+
+    return intervals;
+  }
+
+  //@ts-ignore
+  private static _legacyGetAvailabilityBlockset(scheduleIntervals: Interval[], weekdayMap: WeekdayMap): Interval[] {
     const newIntervals: Interval[] = [];
 
     for (const sInterval of scheduleIntervals) {
