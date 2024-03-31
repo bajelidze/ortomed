@@ -7,7 +7,9 @@
     <v-container>
       <v-row>
         <v-col cols="5">
-          <div class="mb-3" id="schedule-date-picker"/>
+          <form onsubmit="return false;">
+            <div class="mb-3" id="schedule-date-picker"/>
+          </form>
         </v-col>
       </v-row>
 
@@ -54,7 +56,7 @@
           </CardItem>
         </v-col>
 
-        <v-col cols="6" class="mb-12">
+        <v-col cols="6" class="mb-14">
           <CardItem
             title="Course"
             icon="mdi-list-box"
@@ -91,16 +93,16 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { DateTime } from 'luxon';
-import MsgSnackbar from '../../common/MsgSnackbar.vue';
-import CardItem from '../../common/CardItem.vue';
-import { SubmitFormProps } from '../../../common/props';
-import { Scheduler } from '../../../common/events';
-import { AddScheduleFields } from '../../../../common/fields';
+import MsgSnackbar from '../../../common/MsgSnackbar.vue';
+import CardItem from '../../../common/CardItem.vue';
+import { SubmitFormProps } from '../../../../common/props';
+import { Scheduler } from '../../../../common/events';
+import { AddScheduleFields } from '../../../../../common/fields';
 import {
   FormattedPatient, FormattedDoctor, FormattedCourse,
-} from '../../../../common/interfaces';
+} from '../../../../../common/interfaces';
 import { createDatePicker } from '@schedule-x/date-picker';
-import { autocompleteRules } from '../../../common/rules';
+import { autocompleteRules } from '../../../../common/rules';
 import '@schedule-x/theme-default/dist/date-picker.css';
 
 const patients = await window.api.patients.listAll();

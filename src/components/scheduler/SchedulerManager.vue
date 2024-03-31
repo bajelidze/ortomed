@@ -32,7 +32,7 @@
             :submit-loading="submitLoading"
             :show-indicates-required-field="true"
           >
-            <AddSchedule
+            <AddScheduleStepper
               :form-id="schedulerAddFormID"
               :show-indicates-required-field="true"
               :submit-loading="submitLoading"
@@ -51,7 +51,7 @@
 import { ref } from 'vue';
 import AddDialog from '../common/AddDialog.vue';
 import ScheduleXCalendar from './components/ScheduleXCalendar.vue';
-import AddSchedule from './components/AddSchedule.vue';
+import AddScheduleStepper from './components/AddScheduleStepper.vue';
 import { AddScheduleFields } from '../../../common/fields';
 const tab = ref(null);
 
