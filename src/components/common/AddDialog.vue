@@ -28,7 +28,12 @@
           :loading="submitLoading"
           :form="formId"
         >
-          {{ locale.common.SUBMIT }}
+          <p v-if="submitBtnText.length > 0">
+            {{ submitBtnText }}
+          </p>
+          <p v-else>
+            {{ locale.common.SUBMIT }}
+          </p>
           <template #loader>
             <v-progress-circular indeterminate color="primary"/>
           </template>
@@ -62,6 +67,7 @@ withDefaults(
   defineProps<AddDialogProps>(),
   {
     maxWidth: 1200,
+    submitBtnText: '',
   },
 );
 

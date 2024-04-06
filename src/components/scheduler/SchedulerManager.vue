@@ -25,20 +25,7 @@
             Schedule
           </v-btn>
 
-          <AddDialog
-            v-model="showAddScheduleDialog"
-            add-item-title="Add Schedule"
-            :form-id="schedulerAddFormID"
-            :submit-loading="submitLoading"
-            :show-indicates-required-field="true"
-          >
-            <AddScheduleStepper
-              :form-id="schedulerAddFormID"
-              :show-indicates-required-field="true"
-              :submit-loading="submitLoading"
-              @add-schedule-submit="addScheduleSubmit"
-            />
-          </AddDialog>
+          <AddScheduleDialog v-model="showAddScheduleDialog" />
         </v-col>
       </v-row>
     </v-container>
@@ -49,32 +36,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import AddDialog from '../common/AddDialog.vue';
 import ScheduleXCalendar from './components/ScheduleXCalendar.vue';
-import AddScheduleStepper from './components/AddScheduleStepper.vue';
-import { AddScheduleFields } from '../../../common/fields';
+import AddScheduleDialog from './components/AddScheduleDialog.vue';
 const tab = ref(null);
 
-const schedulerAddFormID = 'availabilityForm';
-
 const showAddScheduleDialog = ref(false);
-const submitLoading = ref(false);
 
 function showDialog(show: boolean) {
   showAddScheduleDialog.value = show;
-}
-
-async function addScheduleSubmit(scheduleData: AddScheduleFields ) {
-  submitLoading.value = true;
-
-  console.log(JSON.stringify(scheduleData));
-
-  try {
-    await window.api.session.schedule(scheduleData);
-  } finally {
-    submitLoading.value = false;
-    showDialog(false);
-  }
 }
 </script>
 

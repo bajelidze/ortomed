@@ -5,6 +5,10 @@ export interface ModelProps {
   modelValue: boolean;
 }
 
+export interface ModelNumberProps {
+  modelValue: number;
+}
+
 export interface SubmitFormProps {
   submitLoading: boolean;
   formId: string;
@@ -36,6 +40,7 @@ export interface ItemsListManagerProps extends ModelProps, SubmitFormProps {
 export interface AddDialogProps extends ModelProps, SubmitFormProps {
   addItemTitle: string;
   maxWidth?: number;
+  submitBtnText?: string;
 }
 
 export interface MsgSnackbarProps extends ModelProps {
@@ -66,6 +71,8 @@ export interface CardItemProps extends TitledCardProps {
 export interface AddCourseActivityProps extends SubmitFormProps {
   activity: Activity;
 }
+
+export interface AddScheduleStepperProps extends SubmitFormProps, ModelNumberProps {}
 
 export interface KeyValueTooltipProps {
   object: any;
