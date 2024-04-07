@@ -56,6 +56,8 @@ async function addScheduleSubmit(scheduleData: AddScheduleFields) {
 function showDialog(show: boolean) {
   emit(Common.UPDATE_MODULE_VALUE, show);
 
+  // Not ideal, but the stepper needs to reset with a delay,
+  // otherwise it will reset during the dialog close animation.
   if (currentStep.value != 1) {
     setTimeout(() => {
       currentStep.value = 1;

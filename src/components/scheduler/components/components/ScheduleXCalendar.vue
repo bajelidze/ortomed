@@ -23,14 +23,14 @@ const calendarApp = createCalendar({
     {
       id: 1,
       title: 'Event 1',
-      start: '2024-02-17 12:00',
-      end: '2024-02-17 13:00',
+      start: '2024-04-15 12:00',
+      end: '2024-04-15 13:00',
     },
     {
       id: 1,
       title: 'Event 2',
-      start: '2024-02-17 14:00',
-      end: '2024-02-17 15:00',
+      start: '2024-04-17 14:00',
+      end: '2024-04-17 15:00',
     },
   ],
   callbacks: {
