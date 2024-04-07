@@ -2,16 +2,16 @@ import { Table, SortBy } from './interfaces';
 import { Activity } from '../../common/interfaces';
 
 export interface ModelProps {
-  modelValue: boolean;
+  modelValue?: boolean;
 }
 
 export interface ModelNumberProps {
-  modelValue: number;
+  modelValue?: number;
 }
 
 export interface SubmitFormProps {
-  submitLoading: boolean;
-  formId: string;
+  submitLoading?: boolean;
+  formId?: string;
   showIndicatesRequiredField?: boolean;
 }
 
@@ -20,12 +20,11 @@ export interface ItemsListProps {
 }
 
 export interface ItemsManagerProps extends ItemsListProps, ModelProps, SubmitFormProps {
-  addItemTitle: string;
-  title: string;
-  noDataText: string;
+  addItemTitle?: string;
+  title?: string;
+  noDataText?: string;
   sortBy: SortBy[];
-  addButton: boolean;
-  deleteDisabled: boolean;
+  deleteDisabled?: boolean;
   addDialog?: boolean;
 }
 

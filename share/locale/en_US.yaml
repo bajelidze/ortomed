@@ -13,16 +13,16 @@ strings:
     NO_DATA: 'No Data'
   patients:
     PATIENTS: 'Patients'
-    ADD_PATIENT: 'Add patient'
-    NO_PATIENTS: 'No patients'
+    ADD_PATIENT: 'Add Patient'
+    NO_PATIENTS: 'No Patients'
   doctors:
     DOCTORS: 'Doctors'
-    ADD_DOCTOR: 'Add doctor'
-    NO_DOCTORS: 'No doctors'
+    ADD_DOCTOR: 'Add Doctor'
+    NO_DOCTORS: 'No Doctors'
   courses:
     COURSES: 'Courses'
-    ADD_COURSE: 'Add course'
-    NO_COURSES: 'No courses'
+    ADD_COURSE: 'Add Course'
+    NO_COURSES: 'No Courses'
   holidays:
     HOLIDAYS: 'Holidays'
     ADD_HOLIDAY: 'Add Holiday'

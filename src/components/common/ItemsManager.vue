@@ -74,7 +74,15 @@ const emit = defineEmits([
 withDefaults(
   defineProps<ItemsManagerProps>(),
   {
+    addItemTitle: 'Add Item',
+    title: 'Items',
+    noDataText: 'No Data',
+    deleteDisabled: false,
     addDialog: true,
+    submitLoading: false,
+    formId: 'default',
+    showIndicatesRequiredField: false,
+    modelValue: false,
   },
 );
 

@@ -16,7 +16,6 @@
 
       <AddScheduleDialog v-model="showAddScheduleDialog" />
     </SessionViewer>
-    <v-divider/>
   </v-card>
 </template>
 
