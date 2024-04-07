@@ -1,5 +1,7 @@
 <template>
-  <ScheduleXCalendar :calendar-app="calendarApp"/>
+  <v-card class="ma-12">
+    <ScheduleXCalendar :calendar-app="calendarApp"/>
+  </v-card>
 </template>
 
 <script setup lang="ts">
@@ -46,6 +48,9 @@ const calendarApp = createCalendar({
 .sx__calendar {
   border-radius: 0;
   border-width: 0 0 1px 0;
+}
+.sx__month-grid-day__events {
+  min-height: 60px;
 }
 </style>
 
