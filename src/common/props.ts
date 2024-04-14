@@ -76,3 +76,9 @@ export interface AddScheduleStepperProps extends SubmitFormProps, ModelNumberPro
 export interface KeyValueTooltipProps {
   object: any;
 }
+
+export interface ScheduleXCalendarProps {
+  defaultView?: string;
+}
+
+export interface SessionViewerProps extends ScheduleXCalendarProps {}

@@ -19,13 +19,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import AddDialog from '../../common/AddDialog.vue';
 import AddScheduleStepper from './components/AddScheduleStepper.vue';
 import { AddScheduleFields } from '../../../../common/fields';
 import { Common } from '../../../common/events';
 import { ModelProps } from '../../../common/props';
-import { computed } from 'vue';
+import { Session } from '../../../../common/interfaces';
 
 const schedulerAddFormID = 'addScheduleForm';
 
@@ -33,6 +33,8 @@ const submitLoading = ref(false);
 
 const currentStep = ref(1);
 const submitBtnText = computed(() => currentStep.value == 1 ? 'Next' : '');
+
+const sessions = ref([] as Session[]);
 
 const emit = defineEmits<{
  (e: typeof Common.UPDATE_MODULE_VALUE, show: boolean): void;
@@ -46,7 +48,8 @@ async function addScheduleSubmit(scheduleData: AddScheduleFields) {
   console.log(JSON.stringify(scheduleData));
 
   try {
-    await window.api.session.schedule(scheduleData);
+    const candidateSessions = await window.api.session.schedule(scheduleData);
+    sessions.value = candidateSessions;
   } finally {
     submitLoading.value = false;
     currentStep.value = 2;

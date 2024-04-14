@@ -1,6 +1,9 @@
 <template>
   <v-card class="ma-12">
-    <ScheduleXCalendar :calendar-app="calendarApp"/>
+    <ScheduleXCalendar
+      v-if="calendarApp != undefined"
+      :calendar-app="calendarApp"
+    />
   </v-card>
 </template>
 
@@ -15,11 +18,19 @@ import {
 } from '@schedule-x/calendar';
 import '@schedule-x/theme-default/dist/index.css';
 import { createEventModalPlugin } from '@schedule-x/event-modal';
+import { ScheduleXCalendarProps } from '../../../../common/props';
+
+const props = withDefaults(
+  defineProps<ScheduleXCalendarProps>(),
+  {
+    defaultView: viewWeek.name,
+  },
+);
 
 const calendarApp = createCalendar({
   locale: 'en-GB',
   views: [viewDay, viewWeek, viewMonthGrid, viewMonthAgenda],
-  defaultView: viewWeek.name,
+  defaultView: props.defaultView,
   plugins: [createEventModalPlugin()],
   events: [
     {

@@ -24,7 +24,7 @@
   </v-card>
   <v-window v-model="tab">
     <v-window-item :value="1">
-      <ScheduleXCalendar />
+      <ScheduleXCalendar :default-view="defaultView" />
     </v-window-item>
 
     <v-window-item :value="2">
@@ -45,11 +45,14 @@ import { ref, reactive } from 'vue';
 import ScheduleXCalendar from './components/ScheduleXCalendar.vue';
 import ItemsManager from '../../common/ItemsManager.vue';
 import { Align, Order, Table } from '../../../common/interfaces';
+import { SessionViewerProps } from '../../../common/props';
 import { readFile } from '../../../common/locale';
 import { useSettingsStore } from '../../../store/settings';
 
 const settings = await useSettingsStore().get();
 const locale = await readFile(settings.locale);
+
+defineProps<SessionViewerProps>();
 
 const tab = ref(1);
 

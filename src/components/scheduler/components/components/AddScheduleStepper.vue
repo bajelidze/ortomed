@@ -16,13 +16,14 @@
     </template>
 
     <template #item.2>
-      <v-card title="Step Two" flat>...</v-card>
+      <SessionViewer default-view="month-grid" />
     </template>
   </v-stepper>
 </template>
 
 <script setup lang="ts">
 import AddSchedule from './components/AddSchedule.vue';
+import SessionViewer from '../SessionViewer.vue';
 import { AddScheduleStepperProps } from '../../../../common/props';
 import { Scheduler, Common } from '../../../../common/events';
 import { AddScheduleFields } from '../../../../../common/fields';
