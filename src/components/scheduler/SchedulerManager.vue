@@ -3,7 +3,9 @@
     class="ma-0 sticky-tabs"
     flat
   >
-    <SessionViewer>
+    <SessionViewer
+      :events="[]"
+    >
       <v-btn
         prepend-icon="mdi-plus"
         class="mt-2 mr-1"

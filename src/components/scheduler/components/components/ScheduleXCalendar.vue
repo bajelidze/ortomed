@@ -24,6 +24,7 @@ const props = withDefaults(
   defineProps<ScheduleXCalendarProps>(),
   {
     defaultView: viewWeek.name,
+    withPagination: false,
   },
 );
 
@@ -32,25 +33,12 @@ const calendarApp = createCalendar({
   views: [viewDay, viewWeek, viewMonthGrid, viewMonthAgenda],
   defaultView: props.defaultView,
   plugins: [createEventModalPlugin()],
-  events: [
-    {
-      id: 1,
-      title: 'Event 1',
-      start: '2024-04-15 12:00',
-      end: '2024-04-15 13:00',
-    },
-    {
-      id: 1,
-      title: 'Event 2',
-      start: '2024-04-17 14:00',
-      end: '2024-04-17 15:00',
-    },
-  ],
+  events: props.events,
   callbacks: {
-    onRangeUpdate(range) {
+    onRangeUpdate: props.withPagination ? (range) => {
       console.log('new calendar range start date', range.start);
       console.log('new calendar range end date', range.end);
-    },
+    } : undefined,
   },
 });
 </script>

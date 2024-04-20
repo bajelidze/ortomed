@@ -1,5 +1,6 @@
 export namespace Common {
   export const UPDATE_MODULE_VALUE = 'update:modelValue';
+  export const SUBMIT_LOADING = 'submitLoading';
 }
 
 export namespace ItemsManager {
@@ -43,4 +44,5 @@ export namespace CourseActivity {
 
 export namespace Scheduler {
   export const ADD_SCHEDULE_SUBMIT = 'addScheduleSubmit';
+  export const ADD_SCHEDULE_PREPARE = 'addSchedulePrepare';
 }

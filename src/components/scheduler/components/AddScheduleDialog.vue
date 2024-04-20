@@ -6,35 +6,25 @@
     :form-id="schedulerAddFormID"
     :submit-loading="submitLoading"
     :show-indicates-required-field="true"
-    :submit-btn-text="submitBtnText"
   >
     <AddScheduleStepper
-      v-model="currentStep"
       :form-id="schedulerAddFormID"
       :show-indicates-required-field="true"
-      :submit-loading="submitLoading"
-      @add-schedule-submit="addScheduleSubmit"
+      @submit-loading="loading => submitLoading = loading"
     />
   </AddDialog>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import AddDialog from '../../common/AddDialog.vue';
 import AddScheduleStepper from './components/AddScheduleStepper.vue';
-import { AddScheduleFields } from '../../../../common/fields';
 import { Common } from '../../../common/events';
 import { ModelProps } from '../../../common/props';
-import { Session } from '../../../../common/interfaces';
 
 const schedulerAddFormID = 'addScheduleForm';
 
 const submitLoading = ref(false);
-
-const currentStep = ref(1);
-const submitBtnText = computed(() => currentStep.value == 1 ? 'Next' : '');
-
-const sessions = ref([] as Session[]);
 
 const emit = defineEmits<{
  (e: typeof Common.UPDATE_MODULE_VALUE, show: boolean): void;
@@ -42,29 +32,7 @@ const emit = defineEmits<{
 
 defineProps<ModelProps>();
 
-async function addScheduleSubmit(scheduleData: AddScheduleFields) {
-  submitLoading.value = true;
-
-  console.log(JSON.stringify(scheduleData));
-
-  try {
-    const candidateSessions = await window.api.session.schedule(scheduleData);
-    sessions.value = candidateSessions;
-  } finally {
-    submitLoading.value = false;
-    currentStep.value = 2;
-  }
-}
-
 function showDialog(show: boolean) {
   emit(Common.UPDATE_MODULE_VALUE, show);
-
-  // Not ideal, but the stepper needs to reset with a delay,
-  // otherwise it will reset during the dialog close animation.
-  if (currentStep.value != 1) {
-    setTimeout(() => {
-      currentStep.value = 1;
-    }, 500);
-  }
 }
 </script>

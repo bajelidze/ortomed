@@ -24,7 +24,10 @@
   </v-card>
   <v-window v-model="tab">
     <v-window-item :value="1">
-      <ScheduleXCalendar :default-view="defaultView" />
+      <ScheduleXCalendar
+        :default-view="defaultView"
+        :events="events"
+      />
     </v-window-item>
 
     <v-window-item :value="2">

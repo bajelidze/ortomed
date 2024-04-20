@@ -20,6 +20,11 @@ export function setDoctorHandlers() {
     return formatDoctors(doctors);
   });
 
+  ipcMain.handle(Doctors.GET, async (_, id: number) => {
+    const doctor = await new DoctorDao(db).getById(id);
+    return formatDoctors([doctor])[0];
+  });
+
   ipcMain.handle(Doctors.ADD, async (_, doctor: AddDoctorFields) => {
     const weekdays: WeekdayStr[] = doctor.schedule.map(item => item.weekday);
 

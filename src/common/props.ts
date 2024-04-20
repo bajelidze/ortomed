@@ -1,5 +1,6 @@
 import { Table, SortBy } from './interfaces';
 import { Activity } from '../../common/interfaces';
+import { Event } from './interfaces';
 
 export interface ModelProps {
   modelValue?: boolean;
@@ -9,10 +10,13 @@ export interface ModelNumberProps {
   modelValue?: number;
 }
 
-export interface SubmitFormProps {
-  submitLoading?: boolean;
+export interface SubmitFormNoLoadProps {
   formId?: string;
   showIndicatesRequiredField?: boolean;
+}
+
+export interface SubmitFormProps extends SubmitFormNoLoadProps {
+  submitLoading?: boolean;
 }
 
 export interface ItemsListProps {
@@ -71,7 +75,7 @@ export interface AddCourseActivityProps extends SubmitFormProps {
   activity: Activity;
 }
 
-export interface AddScheduleStepperProps extends SubmitFormProps, ModelNumberProps {}
+export interface AddScheduleStepperProps extends SubmitFormNoLoadProps {}
 
 export interface KeyValueTooltipProps {
   object: any;
@@ -79,6 +83,8 @@ export interface KeyValueTooltipProps {
 
 export interface ScheduleXCalendarProps {
   defaultView?: string;
+  withPagination?: boolean;
+  events: Event[];
 }
 
 export interface SessionViewerProps extends ScheduleXCalendarProps {}

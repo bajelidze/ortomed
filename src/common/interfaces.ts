@@ -26,3 +26,14 @@ export interface SortBy {
   key: string;
   order: Order;
 }
+
+export interface Event {
+  id: number | string;
+  start: string;
+  end: string;
+  title?: string;
+  people?: string[];
+  location?: string;
+  description?: string;
+  calendarId?: string;
+}

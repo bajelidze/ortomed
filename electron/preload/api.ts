@@ -6,7 +6,8 @@ import {
   AddScheduleFields,
 } from '../../common/fields';
 import {
-  FormattedPatient, FormattedDoctor, Activity, Session,
+  FormattedPatient, FormattedDoctor, FormattedCourse,
+  Activity, Session,
 } from '../../common/interfaces';
 import {
   Settings, Patients, Doctors,
@@ -31,6 +32,9 @@ export const API = {
     async listAll(): Promise<FormattedPatient[]> {
       return await ipcRenderer.invoke(Patients.LIST_ALL);
     },
+    async get(id: number): Promise<FormattedPatient[]> {
+      return await ipcRenderer.invoke(Patients.GET, id);
+    },
     async add(patient: AddPatientFields) {
       return await ipcRenderer.invoke(Patients.ADD, patient);
     },
@@ -44,6 +48,9 @@ export const API = {
     },
     async listAll(): Promise<FormattedDoctor[]> {
       return await ipcRenderer.invoke(Doctors.LIST_ALL);
+    },
+    async get(id: number): Promise<FormattedDoctor[]> {
+      return await ipcRenderer.invoke(Doctors.GET, id);
     },
     async add(doctor: string) {
       return await ipcRenderer.invoke(Doctors.ADD, JSON.parse(doctor) as AddDoctorFields);
@@ -64,11 +71,14 @@ export const API = {
     },
   },
   courses: {
-    async list(limit: number, offset: number): Promise<FormattedDoctor[]> {
+    async list(limit: number, offset: number): Promise<FormattedCourse[]> {
       return await ipcRenderer.invoke(Courses.LIST, limit, offset);
     },
-    async listAll(): Promise<FormattedDoctor[]> {
+    async listAll(): Promise<FormattedCourse[]> {
       return await ipcRenderer.invoke(Courses.LIST_ALL);
+    },
+    async get(id: number): Promise<FormattedCourse[]> {
+      return await ipcRenderer.invoke(Courses.GET, id);
     },
     async add(course: string) {
       return await ipcRenderer.invoke(Courses.ADD, JSON.parse(course) as AddCourseFields);
@@ -80,6 +90,9 @@ export const API = {
   activity: {
     async listAll(): Promise<Activity[]> {
       return await ipcRenderer.invoke(ActivityE.LIST_ALL);
+    },
+    async get(id: number): Promise<Activity[]> {
+      return await ipcRenderer.invoke(ActivityE.GET, id);
     },
     async add(activities: Activity[]): Promise<number[]> {
       return await ipcRenderer.invoke(ActivityE.ADD, activities);
