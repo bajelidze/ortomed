@@ -17,9 +17,9 @@ export function setPatientHandlers() {
     return formatPatients(patients);
   });
 
-  ipcMain.handle(Patients.GET, async (_, id: number) => {
-    const patient = await new PatientDao(db).getById(id);
-    return formatPatients([patient])[0];
+  ipcMain.handle(Patients.GET, async (_, ids: number[]) => {
+    const patients = await new PatientDao(db).getByIds(...ids);
+    return formatPatients(patients);
   });
 
   ipcMain.handle(Patients.ADD, async (_, patient: AddPatientFields) => {

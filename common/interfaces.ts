@@ -5,8 +5,7 @@ export interface WithID {
   id?: number;
 }
 
-interface FormattedItem {
-  id?: string;
+interface FormattedItem extends WithID {
   name: string;
   dateAdded: string;
 }
@@ -39,9 +38,11 @@ export interface Activity extends WithID {
   flexible: boolean;
 }
 
-export interface CourseActivity {
+export interface CourseActivity extends WithID {
   activityId?: number;
+  courseId?: number;
   pause: number; // Seconds. Pause is the minimal pause before next activity.
+  index: number;
 }
 
 export interface Session extends WithID {

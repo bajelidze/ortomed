@@ -18,6 +18,11 @@ export function setCourseHandlers() {
     return formatCourses(courses);
   });
 
+  ipcMain.handle(Courses.GET, async (_, ids: number[]) => {
+    const courses = await new CourseDao(db).getByIds(...ids);
+    return formatCourses(courses);
+  });
+
   ipcMain.handle(Courses.ADD, async (_, course: AddCourseFields) => {
     const courseCls = new Course({
       name: course.name,

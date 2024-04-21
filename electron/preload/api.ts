@@ -7,12 +7,13 @@ import {
 } from '../../common/fields';
 import {
   FormattedPatient, FormattedDoctor, FormattedCourse,
-  Activity, Session,
+  Activity, Session, CourseActivity,
 } from '../../common/interfaces';
 import {
   Settings, Patients, Doctors,
   Availability, Courses, Locale,
   Activity as ActivityE,
+  CourseActivity as CourseActivityE,
   Session as SessionE,
 } from '../api/endpoints/endpoints';
 
@@ -32,7 +33,7 @@ export const API = {
     async listAll(): Promise<FormattedPatient[]> {
       return await ipcRenderer.invoke(Patients.LIST_ALL);
     },
-    async get(id: number): Promise<FormattedPatient[]> {
+    async get(...id: number[]): Promise<FormattedPatient[]> {
       return await ipcRenderer.invoke(Patients.GET, id);
     },
     async add(patient: AddPatientFields) {
@@ -49,7 +50,7 @@ export const API = {
     async listAll(): Promise<FormattedDoctor[]> {
       return await ipcRenderer.invoke(Doctors.LIST_ALL);
     },
-    async get(id: number): Promise<FormattedDoctor[]> {
+    async get(...id: number[]): Promise<FormattedDoctor[]> {
       return await ipcRenderer.invoke(Doctors.GET, id);
     },
     async add(doctor: string) {
@@ -77,7 +78,7 @@ export const API = {
     async listAll(): Promise<FormattedCourse[]> {
       return await ipcRenderer.invoke(Courses.LIST_ALL);
     },
-    async get(id: number): Promise<FormattedCourse[]> {
+    async get(...id: number[]): Promise<FormattedCourse[]> {
       return await ipcRenderer.invoke(Courses.GET, id);
     },
     async add(course: string) {
@@ -91,7 +92,7 @@ export const API = {
     async listAll(): Promise<Activity[]> {
       return await ipcRenderer.invoke(ActivityE.LIST_ALL);
     },
-    async get(id: number): Promise<Activity[]> {
+    async get(...id: number[]): Promise<Activity[]> {
       return await ipcRenderer.invoke(ActivityE.GET, id);
     },
     async add(activities: Activity[]): Promise<number[]> {
@@ -99,6 +100,11 @@ export const API = {
     },
     async delete(id: number) {
       return await ipcRenderer.invoke(ActivityE.DELETE, id);
+    },
+  },
+  courseActivity: {
+    async get(...id: number[]): Promise<CourseActivity[]> {
+      return await ipcRenderer.invoke(CourseActivityE.GET, id);
     },
   },
   session: {

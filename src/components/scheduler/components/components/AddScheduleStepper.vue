@@ -16,7 +16,7 @@
     <template #item.2>
       <SessionViewer
         default-view="month-grid"
-        :events="[]"
+        :events="events"
       />
     </template>
   </v-stepper>
@@ -29,12 +29,13 @@ import SessionViewer from '../SessionViewer.vue';
 import { AddScheduleStepperProps } from '../../../../common/props';
 import { Common } from '../../../../common/events';
 import { AddScheduleFields } from '../../../../../common/fields';
-import { Session } from '../../../../../common/interfaces';
+import { Event } from '../../../../common/interfaces';
+import { sessionsToEvents } from './src/util';
 
 defineProps<AddScheduleStepperProps>();
 
 const currentStep = ref(1);
-const sessions = ref([] as Session[]);
+const events = ref([] as Event[]);
 
 const emit = defineEmits<{
  (e: typeof Common.SUBMIT_LOADING, submitLoading: boolean): void;
@@ -43,11 +44,9 @@ const emit = defineEmits<{
 async function addSchedulePrepare(scheduleData: AddScheduleFields) {
   emit(Common.SUBMIT_LOADING, true);
 
-  console.log(JSON.stringify(scheduleData));
-
   try {
     const candidateSessions = await window.api.session.schedule(scheduleData);
-    sessions.value = candidateSessions;
+    events.value = await sessionsToEvents(candidateSessions);
   } finally {
     emit(Common.SUBMIT_LOADING, false);
     currentStep.value = 2;

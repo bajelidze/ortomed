@@ -11,6 +11,11 @@ export function setActivityHandlers() {
     return activities.map(act => formatActivity(act));
   });
 
+  ipcMain.handle(ActivityE.GET, async (_, ids: number[]) => {
+    const activities = await new ActivityDao(db).getByIds(...ids);
+    return formatActivities(activities);
+  });
+
   ipcMain.handle(ActivityE.ADD, async (_, activities: Activity[]) =>
     await addActivities(activities),
   );
@@ -38,6 +43,10 @@ export async function addActivities(activities: Activity[]): Promise<number[]> {
 
   const acts = await Promise.all(activitiesC);
   return acts.map(act => act.id == undefined ? 0 : act.id);
+}
+
+function formatActivities(activitiesC: ActivityC[]): Activity[] {
+  return activitiesC.map(act => formatActivity(act));
 }
 
 function formatActivity(activityC: ActivityC): Activity {

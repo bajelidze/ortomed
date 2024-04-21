@@ -49,6 +49,7 @@ const courseActivityPrefix = 'courseActivity';
 
 export enum CourseActivity {
   LIST_ALL = courseActivityPrefix + 'ListAll',
+  GET = courseActivityPrefix + 'Get',
   ADD = courseActivityPrefix + 'Add',
   DELETE = courseActivityPrefix + 'Delete',
 }
