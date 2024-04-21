@@ -7,7 +7,7 @@
   >
     <template #item.1>
       <AddSchedule
-        :form-id="formId"
+        :form-id="addScheduleFormId"
         :show-indicates-required-field="true"
         @add-schedule-submit="addSchedulePrepare"
       />
@@ -18,6 +18,12 @@
         default-view="month-grid"
         :events="events"
       />
+
+      <v-form
+        :id="submitScheduleFormId"
+        fast-fail
+        @submit.prevent="submit"
+      />
     </template>
   </v-stepper>
 </template>
@@ -27,7 +33,7 @@ import { ref } from 'vue';
 import AddSchedule from './components/AddSchedule.vue';
 import SessionViewer from '../SessionViewer.vue';
 import { AddScheduleStepperProps } from '../../../../common/props';
-import { Common } from '../../../../common/events';
+import { Common, Scheduler } from '../../../../common/events';
 import { AddScheduleFields } from '../../../../../common/fields';
 import { Event } from '../../../../common/interfaces';
 import { sessionsToEvents } from './src/util';
@@ -39,6 +45,7 @@ const events = ref([] as Event[]);
 
 const emit = defineEmits<{
  (e: typeof Common.SUBMIT_LOADING, submitLoading: boolean): void;
+ (e: typeof Scheduler.ADD_SCHEDULE_PREPARE): void;
 }>();
 
 async function addSchedulePrepare(scheduleData: AddScheduleFields) {
@@ -50,6 +57,11 @@ async function addSchedulePrepare(scheduleData: AddScheduleFields) {
   } finally {
     emit(Common.SUBMIT_LOADING, false);
     currentStep.value = 2;
+    emit(Scheduler.ADD_SCHEDULE_PREPARE);
   }
+}
+
+function submit() {
+  console.log('ddx');
 }
 </script>

@@ -37,7 +37,7 @@ export function setPatientHandlers() {
 
 function formatPatients(patients: Patient[]): FormattedPatient[] {
   return patients.map(patient => ({
-    id: patient.id?.toString(),
+    id: patient.id,
     name: patient.name,
     dateAdded: patient.dateAdded.toLocaleString(DateTime.DATETIME_MED),
   }));

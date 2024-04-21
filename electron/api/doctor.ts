@@ -65,7 +65,7 @@ export function setDoctorHandlers() {
 
 function formatDoctors(doctors: Doctor[]): FormattedDoctor[] {
   return doctors.map(doctor => ({
-    id: doctor.id?.toString(),
+    id: doctor.id,
     name: doctor.name,
     dateAdded: doctor.dateAdded.toLocaleString(DateTime.DATETIME_MED),
   }));

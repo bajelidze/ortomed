@@ -75,7 +75,10 @@ export interface AddCourseActivityProps extends SubmitFormProps {
   activity: Activity;
 }
 
-export interface AddScheduleStepperProps extends SubmitFormNoLoadProps {}
+export interface AddScheduleStepperProps {
+  addScheduleFormId?: string;
+  submitScheduleFormId?: string;
+}
 
 export interface KeyValueTooltipProps {
   object: any;

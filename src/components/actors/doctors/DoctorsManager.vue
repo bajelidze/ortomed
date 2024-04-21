@@ -74,7 +74,7 @@ async function resetDoctorsTable() {
   const doctors = await window.api.doctors.listAll();
 
   table.rows = doctors.map(doctor => ({
-    id: doctor.id ? doctor.id : '0',
+    id: doctor.id ? doctor.id.toString() : '0',
     name: doctor.name,
     date_added: doctor.dateAdded,
   }));

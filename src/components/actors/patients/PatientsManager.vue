@@ -73,7 +73,7 @@ async function listPatientsTable() {
   const patients = await window.api.patients.listAll();
 
   table.rows = patients.map(patient => ({
-    id: patient.id ? patient.id : '0',
+    id: patient.id ? patient.id.toString() : '0',
     name: patient.name,
     date_added: patient.dateAdded,
   }));

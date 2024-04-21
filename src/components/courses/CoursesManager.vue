@@ -75,7 +75,7 @@ async function resetCoursesTable() {
   const courses = await window.api.courses.listAll();
 
   table.rows = courses.map(course => ({
-    id: course.id ? course.id : '0',
+    id: course.id ? course.id.toString() : '0',
     name: course.name,
     date_added: course.dateAdded,
   }));

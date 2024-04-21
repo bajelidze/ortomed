@@ -47,7 +47,7 @@ export function setCourseHandlers() {
 
 function formatCourses(courses: Course[]): FormattedCourse[] {
   return courses.map(course => ({
-    id: course.id?.toString(),
+    id: course.id,
     name: course.name,
     dateAdded: course.dateAdded.toLocaleString(DateTime.DATETIME_MED),
   }));
