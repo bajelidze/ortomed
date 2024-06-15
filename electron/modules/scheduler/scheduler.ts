@@ -66,22 +66,28 @@ export class Scheduler {
 
     const courseActivities = await course.listActivities();
 
-    for (const courseActivity of courseActivities) {
-      const session = await this.scheduleCourseActivity(
-        doctor, patient, courseActivity, startTime,
-      );
+    if (course.repetitions == undefined) {
+      course.repetitions = 1;
+    }
 
-      if (session.interval?.end == null) {
-        throw Error('the scheduled session interval end is null');
+    for (let rep = 0; rep < course.repetitions; rep++) {
+      for (const courseActivity of courseActivities) {
+        const session = await this.scheduleCourseActivity(
+          doctor, patient, courseActivity, startTime,
+        );
+
+        if (session.interval?.end == null) {
+          throw Error('the scheduled session interval end is null');
+        }
+
+        log.info(`Scheduled session: ${session.interval.toISO()}`);
+
+        // The next course activity needs to be after the previous one plus
+        // the pause defined by the course activity itself.
+        startTime = session.interval?.end.plus(courseActivity.pause);
+
+        newSessions.push(session);
       }
-
-      log.info(`Scheduled session: ${session.interval.toISO()}`);
-
-      // The next course activity needs to be after the previous one plus
-      // the pause defined by the course activity itself.
-      startTime = session.interval?.end.plus(courseActivity.pause);
-
-      newSessions.push(session);
     }
 
     log.info(`Scheduled ${newSessions.length} sessions: ${newSessions.map(sess => sess.interval?.toISO())}`);

@@ -77,6 +77,8 @@ function sessionToEvent(
   events: Event[],
   sess: Session,
 ): Event|null {
+  const timeFormat = 'yyyy-MM-dd HH:mm';
+
   const courseActivity = courseActivities[sess.courseActivityId as number];
   const course = courses[courseActivity.courseId as number];
   const activity = activities[courseActivity.activityId as number];
@@ -90,22 +92,21 @@ function sessionToEvent(
     return null;
   }
 
+  const start = DateTime.fromSeconds(sess.interval.start);
+  const end = DateTime.fromSeconds(sess.interval.end);
+
   for (const event of events) {
-    if (event.start == sess.interval.start.toString()
-        && event.end == sess.interval.end.toString()) {
+    if (event.start == start.toFormat(timeFormat) && event.end == end.toFormat(timeFormat)) {
       event.people?.push(patient.name);
       return null;
     }
   }
 
-  const start = DateTime.fromSeconds(sess.interval.start);
-  const end = DateTime.fromSeconds(sess.interval.end);
-
   return {
     id: sess.id as number,
-    start: start.toFormat('yyyy-MM-dd HH:mm'),
-    end: end.toFormat('yyyy-MM-dd HH:mm'),
-    title: formatTitle(activity.name, course.name),
+    start: start.toFormat(timeFormat),
+    end: end.toFormat(timeFormat),
+    title: formatTitle(doctor.name, activity.name, course.name),
     people: [patient.name],
     calendarId: doctor.id?.toString(),
   } as Event;
@@ -127,6 +128,6 @@ function itemsToMap<T extends WithID>(items: T[]): Record<number, T> {
   return map;
 }
 
-function formatTitle(activityName: string, courseName: string): string {
-  return `${activityName} (${courseName})`;
+function formatTitle(doctorName: string, activityName: string, courseName: string): string {
+  return `[${doctorName}] ${activityName} (${courseName})`;
 }

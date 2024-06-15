@@ -3,7 +3,7 @@ import { Knex, knex } from 'knex';
 const knexCfg: Knex.Config = {
   client: 'sqlite3',
   connection: {
-    filename: 'test.db',
+    filename: 'ortomed.db',
   },
   useNullAsDefault: true,
 };
