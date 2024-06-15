@@ -103,6 +103,9 @@ export class SessionDao extends BasicDao<Session, SessionEntity> {
     super(db, _sessionsTable);
   }
 
+  startTimeName = 'startTime';
+  endTimeName = 'endTime';
+
   protected async createTable(): Promise<void> {
     return await this.db.schema.createTable(this.table, table => {
       table.increments('id');
@@ -121,9 +124,17 @@ export class SessionDao extends BasicDao<Session, SessionEntity> {
         .index()
         .references('id')
         .inTable(_courseActivitiesTable);
-      table.integer('startTime').notNullable().unsigned();
-      table.integer('endTime').notNullable().unsigned();
+      table.integer(this.startTimeName).notNullable().unsigned();
+      table.integer(this.endTimeName).notNullable().unsigned();
     });
+  }
+
+  // listIntersectInterval lists the sessions that intersect the given interval.
+  async listIntersectInterval(startTime: number, endTime: number): Promise<Session[]> {
+    return await this.list(query => query
+      .where(this.endTimeName, '>=', startTime)
+      .andWhere(this.startTimeName, '<=', endTime),
+    );
   }
 
   protected toEntities(...sessions: Session[]): SessionEntity[] {

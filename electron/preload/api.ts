@@ -114,6 +114,9 @@ export const API = {
     async submit(sessionsJSON: string): Promise<void> {
       return await ipcRenderer.invoke(SessionE.SUBMIT, sessionsJSON);
     },
+    async list(startTime: number, endTime: number): Promise<Session[]> {
+      return await ipcRenderer.invoke(SessionE.LIST, startTime, endTime);
+    },
   },
   locale: {
     async readFile(fileName: LocaleFile): Promise<string> {

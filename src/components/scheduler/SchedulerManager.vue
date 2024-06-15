@@ -4,7 +4,8 @@
     flat
   >
     <SessionViewer
-      :events="[]"
+      :events="events"
+      :rerender="recomputeSessions"
     >
       <v-btn
         prepend-icon="mdi-plus"
@@ -16,7 +17,10 @@
         Schedule
       </v-btn>
 
-      <AddScheduleDialog v-model="showAddScheduleDialog" />
+      <AddScheduleDialog
+        v-model="showAddScheduleDialog"
+        @add-schedule-submit="rerenderSessions"
+      />
     </SessionViewer>
   </v-card>
 </template>
@@ -25,8 +29,25 @@
 import { ref } from 'vue';
 import AddScheduleDialog from './components/AddScheduleDialog.vue';
 import SessionViewer from './components/SessionViewer.vue';
+import { sessionsToEvents } from './components/components/src/util';
+import { Event } from '../../common/interfaces';
 
 const showAddScheduleDialog = ref(false);
+const recomputeSessions = ref(0);
+
+const events = ref([] as Event[]);
+
+async function listSessions() {
+  const sessions = await window.api.session.list(0, 100000000000000);
+  events.value = await sessionsToEvents(sessions);
+}
+
+await listSessions();
+
+async function rerenderSessions() {
+  await listSessions();
+  recomputeSessions.value++;
+}
 
 function showDialog(show: boolean) {
   showAddScheduleDialog.value = show;

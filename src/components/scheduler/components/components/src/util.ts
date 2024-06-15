@@ -11,6 +11,10 @@ type ItemMap<T> = Record<number, T>
 export async function sessionsToEvents(sessions: Session[]): Promise<Event[]> {
   const events: Event[] = [];
 
+  if (sessions.length == 0) {
+    return events;
+  }
+
   const courseActivitiesArr = await window.api.courseActivity.get(...sessions.map(sess => sess.courseActivityId as number));
 
   const coursesArr = await window.api.courses.get(...courseActivitiesArr.map(ca => ca.courseId as number));

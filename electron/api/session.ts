@@ -4,7 +4,7 @@ import { Scheduler } from '@/modules/scheduler/scheduler';
 import { PatientDao } from '@/modules/actors/patient';
 import { DoctorDao } from '@/modules/actors/doctor';
 import { CourseDao } from '@/modules/course/course';
-import { Session } from '@/modules/scheduler/session';
+import { Session, SessionDao } from '@/modules/scheduler/session';
 import { DateTime, Interval } from 'luxon';
 import { AddScheduleFields } from '../../common/fields';
 import { Session as SessionE } from '../api/endpoints/endpoints';
@@ -20,19 +20,17 @@ export function setSessionHandlers() {
     const startTime = DateTime.fromISO(req.startTime);
 
     const sessions = await scheduler.scheduleCourse(doctor, patient, course, startTime);
-
-    const formattedSessions = formatSessions(sessions);
-
-    for (const session of formattedSessions) {
-      console.log(session);
-    }
-
-    return formattedSessions;
+    return formatSessions(sessions);
   });
 
   ipcMain.handle(SessionE.SUBMIT, async (_, sessions: string) => {
     const sessionsI: SessionI[] = JSON.parse(sessions);
     await new Scheduler(db).commitSessions(...marshalSessions(sessionsI));
+  });
+
+  ipcMain.handle(SessionE.LIST, async (_, startTime: number, endTime: number): Promise<SessionI[]> => {
+    const sessions = await new SessionDao(db).listIntersectInterval(startTime, endTime);
+    return formatSessions(sessions);
   });
 }
 

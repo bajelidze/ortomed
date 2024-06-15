@@ -27,6 +27,7 @@
       <ScheduleXCalendar
         :default-view="defaultView"
         :events="events"
+        :key="rerender"
       />
     </v-window-item>
 

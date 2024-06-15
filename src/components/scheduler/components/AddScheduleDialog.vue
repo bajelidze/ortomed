@@ -23,7 +23,7 @@
 import { ref } from 'vue';
 import AddDialog from '../../common/AddDialog.vue';
 import AddScheduleStepper from './components/AddScheduleStepper.vue';
-import { Common } from '../../../common/events';
+import { Common, Scheduler } from '../../../common/events';
 import { Session } from '../../../../common/interfaces';
 import { ModelProps } from '../../../common/props';
 
@@ -36,6 +36,7 @@ const formId = ref(schedulerAddFormID);
 
 const emit = defineEmits<{
  (e: typeof Common.UPDATE_MODULE_VALUE, show: boolean): void;
+ (e: typeof Scheduler.ADD_SCHEDULE_SUBMIT): void;
 }>();
 
 defineProps<ModelProps>();
@@ -49,6 +50,7 @@ async function addScheduleSubmit(sessions: Session[]) {
 
   try {
     await window.api.session.submit(JSON.stringify(sessions));
+    emit(Scheduler.ADD_SCHEDULE_SUBMIT);
   } finally {
     formId.value = schedulerAddFormID;
     submitLoading.value = false;

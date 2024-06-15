@@ -87,6 +87,7 @@ export interface KeyValueTooltipProps {
 export interface ScheduleXCalendarProps {
   defaultView?: string;
   withPagination?: boolean;
+  rerender?: number;
   events: Event[];
 }
 
