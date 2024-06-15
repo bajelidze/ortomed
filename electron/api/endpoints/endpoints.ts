@@ -58,6 +58,7 @@ const sessionPrefix = 'session';
 
 export enum Session {
   SCHEDULE = sessionPrefix + 'Schedule',
+  SUBMIT = sessionPrefix + 'Submit',
 }
 
 const localePrefix = 'locale';

@@ -12,7 +12,9 @@
       :submit-schedule-form-id="schedulerSubmitFormID"
       :show-indicates-required-field="true"
       @submit-loading="loading => submitLoading = loading"
-      @add-schedule-prepare="addSchedulePrepare"
+      @add-schedule-prepare="formId = schedulerSubmitFormID"
+      @add-schedule-done="formId = schedulerAddFormID"
+      @add-schedule-submit="addScheduleSubmit"
     />
   </AddDialog>
 </template>
@@ -22,6 +24,7 @@ import { ref } from 'vue';
 import AddDialog from '../../common/AddDialog.vue';
 import AddScheduleStepper from './components/AddScheduleStepper.vue';
 import { Common } from '../../../common/events';
+import { Session } from '../../../../common/interfaces';
 import { ModelProps } from '../../../common/props';
 
 const schedulerAddFormID = 'addScheduleForm';
@@ -41,8 +44,15 @@ function showDialog(show: boolean) {
   emit(Common.UPDATE_MODULE_VALUE, show);
 }
 
-function addSchedulePrepare() {
-  console.log('HEREREE!');
-  formId.value = schedulerSubmitFormID;
+async function addScheduleSubmit(sessions: Session[]) {
+  submitLoading.value = true;
+
+  try {
+    await window.api.session.submit(JSON.stringify(sessions));
+  } finally {
+    formId.value = schedulerAddFormID;
+    submitLoading.value = false;
+    showDialog(false);
+  }
 }
 </script>

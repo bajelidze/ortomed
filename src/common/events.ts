@@ -45,4 +45,5 @@ export namespace CourseActivity {
 export namespace Scheduler {
   export const ADD_SCHEDULE_SUBMIT = 'addScheduleSubmit';
   export const ADD_SCHEDULE_PREPARE = 'addSchedulePrepare';
+  export const ADD_SCHEDULE_DONE = 'addScheduleDone';
 }

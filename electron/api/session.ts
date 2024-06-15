@@ -5,7 +5,7 @@ import { PatientDao } from '@/modules/actors/patient';
 import { DoctorDao } from '@/modules/actors/doctor';
 import { CourseDao } from '@/modules/course/course';
 import { Session } from '@/modules/scheduler/session';
-import { DateTime } from 'luxon';
+import { DateTime, Interval } from 'luxon';
 import { AddScheduleFields } from '../../common/fields';
 import { Session as SessionE } from '../api/endpoints/endpoints';
 import { Session as SessionI } from '../../common/interfaces';
@@ -28,6 +28,11 @@ export function setSessionHandlers() {
     }
 
     return formattedSessions;
+  });
+
+  ipcMain.handle(SessionE.SUBMIT, async (_, sessions: string) => {
+    const sessionsI: SessionI[] = JSON.parse(sessions);
+    await new Scheduler(db).commitSessions(...marshalSessions(sessionsI));
   });
 }
 
@@ -52,5 +57,20 @@ function formatSessions(sessions: Session[]): SessionI[] {
         end: end,
       },
     };
+  });
+}
+
+function marshalSessions(sessions: SessionI[]): Session[] {
+  return sessions.map(session => {
+    return new Session({
+      id: session.id,
+      doctorId: session.doctorId,
+      patientId: session.patientId,
+      courseActivityId: session.courseActivityId,
+      interval: Interval.fromDateTimes(
+        DateTime.fromSeconds(session.interval.start),
+        DateTime.fromSeconds(session.interval.end),
+      ),
+    });
   });
 }

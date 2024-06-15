@@ -111,6 +111,9 @@ export const API = {
     async schedule(schedule: AddScheduleFields): Promise<Session[]> {
       return await ipcRenderer.invoke(SessionE.SCHEDULE, schedule);
     },
+    async submit(sessionsJSON: string): Promise<void> {
+      return await ipcRenderer.invoke(SessionE.SUBMIT, sessionsJSON);
+    },
   },
   locale: {
     async readFile(fileName: LocaleFile): Promise<string> {
