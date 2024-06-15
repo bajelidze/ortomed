@@ -1,7 +1,7 @@
 {
   "name": "Ortomed",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "dev": "ELECTRON_ENABLE_LOGGING=1 NODE_OPTIONS='--unhandled-rejections=strict' vite",
     "debug": "ORTOMED_DEBUG=1 ELECTRON_ENABLE_LOGGING=1 NODE_OPTIONS='--unhandled-rejections=strict' vite",
