@@ -26,6 +26,8 @@ process.traceProcessWarnings = true;
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.PUBLIC, 'ortomed.svg'),
+    height: 800,
+    width: 1400,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       sandbox: false,
@@ -51,7 +53,7 @@ function createWindow() {
 }
 
 app.on('window-all-closed', () => {
-  win = null;
+  app.quit();
 });
 
 setHandlers();
